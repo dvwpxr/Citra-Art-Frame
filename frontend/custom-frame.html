@@ -1,238 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Custom Frame Builder - Frameholic</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="nav-brand">
-                <a href="index.html" class="logo">FRAMEHOLIC</a>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="index.html#frames" class="nav-link">FRAMES</a>
-                <a href="prints.html" class="nav-link">ART PRINTS</a>
-                <a href="products.html" class="nav-link">PRODUCTS</a>
-                <a href="#" class="nav-link">BLOG</a>
-            </nav>
-            
-            <div class="nav-actions">
-                <button class="icon-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </button>
-                <button class="icon-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                </button>
-                <a href="framing.html" class="btn-primary">START FRAMING</a>
-            </div>
-        </div>
-    </header>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header"></header>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Frame Builder Section -->
-        <section class="frame-builder">
-            <div class="container">
-                <div class="builder-header">
-                    <h1>Customizing your frame to fit a x cm artwork.</h1>
-                    <div class="builder-actions">
-                        <button class="btn-secondary">EDIT SIZE</button>
-                        <button class="btn-secondary">UPLOAD IMAGE</button>
-                    </div>
-                </div>
-
-                <div class="builder-content">
-                    <div class="frame-customizer">
-                        <div class="frame-options">
-                            <div class="option-item active">
-                                <div class="customize-icon">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                    </svg>
-                                    <span>CUSTOMIZE</span>
-                                </div>
-                            </div>
-                            <div class="option-item">
-                                <div class="sample-image">
-                                    <svg width="60" height="40" viewBox="0 0 60 40">
-                                        <rect width="60" height="40" fill="#e0e0e0"/>
-                                        <rect x="10" y="8" width="40" height="24" fill="#f0f0f0"/>
-                                        <circle cx="20" cy="15" r="3" fill="#ccc"/>
-                                        <polygon points="35,25 25,20 30,15 40,25" fill="#ccc"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="frame-preview-large">
-                            <div class="frame-container">
-                                <div class="frame-border-white">
-                                    <div class="artwork-area">
-                                        <div class="placeholder-content">
-                                            <p>Upload your image or use our sample artwork</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="frame-configuration">
-                        <div class="config-section">
-                            <div class="config-row">
-                                <label>FRAME MODEL:</label>
-                                <div class="frame-selector">
-                                    <button class="frame-nav prev"><</button>
-                                    <span class="frame-name">Carlit White</span>
-                                    <button class="frame-nav next">></button>
-                                </div>
-                            </div>
-
-                            <div class="config-row">
-                                <label>MAT WIDTH:</label>
-                                <div class="mat-options">
-                                    <button class="mat-option">No Mat</button>
-                                    <button class="mat-option active">2cm</button>
-                                    <button class="mat-option">3cm</button>
-                                    <button class="mat-option">4cm</button>
-                                </div>
-                            </div>
-
-                            <div class="config-row">
-                                <label>MAT COLOR:</label>
-                                <div class="color-options">
-                                    <button class="color-option white active"></button>
-                                    <button class="color-option cream"></button>
-                                    <button class="color-option black"></button>
-                                    <button class="color-option gray"></button>
-                                </div>
-                            </div>
-
-                            <div class="config-row">
-                                <label>PRICE:</label>
-                                <div class="price-display">
-                                    <span class="price">IDR 150,000</span>
-                                </div>
-                            </div>
-
-                            <div class="frame-info">
-                                <p><em>Your final frame size is x x cm</em></p>
-                                <p>Estimated completion date is <strong>07 Jul 2025</strong></p>
-                            </div>
-
-                            <button class="btn-add-to-cart">ADD TO CART</button>
-                        </div>
-                    </div>
-                </div>
+      <section class="frame-builder">
+        <div class="container">
+          <div class="builder-header">
+            <h1 id="builderTitle">Customizing your frame...</h1>
+            <div class="builder-actions">
+              <div class="flex items-center gap-2">
+                <input
+                  type="number"
+                  id="artworkWidth"
+                  placeholder="Width (cm)"
+                  class="dimension-input w-24"
+                />
+                <span>x</span>
+                <input
+                  type="number"
+                  id="artworkHeight"
+                  placeholder="Height (cm)"
+                  class="dimension-input w-24"
+                />
+                <button id="updateSizeBtn" class="btn-secondary py-2 px-4">
+                  Update Size
+                </button>
+              </div>
+              <button id="uploadImageBtn" class="btn-secondary">
+                UPLOAD IMAGE
+              </button>
+              <input
+                type="file"
+                id="imageUploader"
+                class="hidden"
+                accept="image/*"
+              />
             </div>
-        </section>
+          </div>
 
-        <!-- Frame Specifications -->
-        <section class="frame-specifications">
-            <div class="container">
-                <h2>FRAME SPECIFICATIONS</h2>
-                <div class="spec-content">
-                    <p>Solid wood frame with 15 mm width & 30 mm depth, Carlit White is a minimalist white gallery frame, thin from the front and deeper from the side. Easy to match with wide variety of artwork, great for small to medium, or even larger size artwork for a more minimalist thin look. Bingkai kayu solid dengan lebar 15 mm & kedalaman 30 mm. Carlit White adalah bingkai galeri hitam minimalis, tipis dari depan dan lebih dalam dari samping. Mudah dicocokkan dengan beragam karya seni, bagus untuk karya seni berukuran kecil hingga sedang, atau bahkan berukuran lebih besar untuk tampilan tipis yang minimalis.</p>
+          <div class="builder-content">
+            <div class="frame-preview-large">
+              <div
+                id="frameContainer"
+                class="frame-container"
+                style="--mat-color: white; --frame-color: #e2d6c3"
+              >
+                <div
+                  id="frameBorder"
+                  class="frame-border-white"
+                  style="padding: 30px; background-color: var(--frame-color)"
+                >
+                  <div
+                    id="matBorder"
+                    style="padding: 20px; background-color: var(--mat-color)"
+                  >
+                    <div id="artworkArea" class="artwork-area bg-gray-200">
+                      <div class="placeholder-content">
+                        <p>Upload your image</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-        </section>
 
-        <!-- Instructions Section -->
-        <section class="instructions-section">
-            <div class="container">
-                <div class="instructions-content">
-                    <h2>NOTE:</h2>
-                    <p>Please provide the full dimensions of the paper on which your artwork is printed on. To measure, flatten out your print as much as possible and measure its width and height from edge to edge. Round up to the nearest whole centimeter if the measurement is in between. The frame and matting (optional) will overlap the print by 0.5 centimeter on each side to secure it inside the frame.</p>
-                    
-                    <p>Visit our blog for dimensions of A-series paper sizes (A5, A4, A3, etc) as well as R-series photo paper sizes (6R, 8R, 10R, etc).</p>
-                    
-                    <p>If you have any questions, please contact us via chat or by emailing ask@frameholic.com</p>
-                    
-                    <p><em>Sample artwork is for illustration purpose only. It is not included in your purchase.</em></p>
+            <div class="frame-configuration">
+              <div class="config-section">
+                <div class="config-row">
+                  <label>FRAME MODEL:</label>
+                  <div class="frame-selector">
+                    <button id="prevFrame" class="frame-nav prev"><</button>
+                    <span id="frameName" class="frame-name">Carlit White</span>
+                    <button id="nextFrame" class="frame-nav next">></button>
+                  </div>
                 </div>
+
+                <div class="config-row">
+                  <label>MAT WIDTH:</label>
+                  <div id="matWidthOptions" class="mat-options">
+                    <button class="mat-option" data-width="0">No Mat</button>
+                    <button class="mat-option active" data-width="2">
+                      2cm
+                    </button>
+                    <button class="mat-option" data-width="3">3cm</button>
+                    <button class="mat-option" data-width="4">4cm</button>
+                  </div>
+                </div>
+
+                <div class="config-row">
+                  <label>MAT COLOR:</label>
+                  <div id="matColorOptions" class="color-options">
+                    <button
+                      class="color-option white active"
+                      data-color="white"
+                    ></button>
+                    <button
+                      class="color-option cream"
+                      data-color="#F5F5DC"
+                    ></button>
+                    <button
+                      class="color-option black"
+                      data-color="#2c3e50"
+                    ></button>
+                    <button
+                      class="color-option gray"
+                      data-color="#95a5a6"
+                    ></button>
+                  </div>
+                </div>
+
+                <div class="config-row">
+                  <label>PRICE:</label>
+                  <div class="price-display">
+                    <span id="priceDisplay" class="price">IDR 0</span>
+                  </div>
+                </div>
+
+                <div class="frame-info">
+                  <p>
+                    <em
+                      >Final frame size:
+                      <strong id="finalSize">0 x 0 cm</strong></em
+                    >
+                  </p>
+                  <p>
+                    Estimated completion: <strong id="completionDate"></strong>
+                  </p>
+                </div>
+
+                <button id="addToCartBtn" class="btn-add-to-cart">
+                  ADD TO CART
+                </button>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">FRAMEHOLIC</div>
-                    <div class="footer-contact">
-                        <p>Need Help?</p>
-                        <div class="contact-icons">
-                            <button class="contact-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                    <polyline points="22,6 12,13 2,6"/>
-                                </svg>
-                            </button>
-                            <button class="contact-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                </svg>
-                            </button>
-                            <button class="contact-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                    <line x1="8" y1="21" x2="16" y2="21"/>
-                                    <line x1="12" y1="17" x2="12" y2="21"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h3>Information</h3>
-                        <ul>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h3>Support</h3>
-                        <ul>
-                            <li><a href="#">FAQ</a></li>
-                            <li><a href="#">Terms & Conditions</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Extra Large Frames</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h3>Business Inquiries</h3>
-                        <ul>
-                            <li><a href="#">Wholesale/Bulk Order</a></li>
-                            <li><a href="#">Sell your Art Prints</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>Copyright © 2025 FRAMEHOLIC. Designed by Fullstop Indonesia. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <footer class="footer"></footer>
 
-    <script src="script.js"></script>
-</body>
+    <script src="frame-builder.js"></script>
+  </body>
 </html>

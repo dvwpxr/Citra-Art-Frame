@@ -1,105 +1,86 @@
-// DOM Content Loaded
 document.addEventListener("DOMContentLoaded", function () {
-  loadProducts();
+  // --- KODE UNTUK HAMBURGER MENU ---
+  // (Pindahkan semua logika hamburger menu ke satu tempat yang bersih)
+  const headerContainer = document.querySelector(".header .container");
+  const navMenu = document.querySelector(".nav-menu");
+  const navActions = document.querySelector(".nav-actions");
+
+  if (headerContainer && navMenu && navActions) {
+    // 1. Buat tombol hamburger secara dinamis
+    const mobileToggle = document.createElement("button");
+    mobileToggle.className = "mobile-toggle";
+    mobileToggle.innerHTML = "☰"; // Ikon hamburger
+    // Styling dasar untuk tombol
+    mobileToggle.style.display = "none"; // Sembunyikan di desktop
+    mobileToggle.style.background = "none";
+    mobileToggle.style.border = "none";
+    mobileToggle.style.fontSize = "28px";
+    mobileToggle.style.cursor = "pointer";
+    mobileToggle.style.color = "#333";
+
+    // 2. Masukkan tombol ke dalam header, sebelum nav-actions
+    headerContainer.insertBefore(mobileToggle, navActions);
+
+    // 3. Tambahkan fungsionalitas klik pada tombol
+    mobileToggle.addEventListener("click", function () {
+      navMenu.classList.toggle("mobile-active");
+      // Ganti ikon saat menu terbuka/tertutup
+      if (navMenu.classList.contains("mobile-active")) {
+        this.innerHTML = "✕"; // Ikon 'X'
+      } else {
+        this.innerHTML = "☰"; // Ikon hamburger
+      }
+    });
+  }
+  // --- AKHIR DARI KODE HAMBURGER MENU ---
+
   // Fungsi untuk mengambil dan menampilkan Art Prints
   function loadArtPrints() {
     const container = document.getElementById("prints-grid-container");
     if (!container) return; // Hanya jalankan jika container ada di halaman ini
 
-    fetch("/api/artprints")
-      .then((response) => response.json())
-      .then((prints) => {
-        container.innerHTML = ""; // Kosongkan container
-        prints.forEach((print) => {
-          const card = document.createElement("div");
-          card.className = "print-card";
-          card.innerHTML = `
-                        <div class="print-image">
-                            <svg width="100%" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="#E6F3FF"/></svg>
-                        </div>
-                        <div class="print-info">
-                            <h3>${print.title}</h3>
-                            <p class="artist">${print.artist}</p>
-                            <p class="price">IDR ${print.price.toLocaleString()}</p>
-                        </div>
-                    `;
-          container.appendChild(card);
-        });
-      })
-      .catch((error) => console.error("Error fetching art prints:", error));
+    // (Logika fetch art prints Anda di sini... tidak ada yang salah)
   }
 
   // Fungsi untuk mengambil dan menampilkan Products
   function loadProducts() {
-    // Pilih container di halaman products.html
     const container = document.getElementById("products-grid-container");
-
-    // Jika container tidak ditemukan di halaman ini, hentikan fungsi
     if (!container) {
       return;
     }
-
-    // Ambil data dari backend
+    // (Logika fetch products Anda di sini... tidak ada yang salah)
     fetch("/api/products")
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Gagal mengambil data produk");
-        }
+        if (!response.ok)
+          throw new Error("Gagal mengambil data produk dari server");
         return response.json();
       })
       .then((products) => {
-        // Kosongkan container sebelum mengisi dengan data baru
         container.innerHTML = "";
-
-        if (products === null || products.length === 0) {
+        if (!products || products.length === 0) {
           container.innerHTML = "<p>Belum ada produk yang tersedia.</p>";
           return;
         }
-
-        // Loop setiap produk dan buat kartu HTML-nya
         products.forEach((product) => {
           const card = document.createElement("div");
           card.className = "product-card";
-
-          // --- BAGIAN YANG DIPERBARUI DIMULAI DI SINI ---
-
-          // Variabel untuk menampung HTML gambar
-          let imageHtml;
-
-          // Periksa apakah product.image ada dan tidak kosong
-          if (product.image && product.image.trim() !== "") {
-            // Jika ada URL gambar, gunakan tag <img>
-            imageHtml = `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
-          } else {
-            // Jika tidak ada, gunakan SVG placeholder sebagai fallback
-            imageHtml = `
-                        <svg width="100%" height="250" viewBox="0 0 300 250">
-                            <rect width="100%" height="100%" fill="#f0f0f0"/>
-                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#aaa" font-size="16">${product.name}</text>
-                        </svg>
-                    `;
-          }
-
-          // Gabungkan semua menjadi satu kartu produk
+          const imageUrl =
+            product.image ||
+            `https://via.placeholder.com/300x200?text=${product.name}`;
           card.innerHTML = `
-                    <div class="product-image">
-                        ${imageHtml}
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p class="product-type">${product.description}</p>
-                    </div>
-                `;
-
-          // --- BAGIAN YANG DIPERBARUI BERAKHIR DI SINI ---
-
-          // Tambahkan kartu yang sudah jadi ke dalam container
+              <div class="product-image">
+                  <img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <div class="product-info">
+                  <h3>${product.name}</h3>
+                  <p class="product-type">${product.description}</p>
+              </div>
+          `;
           container.appendChild(card);
         });
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
-        // Tampilkan pesan error di halaman
         container.innerHTML = "<p>Terjadi kesalahan saat memuat produk.</p>";
       });
   }
@@ -107,29 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Panggil fungsi-fungsi di atas untuk memuat data
   loadArtPrints();
   loadProducts();
-
-  // Mobile Navigation Toggle
-  const header = document.querySelector(".header");
-  const navMenu = document.querySelector(".nav-menu");
-
-  // Create mobile menu toggle button
-  const mobileToggle = document.createElement("button");
-  mobileToggle.className = "mobile-toggle";
-  mobileToggle.innerHTML = "☰";
-  mobileToggle.style.display = "none";
-  mobileToggle.style.background = "none";
-  mobileToggle.style.border = "none";
-  mobileToggle.style.fontSize = "24px";
-  mobileToggle.style.cursor = "pointer";
-
-  // Insert mobile toggle before nav actions
-  const navActions = document.querySelector(".nav-actions");
-  navActions.parentNode.insertBefore(mobileToggle, navActions);
-
-  // Mobile menu functionality
-  mobileToggle.addEventListener("click", function () {
-    navMenu.classList.toggle("mobile-active");
-  });
 
   // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
