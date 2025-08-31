@@ -1,0 +1,19 @@
+# --- Environment files (dotenv) ---
+# Abaikan .env di root & subfolder
+.env
+.env.*
+*.env
+*.env.*
+
+# direnv
+.envrc
+.envrc.*
+
+# --- KECUALI file contoh/template berikut: tetap commit ---
+!.env.example
+!.env.sample
+!.env.template
+!.env.schema
+!*.example.env
+!*.sample.env
+!*.template.env
