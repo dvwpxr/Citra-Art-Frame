@@ -1,23 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "http://localhost:8080/api/products";
+  // --- ELEMENTS ---
   const tableBody = document.getElementById("product-table-body");
   const modal = document.getElementById("productModal");
   const deleteModal = document.getElementById("deleteModal");
   const form = document.getElementById("productForm");
   const modalTitle = document.getElementById("modalTitle");
   const notification = document.getElementById("notification");
-  let productToDeleteId = null;
+  const searchInput = document.getElementById("searchInput");
+  const sidebarToggle = document.getElementById("sidebar-toggle");
+  const sidebar = document.getElementById("sidebar");
+  const totalProductsEl = document.getElementById("total-products");
 
-  // --- UTILITY FUNCTIONS ---
+  // --- STATE ---
+  let productToDeleteId = null;
+  let allProducts = []; // Cache untuk menyimpan semua produk dari API
+
+  // --- API CONFIG ---
+  const API_URL = "http://localhost:8080/api/products";
+
+  // --- UTILITY & UI FUNCTIONS ---
   const showNotification = (message, isError = false) => {
     notification.textContent = message;
-    notification.className = `fixed top-5 right-5 text-white py-2 px-4 rounded-lg shadow-md transition-transform ${
-      isError ? "bg-red-500" : "bg-green-500"
+    notification.className = `fixed top-[7%] right-5 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 ${
+      isError ? "bg-red-600" : "bg-green-500"
     } translate-x-0`;
     setTimeout(() => {
       notification.className = notification.className.replace(
         "translate-x-0",
-        "translate-x-[200%]"
+        "translate-x-[150%]"
       );
     }, 3000);
   };
@@ -32,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("stock").value = product.stock || "";
     document.getElementById("category").value = product.category || "";
     document.getElementById("image").value = product.image || "";
+    document.getElementById("detail_image_url").value =
+      product.detail_image_url || "";
     modal.classList.add("active");
   };
 
@@ -47,44 +59,55 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteModal.classList.remove("active");
   };
 
+  const renderTable = (products) => {
+    tableBody.innerHTML = "";
+    if (!products || products.length === 0) {
+      tableBody.innerHTML =
+        '<tr><td colspan="6" class="text-center p-4 text-gray-700">No products found.</td></tr>';
+      return;
+    }
+
+    products.forEach((product) => {
+      const row = document.createElement("tr");
+      row.className = "border-b hover:bg-gray-200";
+      row.innerHTML = `
+        <td class="p-3">
+          <img src="${
+            product.image || "https://via.placeholder.com/40"
+          }" alt="${product.name}" class="w-10 h-10 rounded-md object-cover">
+        </td>
+        <td class="p-3 font-medium text-gray-600">${product.name}</td>
+        <td class="p-3 text-gray-600">${product.category}</td>
+        <td class="p-3 text-gray-600">Rp ${product.price.toLocaleString(
+          "id-ID"
+        )}</td>
+        <td class="p-3 text-gray-600">${product.stock}</td>
+        <td class="p-3">
+          <button class="edit-btn text-blue-500 hover:text-blue-700 mr-3" data-id="${
+            product.id
+          }" title="Edit"><i class="ri-pencil-fill"></i></button>
+          <button class="delete-btn text-red-500 hover:text-red-700" data-id="${
+            product.id
+          }" title="Delete"><i class="ri-delete-bin-5-fill"></i></button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  };
+
   // --- API FUNCTIONS ---
   const fetchProducts = async () => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error("Failed to fetch products");
       const products = await response.json();
-
-      tableBody.innerHTML = "";
-      if (!products) {
-        tableBody.innerHTML =
-          '<tr><td colspan="5" class="text-center p-4">No products found.</td></tr>';
-        return;
-      }
-
-      products.forEach((product) => {
-        const row = document.createElement("tr");
-        row.className = "border-b";
-        row.innerHTML = `
-                    <td class="p-2">${product.name}</td>
-                    <td class="p-2">${product.category}</td>
-                    <td class="p-2">Rp ${product.price.toLocaleString(
-                      "id-ID"
-                    )}</td>
-                    <td class="p-2">${product.stock}</td>
-                    <td class="p-2">
-                        <button class="edit-btn text-blue-500 hover:text-blue-700 mr-2" data-id="${
-                          product.id
-                        }"><i class="ri-pencil-line"></i></button>
-                        <button class="delete-btn text-red-500 hover:text-red-700" data-id="${
-                          product.id
-                        }"><i class="ri-delete-bin-line"></i></button>
-                    </td>
-                `;
-        tableBody.appendChild(row);
-      });
+      allProducts = products || []; // Simpan data asli
+      totalProductsEl.textContent = allProducts.length; // Update kartu statistik
+      renderTable(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       showNotification(error.message, true);
+      tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">${error.message}</td></tr>`;
     }
   };
 
@@ -108,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       showNotification(`Product successfully ${id ? "updated" : "created"}!`);
       closeModal();
-      fetchProducts();
+      fetchProducts(); // Refresh data
     } catch (error) {
       console.error("Error saving product:", error);
       showNotification(error.message, true);
@@ -121,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("Failed to delete product");
       showNotification("Product deleted successfully!");
       closeDeleteModal();
-      fetchProducts();
+      fetchProducts(); // Refresh data
     } catch (error) {
       console.error("Error deleting product:", error);
       showNotification(error.message, true);
@@ -129,32 +152,37 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- EVENT LISTENERS ---
+
+  // Sidebar Toggle for mobile
+  sidebarToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("-translate-x-full");
+  });
+
+  // Modal Buttons
   document
     .getElementById("addProductBtn")
     .addEventListener("click", () => openModal("Add New Product"));
   document
     .getElementById("closeModalBtn")
     .addEventListener("click", closeModal);
+  document
+    .getElementById("cancelModalBtn")
+    .addEventListener("click", closeModal);
 
+  // Form Submission
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    // Ambil ID, bisa jadi string kosong jika produk baru
     const idValue = document.getElementById("productId").value;
-
     const productData = {
-      // Gunakan parseInt untuk mengubah string menjadi angka
       price: parseInt(document.getElementById("price").value, 10),
       stock: parseInt(document.getElementById("stock").value, 10),
-
-      // Data lain tetap sebagai string
       name: document.getElementById("name").value,
       description: document.getElementById("description").value,
       category: document.getElementById("category").value,
       image: document.getElementById("image").value,
+      detail_image_url: document.getElementById("detail_image_url").value,
     };
 
-    // Hanya tambahkan ID ke objek jika memang ada (untuk mode edit)
     if (idValue) {
       productData.id = parseInt(idValue, 10);
     }
@@ -162,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveProduct(productData);
   });
 
+  // Table Actions (Edit & Delete)
   tableBody.addEventListener("click", async (e) => {
     const editBtn = e.target.closest(".edit-btn");
     const deleteBtn = e.target.closest(".delete-btn");
@@ -184,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Delete Confirmation Modal
   document
     .getElementById("cancelDeleteBtn")
     .addEventListener("click", closeDeleteModal);
@@ -193,6 +223,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial fetch
+  // Search Functionality
+  searchInput.addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredProducts = allProducts.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.category.toLowerCase().includes(searchTerm)
+    );
+    renderTable(filteredProducts);
+  });
+
+  // Logout
+  const logoutButton = document.getElementById("logoutBtn");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+      fetch("/api/admin/logout", { method: "POST" })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/login";
+          } else {
+            showNotification("Logout failed, please try again.", true);
+          }
+        })
+        .catch((error) => {
+          console.error("Error during logout:", error);
+          showNotification("An error occurred during logout.", true);
+        });
+    });
+  }
+
+  // --- INITIALIZATION ---
   fetchProducts();
 });

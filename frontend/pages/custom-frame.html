@@ -3,15 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Custom Frame Builder - Frameholic</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Custom Frame Builder - Citra Frame</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <header class="header"></header>
+    <header class="header">
+      <div class="container">
+        <div class="nav-brand">
+          <a href="/" class="logo">CITRA FRAME</a>
+        </div>
+
+        <nav class="nav-menu">
+          <a href="/#frames" class="nav-link">FRAMES</a>
+          <a href="/prints" class="nav-link">ART PRINTS</a>
+          <a href="/products" class="nav-link">PRODUCTS</a>
+          <a href="#" class="nav-link">BLOG</a>
+        </nav>
+
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="nav-actions">
+          <button class="icon-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+          <button class="icon-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
+              ></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </button>
+          <a href="framing.html" class="btn-primary">START FRAMING</a>
+        </div>
+      </div>
+    </header>
 
     <main class="main-content">
       <section class="frame-builder">
@@ -33,10 +97,10 @@
                   placeholder="Height (cm)"
                   class="dimension-input w-24"
                 />
-                <button id="updateSizeBtn" class="btn-secondary py-2 px-4">
-                  Update Size
-                </button>
               </div>
+              <button id="updateSizeBtn" class="btn-secondary py-2 px-4">
+                Update Size
+              </button>
               <button id="uploadImageBtn" class="btn-secondary">
                 UPLOAD IMAGE
               </button>
@@ -51,21 +115,10 @@
 
           <div class="builder-content">
             <div class="frame-preview-large">
-              <div
-                id="frameContainer"
-                class="frame-container"
-                style="--mat-color: white; --frame-color: #e2d6c3"
-              >
-                <div
-                  id="frameBorder"
-                  class="frame-border-white"
-                  style="padding: 30px; background-color: var(--frame-color)"
-                >
-                  <div
-                    id="matBorder"
-                    style="padding: 20px; background-color: var(--mat-color)"
-                  >
-                    <div id="artworkArea" class="artwork-area bg-gray-200">
+              <div id="framePreviewWrapper">
+                <div id="frameElement">
+                  <div id="matElement">
+                    <div id="artworkContainer">
                       <div class="placeholder-content">
                         <p>Upload your image</p>
                       </div>
@@ -151,6 +204,7 @@
 
     <footer class="footer"></footer>
 
-    <script src="frame-builder.js"></script>
+    <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/frame-builder.js"></script>
   </body>
 </html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Orders - CitraFrame</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      .sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      .modal {
+        display: none;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .badge {
+        @apply px-2 py-1 rounded text-xs font-semibold;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 font-sans">
+    <!-- Sidebar -->
+    <div
+      id="sidebar"
+      class="sidebar fixed left-0 top-0 w-64 h-full bg-slate-900 p-4 z-50 transform -translate-x-full md:translate-x-0"
+    >
+      <a href="#" class="flex items-center pb-4 border-b border-b-slate-700">
+        <i class="ri-camera-lens-line text-2xl text-white mr-3"></i>
+        <span class="text-white text-lg font-bold">CitraFrame</span>
+      </a>
+      <ul class="mt-4">
+        <li class="mb-1 group">
+          <a
+            href="/dashboard"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+          >
+            <i class="ri-home-2-line mr-3 text-lg"></i
+            ><span class="text-sm">Dashboard</span>
+          </a>
+        </li>
+        <li class="mb-1 group active">
+          <a
+            href="#"
+            class="flex items-center py-2 px-4 bg-slate-950 text-white rounded-md"
+          >
+            <i class="ri-shopping-cart-line mr-3 text-lg"></i
+            ><span class="text-sm">Orders</span>
+          </a>
+        </li>
+        <li class="mb-1 group">
+          <a
+            href="/dashboard/product"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+          >
+            <i class="ri-archive-line mr-3 text-lg"></i
+            ><span class="text-sm">Products</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main -->
+    <main
+      class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-slate-50 min-h-screen transition-all"
+    >
+      <!-- Topbar -->
+      <div
+        class="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30"
+      >
+        <button
+          type="button"
+          class="text-lg text-gray-600 mr-4 md:hidden"
+          id="sidebar-toggle"
+        >
+          <i class="ri-menu-line"></i>
+        </button>
+        <ul class="ml-auto flex items-center">
+          <li class="relative">
+            <button type="button" class="flex items-center">
+              <span class="text-sm mr-2 font-semibold">Admin</span
+              ><i class="ri-arrow-down-s-line"></i>
+            </button>
+          </li>
+          <li class="ml-4">
+            <button
+              id="logoutBtn"
+              class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm flex items-center"
+            >
+              <i class="ri-logout-box-r-line mr-2"></i> Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="p-6">
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+            <div class="flex justify-between mb-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  New Orders (Today)
+                </p>
+                <p
+                  class="text-2xl font-semibold text-gray-800"
+                  id="stat-new-orders"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-blue-100 text-blue-600 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <i class="ri-shopping-bag-3-line text-2xl"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500" id="stat-new-orders-sub">—</p>
+          </div>
+          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+            <div class="flex justify-between mb-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Pending</p>
+                <p
+                  class="text-2xl font-semibold text-gray-800"
+                  id="stat-pending"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-yellow-100 text-yellow-600 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <i class="ri-time-line text-2xl"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">Menunggu diproses</p>
+          </div>
+          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+            <div class="flex justify-between mb-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Shipped</p>
+                <p
+                  class="text-2xl font-semibold text-gray-800"
+                  id="stat-shipped"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-indigo-100 text-indigo-600 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <i class="ri-truck-line text-2xl"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">Dalam pengiriman</p>
+          </div>
+          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
+            <div class="flex justify-between mb-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Canceled</p>
+                <p
+                  class="text-2xl font-semibold text-gray-800"
+                  id="stat-canceled"
+                >
+                  0
+                </p>
+              </div>
+              <div
+                class="bg-red-100 text-red-600 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <i class="ri-close-circle-line text-2xl"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">Dibatalkan</p>
+          </div>
+        </div>
+
+        <!-- Orders Table Card -->
+        <div class="bg-white p-6 rounded-md shadow-md">
+          <div
+            class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6"
+          >
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
+              <p class="text-sm text-gray-500">
+                Kelola seluruh pesanan pelanggan.
+              </p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-3">
+              <div class="flex gap-2">
+                <input
+                  type="date"
+                  id="fromDate"
+                  class="p-2 border border-gray-300 rounded-md text-sm"
+                />
+                <input
+                  type="date"
+                  id="toDate"
+                  class="p-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <select
+                id="statusFilter"
+                class="p-2 border border-gray-300 rounded-md text-sm"
+              >
+                <option value="">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="PROCESSING">Processing</option>
+                <option value="SHIPPED">Shipped</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="CANCELED">Canceled</option>
+              </select>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by customer/order #"
+                class="p-2 border border-gray-300 rounded-md text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px]">
+              <thead class="bg-gray-50">
+                <tr class="text-sm font-semibold text-left text-gray-600">
+                  <th class="p-3">Order #</th>
+                  <th class="p-3">Customer</th>
+                  <th class="p-3">Items</th>
+                  <th class="p-3">Total</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3">Created</th>
+                  <th class="p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body"></tbody>
+            </table>
+          </div>
+
+          <!-- (Optional) simple pagination -->
+          <div class="flex items-center justify-between mt-4">
+            <p class="text-sm text-gray-500" id="orders-count">0 orders</p>
+            <div class="flex gap-2">
+              <button
+                id="prevPage"
+                class="px-3 py-1 border rounded text-sm disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <button
+                id="nextPage"
+                class="px-3 py-1 border rounded text-sm disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- View/Edit Order Modal -->
+    <div
+      id="orderModal"
+      class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl">
+        <div class="flex justify-between items-center mb-4">
+          <h2 id="orderModalTitle" class="text-2xl font-bold text-gray-800">
+            Order Detail
+          </h2>
+          <button
+            id="closeOrderModalBtn"
+            class="text-gray-500 hover:text-gray-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div
+          id="orderSummary"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+        >
+          <!-- Left: Customer & Shipping -->
+          <div class="space-y-2">
+            <h3 class="font-semibold text-gray-800">Customer</h3>
+            <p class="text-sm text-gray-600" id="od-customer">—</p>
+            <h3 class="font-semibold text-gray-800 mt-3">Shipping Address</h3>
+            <p class="text-sm text-gray-600" id="od-address">—</p>
+          </div>
+          <!-- Right: Meta -->
+          <div class="space-y-2">
+            <h3 class="font-semibold text-gray-800">Order Info</h3>
+            <p class="text-sm text-gray-600" id="od-meta">—</p>
+            <div class="mt-3">
+              <label class="block text-sm font-semibold text-gray-800 mb-1"
+                >Update Status</label
+              >
+              <div class="flex gap-2">
+                <select id="od-status" class="p-2 border rounded w-full">
+                  <option value="PENDING">Pending</option>
+                  <option value="PROCESSING">Processing</option>
+                  <option value="SHIPPED">Shipped</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="CANCELED">Canceled</option>
+                </select>
+                <button
+                  id="saveStatusBtn"
+                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="border rounded-md">
+          <div class="bg-gray-50 px-4 py-2 font-semibold text-gray-700">
+            Items
+          </div>
+          <div id="od-items" class="divide-y max-h-64 overflow-auto"></div>
+          <div class="px-4 py-3 flex flex-col gap-1">
+            <div class="flex justify-between text-sm">
+              <span>Subtotal</span><span id="od-subtotal">Rp 0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span>Shipping</span><span id="od-shipping">Rp 0</span>
+            </div>
+            <div class="flex justify-between font-semibold text-gray-800">
+              <span>Total</span><span id="od-total">Rp 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete/Cancel Modal -->
+    <div
+      id="deleteModal"
+      class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
+        <h2 class="text-xl font-bold mb-4">Confirm Action</h2>
+        <p class="mb-6 text-gray-600" id="deleteModalMsg">Are you sure?</p>
+        <div class="flex justify-end gap-2">
+          <button
+            id="cancelDeleteBtn"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            id="confirmDeleteBtn"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div
+      id="notification"
+      class="fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 translate-x-[150%]"
+    >
+      Notification message
+    </div>
+
+    <script src="../orders-script.js"></script>
+  </body>
+</html>

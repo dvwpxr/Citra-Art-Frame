@@ -3,27 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Frameholic - Custom Picture Frames</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Citra Frame</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <!-- Header -->
     <header class="header">
       <div class="container">
         <div class="nav-brand">
-          <div class="logo">CITRA FRAME</div>
+          <a href="/" class="logo">CITRA FRAME</a>
         </div>
 
         <nav class="nav-menu">
           <a href="#frames" class="nav-link">FRAMES</a>
-          <a href="prints.html" class="nav-link">ART PRINTS</a>
-          <a href="products.html" class="nav-link">PRODUCTS</a>
+          <a href="/prints" class="nav-link">ART PRINTS</a>
+          <a href="/products" class="nav-link">PRODUCTS</a>
           <a href="#" class="nav-link">BLOG</a>
         </nav>
+
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
 
         <div class="nav-actions">
           <button class="icon-btn">
@@ -55,53 +72,42 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </button>
-          <a href="framing.html" class="btn-primary">START FRAMING</a>
+          <a href="/custom" class="btn-primary">START FRAMING</a>
         </div>
       </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1>Build your<br />Custom Frame</h1>
-            <a href="framing.html" class="btn-secondary">ENTER SIZE</a>
-          </div>
-          <div class="hero-images">
-            <div class="frame-showcase">
-              <div class="frame-item">
-                <div class="frame-border">
-                  <img
-                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImcxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjY3ZWVhO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6Izc2NGJhMjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgZmlsbD0idXJsKCNnMSkiIC8+PC9zdmc+"
-                    alt="Framed photo 1"
-                  />
-                </div>
-              </div>
-              <div class="frame-item">
-                <div class="frame-border">
-                  <img
-                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImcyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjA5M2ZiO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y1NTc2YztzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgZmlsbD0idXJsKCNnMikiIC8+PC9zdmc+"
-                    alt="Framed photo 2"
-                  />
-                </div>
-              </div>
-              <div class="frame-item">
-                <div class="frame-border">
-                  <img
-                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImczIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNGZhY2ZlO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzAwZjJmZTtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgZmlsbD0idXJsKCNnMykiIC8+PC9zdmc+"
-                    alt="Framed photo 3"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="slideshow-container">
+        <div class="slide fade">
+          <img
+            src="/assets/images/photo.png"
+            alt="Dekorasi interior dengan bingkai"
+          />
+        </div>
+
+        <div class="slide fade">
+          <img
+            src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1920"
+            alt="Ruang tamu modern"
+          />
+        </div>
+
+        <div class="slide fade">
+          <img
+            src="https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80&w=1920"
+            alt="Dinding galeri seni"
+          />
         </div>
       </div>
+
+      <div class="hero-overlay"></div>
+
+      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+      <a class="next" onclick="plusSlides(1)">&#10095;</a>
     </section>
 
-    <!-- Our Frames Section -->
-    <section class="frames-section">
+    <section class="frames-section" id="frames">
       <div class="container">
         <h2 class="section-title">OUR FRAMES</h2>
         <div class="frames-grid">
@@ -173,19 +179,18 @@
       </div>
     </section>
 
-    <!-- Why Frameholic Section -->
     <section class="why-section">
       <div class="container">
-        <h2 class="section-title">WHY FRAMEHOLIC?</h2>
+        <h2 class="section-title">WHY Citra Frame?</h2>
         <div class="why-content">
           <div class="why-text">
             <p>
-              Founded in 2017, Frameholic offers the easiest and most affordable
-              way to custom frame your artwork, photos, certificates, puzzles,
-              and other cherished memories.
+              Founded in 2017, Citra Frame offers the easiest and most
+              affordable way to custom frame your artwork, photos, certificates,
+              puzzles, and other cherished memories.
             </p>
             <p class="indonesian-text">
-              Sejak 2017, Frameholic menyediakan cara mudah dengan harga
+              Sejak 2017, Citra Frame menyediakan cara mudah dengan harga
               terjangkau bagi Anda yang membutuhkan bingkai custom untuk karya
               seni, poster, foto, plakat sertifikat, puzzle, dan kenangan
               berharga lainnya.
@@ -239,7 +244,6 @@
       </div>
     </section>
 
-    <!-- Services Section -->
     <section class="services-section">
       <div class="container">
         <h2 class="section-title">OUR SERVICES</h2>
@@ -303,12 +307,11 @@
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
           <div class="footer-brand">
-            <div class="logo">FRAMEHOLIC</div>
+            <div class="logo">Citra Frame</div>
             <div class="footer-help">
               <p>Need Help?</p>
               <div class="contact-icons">
@@ -350,6 +353,6 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="/assets/js/script.js"></script>
   </body>
 </html>

@@ -2,34 +2,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- KODE UNTUK HAMBURGER MENU ---
   // (Pindahkan semua logika hamburger menu ke satu tempat yang bersih)
   const headerContainer = document.querySelector(".header .container");
-  const navMenu = document.querySelector(".nav-menu");
   const navActions = document.querySelector(".nav-actions");
+  const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
+  const navMenu = document.querySelector(".nav-menu");
 
-  if (headerContainer && navMenu && navActions) {
-    // 1. Buat tombol hamburger secara dinamis
-    const mobileToggle = document.createElement("button");
-    mobileToggle.className = "mobile-toggle";
-    mobileToggle.innerHTML = "☰"; // Ikon hamburger
-    // Styling dasar untuk tombol
-    mobileToggle.style.display = "none"; // Sembunyikan di desktop
-    mobileToggle.style.background = "none";
-    mobileToggle.style.border = "none";
-    mobileToggle.style.fontSize = "28px";
-    mobileToggle.style.cursor = "pointer";
-    mobileToggle.style.color = "#333";
-
-    // 2. Masukkan tombol ke dalam header, sebelum nav-actions
-    headerContainer.insertBefore(mobileToggle, navActions);
-
-    // 3. Tambahkan fungsionalitas klik pada tombol
-    mobileToggle.addEventListener("click", function () {
-      navMenu.classList.toggle("mobile-active");
-      // Ganti ikon saat menu terbuka/tertutup
-      if (navMenu.classList.contains("mobile-active")) {
-        this.innerHTML = "✕"; // Ikon 'X'
-      } else {
-        this.innerHTML = "☰"; // Ikon hamburger
-      }
+  if (mobileMenuToggle && navMenu) {
+    mobileMenuToggle.addEventListener("click", function () {
+      navMenu.classList.toggle("active");
     });
   }
   // --- AKHIR DARI KODE HAMBURGER MENU ---
@@ -357,11 +336,11 @@ document.head.appendChild(style);
  */
 function updateProduct(productId, updatedData) {
   fetch(`/api/products/${productId}`, {
-    method: "PUT", // Gunakan metode PUT untuk update
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(updatedData), // Kirim data baru dalam format JSON
+    body: JSON.stringify(updatedData),
   })
     .then((response) => {
       if (!response.ok) {
@@ -372,8 +351,6 @@ function updateProduct(productId, updatedData) {
     .then((data) => {
       console.log("Produk berhasil diupdate:", data);
       alert("Produk berhasil diupdate!");
-      // Di sini Anda bisa memuat ulang daftar produk atau memperbarui DOM secara langsung
-      // Contoh: loadProducts();
     })
     .catch((error) => {
       console.error("Error updating product:", error);
@@ -381,10 +358,47 @@ function updateProduct(productId, updatedData) {
     });
 }
 
-// Contoh pemanggilan fungsi:
-// Misalkan Anda memiliki form untuk mengedit produk dengan ID "2"
-// updateProduct("2", {
-//   name: "Love Story Updated",
-//   description: "A beautiful photo collage for your loved ones.",
-//   image: "..."
-// });
+// =============================================== //
+// ===== KODE BARU UNTUK SLIDESHOW (DENGAN NAVIGASI) ===== //
+// =============================================== //
+
+let slideIndex = 1;
+let slideTimer; // Variabel untuk menyimpan timer
+
+// Panggil fungsi ini pertama kali untuk menampilkan slide awal
+showSlides(slideIndex);
+
+// Fungsi untuk navigasi maju/mundur (dipanggil dari HTML)
+function plusSlides(n) {
+  showSlides((slideIndex += n));
+}
+
+// Fungsi utama untuk menampilkan slide
+function showSlides(n) {
+  // Hapus timer autoplay yang sedang berjalan agar tidak bentrok
+  clearTimeout(slideTimer);
+
+  let i;
+  let slides = document.getElementsByClassName("slide");
+
+  // Logika untuk kembali ke slide pertama atau terakhir
+  if (n > slides.length) {
+    slideIndex = 1;
+  }
+  if (n < 1) {
+    slideIndex = slides.length;
+  }
+
+  // Sembunyikan semua slide
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+
+  // Tampilkan slide yang aktif
+  slides[slideIndex - 1].style.display = "block";
+
+  // Mulai lagi timer autoplay dari awal
+  slideTimer = setTimeout(function () {
+    plusSlides(1); // Pindah ke slide berikutnya setelah 5 detik
+  }, 5000); // Ganti angka 5000 jika ingin durasi berbeda
+}

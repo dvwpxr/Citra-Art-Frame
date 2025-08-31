@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let FRAME_MODELS = [];
   let currentFrameIndex = 0;
+  
 
   // --- STATE APLIKASI (Default 50x50) ---
   let state = {
@@ -17,16 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- REFERENSI ELEMEN DOM (Tidak ada perubahan) ---
   const dom = {
-    // ... semua referensi DOM Anda tetap sama ...
     builderTitle: document.getElementById("builderTitle"),
     artworkWidthInput: document.getElementById("artworkWidth"),
     artworkHeightInput: document.getElementById("artworkHeight"),
     updateSizeBtn: document.getElementById("updateSizeBtn"),
     uploadImageBtn: document.getElementById("uploadImageBtn"),
     imageUploader: document.getElementById("imageUploader"),
-    artworkArea: document.getElementById("artworkArea"),
-    frameBorder: document.getElementById("frameBorder"),
-    matBorder: document.getElementById("matBorder"),
+
+    // Elemen baru
+    framePreviewWrapper: document.getElementById("framePreviewWrapper"),
+    frameElement: document.getElementById("frameElement"),
+    matElement: document.getElementById("matElement"),
+    artworkContainer: document.getElementById("artworkContainer"),
+
     frameName: document.getElementById("frameName"),
     priceDisplay: document.getElementById("priceDisplay"),
     finalSize: document.getElementById("finalSize"),
@@ -67,31 +71,48 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderFramePreview = () => {
-    // ... (Fungsi ini tidak perlu diubah) ...
+    // Tentukan ukuran maksimal preview di layar
     const maxPreviewSize = 400;
     const ratio = state.artworkWidth / state.artworkHeight;
-    let previewWidth, previewHeight;
+
+    let previewWrapperWidth, previewWrapperHeight;
+
     if (ratio > 1) {
-      previewWidth = maxPreviewSize;
-      previewHeight = maxPreviewSize / ratio;
+      // Landscape
+      previewWrapperWidth = maxPreviewSize;
+      previewWrapperHeight = maxPreviewSize / ratio;
     } else {
-      previewHeight = maxPreviewSize;
-      previewWidth = maxPreviewSize * ratio;
+      // Portrait atau Persegi
+      previewWrapperHeight = maxPreviewSize;
+      previewWrapperWidth = maxPreviewSize * ratio;
     }
-    dom.artworkArea.style.width = `${previewWidth}px`;
-    dom.artworkArea.style.height = `${previewHeight}px`;
-    const matPadding = state.matWidth * 5;
-    dom.matBorder.style.padding = `${matPadding}px`;
-    dom.matBorder.style.backgroundColor = state.matColor;
+
+    // Atur ukuran wrapper luar
+    dom.framePreviewWrapper.style.width = `${previewWrapperWidth}px`;
+    dom.framePreviewWrapper.style.height = `${previewWrapperHeight}px`;
+
+    // 1. Atur FRAME
     const frame = state.frameModel;
-    dom.frameBorder.style.padding = "20px";
-    if (frame.image) {
-      dom.frameBorder.style.backgroundImage = `url('${frame.image}')`;
-      dom.frameBorder.style.backgroundSize = "100% 100%";
-      dom.frameBorder.style.backgroundColor = "";
+    if (frame && frame.image) {
+      dom.frameElement.style.borderImageSource = `url('${frame.image}')`;
     } else {
-      dom.frameBorder.style.backgroundImage = "none";
-      dom.frameBorder.style.backgroundColor = "#8B4513";
+      dom.frameElement.style.borderImageSource = "none";
+      dom.frameElement.style.borderColor = "#8B4513";
+    }
+
+    // 2. Atur MAT
+    const matPadding = state.matWidth * 7;
+    dom.matElement.style.padding = `${matPadding}px`;
+
+    // --- PERUBAHAN UTAMA DI SINI ---
+    // Jika tidak ada mat, buat area mat transparan dan hilangkan bayangan.
+    if (state.matWidth === 0) {
+      dom.matElement.style.backgroundColor = "transparent";
+      dom.matElement.style.boxShadow = "none";
+    } else {
+      // Jika ada mat, kembalikan warna dan bayangannya.
+      dom.matElement.style.backgroundColor = state.matColor;
+      dom.matElement.style.boxShadow = "0 0 10px rgba(0,0,0,0.2) inset";
     }
   };
 
@@ -131,39 +152,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      // Tampilkan gambar di preview
-      dom.artworkArea.innerHTML = "";
-      dom.artworkArea.style.backgroundImage = `url('${e.target.result}')`;
-      dom.artworkArea.style.backgroundSize = "cover";
-      dom.artworkArea.style.backgroundPosition = "center";
+      // Targetkan kontainer yang benar
+      const container = dom.artworkContainer;
+      container.innerHTML = ""; // Hapus placeholder
 
-      // Buat objek gambar untuk mendapatkan dimensi aslinya
+      const previewImage = document.createElement("img");
+      previewImage.src = e.target.result;
+
+      container.appendChild(previewImage);
+
+      // Sisa logika untuk kalkulasi ukuran sudah benar, tidak perlu diubah
       const img = new Image();
       img.onload = () => {
+        // ... (TIDAK ADA PERUBAHAN DI SINI) ...
         const originalWidth = img.naturalWidth;
         const originalHeight = img.naturalHeight;
         const ratio = originalWidth / originalHeight;
-
         let newWidth, newHeight;
-
-        // Skalakan ukuran cm berdasarkan sisi terpanjang
         if (ratio > 1) {
-          // Gambar landscape
           newWidth = MAX_ARTWORK_DIMENSION_CM;
           newHeight = Math.round(MAX_ARTWORK_DIMENSION_CM / ratio);
         } else {
-          // Gambar portrait atau persegi
           newHeight = MAX_ARTWORK_DIMENSION_CM;
           newWidth = Math.round(MAX_ARTWORK_DIMENSION_CM * ratio);
         }
-
-        // Update state dan input fields
         state.artworkWidth = newWidth;
         state.artworkHeight = newHeight;
         dom.artworkWidthInput.value = newWidth;
         dom.artworkHeightInput.value = newHeight;
-
-        // Render ulang semuanya dengan ukuran baru
         renderAll();
       };
       img.src = e.target.result;
@@ -195,12 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleFrameChange = (direction) => {
     if (FRAME_MODELS.length === 0) return;
 
-    // 1. Tambahkan class untuk memulai animasi fade-out
-    dom.frameBorder.parentElement.parentElement.classList.add("is-changing");
+    dom.framePreviewWrapper.classList.add("is-changing");
 
-    // 2. Tunggu sebentar (setengah dari durasi transisi CSS)
+    // Ubah durasi timeout menjadi 200ms
     setTimeout(() => {
-      // Ganti model frame
       if (direction === "next") {
         currentFrameIndex = (currentFrameIndex + 1) % FRAME_MODELS.length;
       } else {
@@ -209,14 +223,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       state.frameModel = FRAME_MODELS[currentFrameIndex];
 
-      // Render ulang semua informasi saat frame tidak terlihat
       renderAll();
 
-      // 3. Hapus class untuk memicu animasi fade-in dengan frame baru
-      dom.frameBorder.parentElement.parentElement.classList.remove(
-        "is-changing"
-      );
-    }, 150); // Setengah dari 0.3s (300ms) durasi transisi di CSS
+      dom.framePreviewWrapper.classList.remove("is-changing");
+    }, 200); // Durasinya sekarang 200ms
   };
 
   // Gunakan fungsi baru ini untuk event listener
