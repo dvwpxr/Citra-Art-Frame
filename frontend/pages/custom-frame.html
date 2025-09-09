@@ -14,21 +14,39 @@
     <header class="header">
       <div class="container">
         <div class="nav-brand">
-          <a href="/" class="logo">CITRA FRAME</a>
+          <a href="/" class="logo" aria-label="Citra Frame">
+            <picture>
+              <img
+                src="/assets/img/logo-citraframe.svg"
+                alt="Citra Frame"
+                class="logo-img"
+                width="140"
+                height="32"
+                decoding="async"
+                loading="eager"
+              />
+            </picture>
+          </a>
         </div>
 
-        <nav class="nav-menu">
+        <nav class="nav-menu" id="site-nav">
           <a href="/#frames" class="nav-link">FRAMES</a>
           <a href="/prints" class="nav-link">ART PRINTS</a>
           <a href="/products" class="nav-link">PRODUCTS</a>
           <a href="#" class="nav-link">BLOG</a>
+          <a href="/custom" class="btn-primary mobile-only">START FRAMING</a>
         </nav>
 
-        <button class="mobile-menu-toggle" aria-label="Toggle menu">
+        <button
+          class="mobile-menu-toggle"
+          aria-label="Toggle menu"
+          aria-controls="site-nav"
+          aria-expanded="false"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="26"
+            height="26"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -43,7 +61,7 @@
         </button>
 
         <div class="nav-actions">
-          <button class="icon-btn">
+          <button class="icon-btn" aria-label="Account">
             <svg
               width="20"
               height="20"
@@ -56,7 +74,7 @@
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </button>
-          <button class="icon-btn">
+          <button class="icon-btn" aria-label="Cart">
             <svg
               width="20"
               height="20"
@@ -72,7 +90,9 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </button>
-          <a href="framing.html" class="btn-primary">START FRAMING</a>
+          <a href="/custom-frame" class="btn-primary desktop-only"
+            >START FRAMING</a
+          >
         </div>
       </div>
     </header>
@@ -80,29 +100,86 @@
     <main class="main-content">
       <section class="frame-builder">
         <div class="container">
-          <div class="builder-header">
-            <h1 id="builderTitle">Customizing your frame...</h1>
-            <div class="builder-actions">
-              <div class="flex items-center gap-2">
-                <input
-                  type="number"
-                  id="artworkWidth"
-                  placeholder="Width (cm)"
-                  class="dimension-input w-24"
-                />
-                <span>x</span>
-                <input
-                  type="number"
-                  id="artworkHeight"
-                  placeholder="Height (cm)"
-                  class="dimension-input w-24"
-                />
+          <div class="builder-preview-panel">
+            <div class="frame-preview-large">
+              <div id="framePreviewWrapper">
+                <div id="frameElement">
+                  <div id="matElement">
+                    <div id="artworkContainer">
+                      <div class="placeholder-content">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="48"
+                          height="48"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path
+                            d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                          ></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Upload Your Image</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button id="updateSizeBtn" class="btn-secondary py-2 px-4">
-                Update Size
-              </button>
+            </div>
+            <div class="builder-actions">
+              <div class="dimension-group">
+                <label for="artworkWidth">Artwork Size (cm)</label>
+                <div class="dimension-inputs">
+                  <input type="number" id="artworkWidth" placeholder="Width" />
+                  <span>&times;</span>
+                  <input
+                    type="number"
+                    id="artworkHeight"
+                    placeholder="Height"
+                  />
+                  <button id="updateSizeBtn" class="icon-btn" title="Save">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                      ></path>
+                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                      <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <button id="uploadImageBtn" class="btn-secondary">
-                UPLOAD IMAGE
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload Image
               </button>
               <input
                 type="file"
@@ -113,90 +190,150 @@
             </div>
           </div>
 
-          <div class="builder-content">
-            <div class="frame-preview-large">
-              <div id="framePreviewWrapper">
-                <div id="frameElement">
-                  <div id="matElement">
-                    <div id="artworkContainer">
-                      <div class="placeholder-content">
-                        <p>Upload your image</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div class="builder-config-panel">
+            <h1 id="builderTitle">Customize Your Frame</h1>
+            <div class="config-group">
+              <div class="config-header">
+                <h3>1. Choose Your Frame</h3>
               </div>
-            </div>
-
-            <div class="frame-configuration">
-              <div class="config-section">
-                <div class="config-row">
-                  <label>FRAME MODEL:</label>
-                  <div class="frame-selector">
-                    <button id="prevFrame" class="frame-nav prev"><</button>
-                    <span id="frameName" class="frame-name">Carlit White</span>
-                    <button id="nextFrame" class="frame-nav next">></button>
-                  </div>
-                </div>
-
-                <div class="config-row">
-                  <label>MAT WIDTH:</label>
-                  <div id="matWidthOptions" class="mat-options">
-                    <button class="mat-option" data-width="0">No Mat</button>
-                    <button class="mat-option active" data-width="2">
-                      2cm
-                    </button>
-                    <button class="mat-option" data-width="3">3cm</button>
-                    <button class="mat-option" data-width="4">4cm</button>
-                  </div>
-                </div>
-
-                <div class="config-row">
-                  <label>MAT COLOR:</label>
-                  <div id="matColorOptions" class="color-options">
-                    <button
-                      class="color-option white active"
-                      data-color="white"
-                    ></button>
-                    <button
-                      class="color-option cream"
-                      data-color="#F5F5DC"
-                    ></button>
-                    <button
-                      class="color-option black"
-                      data-color="#2c3e50"
-                    ></button>
-                    <button
-                      class="color-option gray"
-                      data-color="#95a5a6"
-                    ></button>
-                  </div>
-                </div>
-
-                <div class="config-row">
-                  <label>PRICE:</label>
-                  <div class="price-display">
-                    <span id="priceDisplay" class="price">IDR 0</span>
-                  </div>
-                </div>
-
-                <div class="frame-info">
-                  <p>
-                    <em
-                      >Final frame size:
-                      <strong id="finalSize">0 x 0 cm</strong></em
+              <div class="config-body">
+                <div class="frame-selector-new">
+                  <button id="prevFrame" class="frame-nav-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                     >
-                  </p>
-                  <p>
-                    Estimated completion: <strong id="completionDate"></strong>
-                  </p>
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <div class="frame-swatch-wrapper">
+                    <img
+                      id="frameSwatchPreview"
+                      src=""
+                      alt="Frame texture preview"
+                    />
+                    <span id="frameName" class="frame-name-text"
+                      >Carlit White</span
+                    >
+                  </div>
+                  <button id="nextFrame" class="frame-nav-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
                 </div>
-
-                <button id="addToCartBtn" class="btn-add-to-cart">
-                  ADD TO CART
-                </button>
               </div>
             </div>
+
+            <div class="config-group">
+              <div class="config-header">
+                <h3>2. Add Matboard</h3>
+                <span id="matInfo" class="config-value">2cm, White</span>
+              </div>
+              <div class="config-body">
+                <label>Mat Width</label>
+                <div id="matWidthOptions" class="mat-options">
+                  <button class="mat-option" data-width="0">No Mat</button>
+                  <button class="mat-option active" data-width="2">2cm</button>
+                  <button class="mat-option" data-width="3">3cm</button>
+                  <button class="mat-option" data-width="4">4cm</button>
+                </div>
+                <label>Mat Color</label>
+                <div id="matColorOptions" class="color-options">
+                  <button
+                    class="color-option white active"
+                    data-color="white"
+                    title="White"
+                  ></button>
+                  <button
+                    class="color-option cream"
+                    data-color="#F5F5DC"
+                    title="Cream"
+                  ></button>
+                  <button
+                    class="color-option black"
+                    data-color="#2c3e50"
+                    title="Black"
+                  ></button>
+                  <button
+                    class="color-option gray"
+                    data-color="#95a5a6"
+                    title="Gray"
+                  ></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <div class="config-header">
+                <h3>3. Choose Glass Protector</h3>
+                <span id="glassInfo" class="config-value">With Glass</span>
+              </div>
+              <div class="config-body">
+                <div id="glassOptions" class="mat-options">
+                  <button class="mat-option active" data-glass="true">
+                    With Glass
+                  </button>
+                  <button class="mat-option" data-glass="false">
+                    Without Glass
+                  </button>
+                </div>
+                <p
+                  class="text-xs text-gray-500 mt-2"
+                  style="font-size: 12px; color: #6b7280; margin-top: 8px"
+                >
+                  High-quality acrylic glass to protect your artwork.
+                </p>
+              </div>
+            </div>
+
+            <div class="summary-section">
+              <div class="summary-item">
+                <span>Final Frame Size</span>
+                <strong id="finalSize">0 x 0 cm</strong>
+              </div>
+              <div class="summary-item">
+                <span>Protector</span>
+                <strong id="glassSummary">With Glass</strong>
+              </div>
+              <div
+                class="summary-item"
+                id="matFeeContainer"
+                style="display: none"
+              >
+                <span>Matboard Fee</span>
+                <strong id="matFee">IDR 0</strong>
+              </div>
+              <div class="summary-item">
+                <span>Estimated Completion</span>
+                <strong id="completionDate"></strong>
+              </div>
+              <div class="summary-total">
+                <span>Total Price</span>
+                <strong id="priceDisplay" class="price">IDR 0</strong>
+              </div>
+            </div>
+
+            <button id="addToCartBtn" class="btn-add-to-cart">
+              Checkout Now
+            </button>
           </div>
         </div>
       </section>

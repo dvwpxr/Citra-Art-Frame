@@ -5,6 +5,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const navActions = document.querySelector(".nav-actions");
   const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
   const navMenu = document.querySelector(".nav-menu");
+  const siteNav = document.getElementById("site-nav");
+
+  if (mobileMenuToggle && siteNav) {
+    mobileMenuToggle.addEventListener("click", () => {
+      const isExpanded =
+        mobileMenuToggle.getAttribute("aria-expanded") === "true";
+      mobileMenuToggle.setAttribute("aria-expanded", !isExpanded);
+      siteNav.classList.toggle("active"); // Anda mungkin perlu menambahkan class 'active' di CSS
+    });
+  }
+  const header = document.querySelector(".header");
+  if (header) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 50) {
+        header.classList.add("sticky");
+      } else {
+        header.classList.remove("sticky");
+      }
+    });
+  }
 
   if (mobileMenuToggle && navMenu) {
     mobileMenuToggle.addEventListener("click", function () {
@@ -358,47 +378,37 @@ function updateProduct(productId, updatedData) {
     });
 }
 
-// =============================================== //
 // ===== KODE BARU UNTUK SLIDESHOW (DENGAN NAVIGASI) ===== //
-// =============================================== //
 
-let slideIndex = 1;
-let slideTimer; // Variabel untuk menyimpan timer
+// Cek dulu apakah ada elemen slideshow di halaman ini
+const slideshowElement = document.querySelector(".slideshow-container");
+if (slideshowElement) {
+  let slideIndex = 1;
+  let slideTimer;
 
-// Panggil fungsi ini pertama kali untuk menampilkan slide awal
-showSlides(slideIndex);
+  showSlides(slideIndex);
 
-// Fungsi untuk navigasi maju/mundur (dipanggil dari HTML)
-function plusSlides(n) {
-  showSlides((slideIndex += n));
-}
-
-// Fungsi utama untuk menampilkan slide
-function showSlides(n) {
-  // Hapus timer autoplay yang sedang berjalan agar tidak bentrok
-  clearTimeout(slideTimer);
-
-  let i;
-  let slides = document.getElementsByClassName("slide");
-
-  // Logika untuk kembali ke slide pertama atau terakhir
-  if (n > slides.length) {
-    slideIndex = 1;
-  }
-  if (n < 1) {
-    slideIndex = slides.length;
+  // Fungsi plusSlides(n) dan showSlides(n) tetap berada di dalam blok 'if' ini
+  function plusSlides(n) {
+    showSlides((slideIndex += n));
   }
 
-  // Sembunyikan semua slide
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
+  function showSlides(n) {
+    clearTimeout(slideTimer);
+    let i;
+    let slides = document.getElementsByClassName("slide");
+    if (n > slides.length) {
+      slideIndex = 1;
+    }
+    if (n < 1) {
+      slideIndex = slides.length;
+    }
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    slides[slideIndex - 1].style.display = "block";
+    slideTimer = setTimeout(function () {
+      plusSlides(1);
+    }, 5000);
   }
-
-  // Tampilkan slide yang aktif
-  slides[slideIndex - 1].style.display = "block";
-
-  // Mulai lagi timer autoplay dari awal
-  slideTimer = setTimeout(function () {
-    plusSlides(1); // Pindah ke slide berikutnya setelah 5 detik
-  }, 5000); // Ganti angka 5000 jika ingin durasi berbeda
 }

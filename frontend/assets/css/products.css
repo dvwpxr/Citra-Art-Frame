@@ -1,0 +1,112 @@
+/* === HEADER HALAMAN (Judul Besar) === */
+.page-header {
+  padding-top: 120px; /* Offset for fixed header */
+  padding-bottom: 60px;
+  text-align: center;
+  background-color: var(--surface-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+.page-header h1 {
+  font-size: 56px;
+  color: var(--primary-blue);
+}
+
+/* === LAYOUT UTAMA (Sidebar + Grid) === */
+.content-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  padding: 60px 0 100px;
+}
+
+/* === SIDEBAR FILTER === */
+.sidebar-filters {
+  background-color: var(--surface-bg);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  height: fit-content;
+  position: sticky;
+  top: 120px; /* Offset for fixed header */
+}
+.filter-section {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+.filter-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.filter-section h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* === GRID PRODUK === */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+.product-card {
+  background: var(--surface-bg);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+.product-image {
+  height: 280px;
+  background-color: #eee;
+}
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.product-info {
+  padding: 20px;
+}
+.product-info h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.product-info .artist,
+.product-info .product-type {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+.product-info .price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+/* === RESPONSIVE (PRODUCTS/PRINTS) === */
+@media (max-width: 992px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .sidebar-filters {
+    position: static;
+  }
+}

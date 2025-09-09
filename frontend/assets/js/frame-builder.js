@@ -1,22 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- KONFIGURASI ---
   const API_BASE_URL = "http://localhost:8080/api";
-  const MAX_ARTWORK_DIMENSION_CM = 80; // Atur sisi terpanjang artwork maks 80 cm
+  const MAX_ARTWORK_DIMENSION_CM = 80;
 
   let FRAME_MODELS = [];
   let currentFrameIndex = 0;
-  
 
-  // --- STATE APLIKASI (Default 50x50) ---
+  // --- STATE APLIKASI ---
   let state = {
     artworkWidth: 50,
     artworkHeight: 50,
     matWidth: 2,
     matColor: "white",
     frameModel: null,
+    hasGlass: true,
+    artworkImageUrl: null,
   };
 
-  // --- REFERENSI ELEMEN DOM (Tidak ada perubahan) ---
+  // --- REFERENSI ELEMEN DOM ---
   const dom = {
     builderTitle: document.getElementById("builderTitle"),
     artworkWidthInput: document.getElementById("artworkWidth"),
@@ -24,13 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSizeBtn: document.getElementById("updateSizeBtn"),
     uploadImageBtn: document.getElementById("uploadImageBtn"),
     imageUploader: document.getElementById("imageUploader"),
-
-    // Elemen baru
     framePreviewWrapper: document.getElementById("framePreviewWrapper"),
     frameElement: document.getElementById("frameElement"),
     matElement: document.getElementById("matElement"),
     artworkContainer: document.getElementById("artworkContainer"),
-
     frameName: document.getElementById("frameName"),
     priceDisplay: document.getElementById("priceDisplay"),
     finalSize: document.getElementById("finalSize"),
@@ -40,6 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
     matWidthOptions: document.getElementById("matWidthOptions"),
     matColorOptions: document.getElementById("matColorOptions"),
     addToCartBtn: document.getElementById("addToCartBtn"),
+    frameSwatchPreview: document.getElementById("frameSwatchPreview"),
+    glassOptions: document.getElementById("glassOptions"),
+    glassInfo: document.getElementById("glassInfo"),
+    glassSummary: document.getElementById("glassSummary"),
+    matFeeContainer: document.getElementById("matFeeContainer"),
+    matFee: document.getElementById("matFee"),
   };
 
   // --- FUNGSI UTAMA ---
@@ -54,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       state.frameModel = FRAME_MODELS[currentFrameIndex];
-      // Set nilai input awal sesuai state default
       dom.artworkWidthInput.value = state.artworkWidth;
       dom.artworkHeightInput.value = state.artworkHeight;
       renderAll();
@@ -71,27 +74,18 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderFramePreview = () => {
-    // Tentukan ukuran maksimal preview di layar
     const maxPreviewSize = 400;
     const ratio = state.artworkWidth / state.artworkHeight;
-
     let previewWrapperWidth, previewWrapperHeight;
-
     if (ratio > 1) {
-      // Landscape
       previewWrapperWidth = maxPreviewSize;
       previewWrapperHeight = maxPreviewSize / ratio;
     } else {
-      // Portrait atau Persegi
       previewWrapperHeight = maxPreviewSize;
       previewWrapperWidth = maxPreviewSize * ratio;
     }
-
-    // Atur ukuran wrapper luar
     dom.framePreviewWrapper.style.width = `${previewWrapperWidth}px`;
     dom.framePreviewWrapper.style.height = `${previewWrapperHeight}px`;
-
-    // 1. Atur FRAME
     const frame = state.frameModel;
     if (frame && frame.image) {
       dom.frameElement.style.borderImageSource = `url('${frame.image}')`;
@@ -99,43 +93,65 @@ document.addEventListener("DOMContentLoaded", () => {
       dom.frameElement.style.borderImageSource = "none";
       dom.frameElement.style.borderColor = "#8B4513";
     }
-
-    // 2. Atur MAT
     const matPadding = state.matWidth * 7;
     dom.matElement.style.padding = `${matPadding}px`;
-
-    // --- PERUBAHAN UTAMA DI SINI ---
-    // Jika tidak ada mat, buat area mat transparan dan hilangkan bayangan.
     if (state.matWidth === 0) {
       dom.matElement.style.backgroundColor = "transparent";
       dom.matElement.style.boxShadow = "none";
     } else {
-      // Jika ada mat, kembalikan warna dan bayangannya.
       dom.matElement.style.backgroundColor = state.matColor;
       dom.matElement.style.boxShadow = "0 0 10px rgba(0,0,0,0.2) inset";
     }
   };
 
   const renderInfo = () => {
-    // ... (Fungsi ini tidak perlu diubah) ...
     const frame = state.frameModel;
     if (!frame) return;
-    const area = state.artworkWidth * state.artworkHeight;
-    const basePrice = area * 50;
-    const matPrice = state.matWidth * 15000;
-    const framePrice = frame.price;
-    const totalPrice = basePrice + matPrice + framePrice;
-    dom.priceDisplay.textContent = `IDR ${totalPrice.toLocaleString("id-ID")}`;
-    const frameBorderWidth = 2.5;
-    const finalWidth =
-      state.artworkWidth + state.matWidth * 2 + frameBorderWidth * 2;
-    const finalHeight =
-      state.artworkHeight + state.matWidth * 2 + frameBorderWidth * 2;
+
+    const totalAddedDimension = state.matWidth * 2;
+    const finalWidth = state.artworkWidth + totalAddedDimension;
+    const finalHeight = state.artworkHeight + totalAddedDimension;
+
     dom.finalSize.textContent = `${finalWidth.toFixed(
       1
     )} x ${finalHeight.toFixed(1)} cm`;
+
+    const areaCm2 = state.artworkWidth * state.artworkHeight;
+    const assemblyPrice = 0;
+    const glassPrice = state.hasGlass ? areaCm2 * 20 : 0;
+
+    // === BIAYA MATBOARD DIAKTIFKAN KEMBALI ===
+    const matPrice = state.matWidth > 0 ? 20000 : 0;
+
+    const perimeterCm = (finalWidth + finalHeight) * 2;
+    const perimeterM = perimeterCm / 100;
+    const framePrice = perimeterM * frame.price;
+
+    // Total harga sekarang adalah jumlahan semua komponen
+    const totalPrice = assemblyPrice + glassPrice + matPrice + framePrice;
+
+    dom.priceDisplay.textContent = `IDR ${Math.round(totalPrice).toLocaleString(
+      "id-ID"
+    )}`;
+
+    // Tampilkan atau sembunyikan rincian biaya matboard
+    if (state.matWidth > 0) {
+      dom.matFeeContainer.style.display = "flex";
+      dom.matFee.textContent = `IDR ${matPrice.toLocaleString("id-ID")}`;
+    } else {
+      dom.matFeeContainer.style.display = "none";
+    }
+
+    const glassText = state.hasGlass ? "With Glass" : "Without Glass";
+    dom.glassInfo.textContent = glassText;
+    dom.glassSummary.textContent = glassText;
+
     dom.builderTitle.textContent = `Customizing for ${state.artworkWidth}x${state.artworkHeight}cm Artwork`;
-    dom.frameName.textContent = frame.name;
+    const frameNameText = document.querySelector(".frame-name-text");
+    if (frameNameText) frameNameText.textContent = frame.name;
+    if (dom.frameSwatchPreview && frame.image) {
+      dom.frameSwatchPreview.src = frame.image;
+    }
     const date = new Date();
     date.setDate(date.getDate() + 3);
     dom.completionDate.textContent = date.toLocaleDateString("en-GB", {
@@ -145,29 +161,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  /** [DIPERBARUI] Menangani upload gambar oleh pengguna */
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // 1. Simpan file asli ke dalam state untuk di-upload nanti
+    state.artworkImageFile = file;
+
+    // 2. Gunakan FileReader untuk membuat URL pratinjau lokal
     const reader = new FileReader();
     reader.onload = (e) => {
-      // Targetkan kontainer yang benar
+      const localImageUrl = e.target.result;
+      state.artworkPreviewUrl = localImageUrl; // Simpan URL pratinjau
+
+      // 3. Tampilkan gambar pratinjau di dalam frame
       const container = dom.artworkContainer;
-      container.innerHTML = ""; // Hapus placeholder
-
+      container.innerHTML = "";
       const previewImage = document.createElement("img");
-      previewImage.src = e.target.result;
-
+      previewImage.src = localImageUrl;
+      previewImage.style.width = "100%";
+      previewImage.style.height = "100%";
+      previewImage.style.objectFit = "cover";
       container.appendChild(previewImage);
 
-      // Sisa logika untuk kalkulasi ukuran sudah benar, tidak perlu diubah
+      // 4. Hitung ulang dimensi berdasarkan gambar pratinjau
       const img = new Image();
       img.onload = () => {
-        // ... (TIDAK ADA PERUBAHAN DI SINI) ...
-        const originalWidth = img.naturalWidth;
-        const originalHeight = img.naturalHeight;
-        const ratio = originalWidth / originalHeight;
+        const ratio = img.naturalWidth / img.naturalHeight;
         let newWidth, newHeight;
         if (ratio > 1) {
           newWidth = MAX_ARTWORK_DIMENSION_CM;
@@ -182,16 +202,128 @@ document.addEventListener("DOMContentLoaded", () => {
         dom.artworkHeightInput.value = newHeight;
         renderAll();
       };
-      img.src = e.target.result;
+      img.src = localImageUrl;
     };
     reader.readAsDataURL(file);
   };
 
-  const handleAddToCart = async () => {
-    // ... (Fungsi ini tidak perlu diubah) ...
+  const handleAddToCart = () => {
+    if (!state.frameModel) {
+      alert("Please select a frame model first.");
+      return;
+    }
+
+    // Kalkulasi ulang semua komponen
+    const totalAddedDimension = state.matWidth * 2;
+    const finalWidth = state.artworkWidth + totalAddedDimension;
+    const finalHeight = state.artworkHeight + totalAddedDimension;
+    const areaCm2 = state.artworkWidth * state.artworkHeight;
+    const glassPrice = state.hasGlass ? areaCm2 * 20 : 0;
+    const matPrice = state.matWidth > 0 ? 20000 : 0;
+    const perimeterCm = (finalWidth + finalHeight) * 2;
+    const perimeterM = perimeterCm / 100;
+    const framePrice = perimeterM * state.frameModel.price;
+    const totalPrice = glassPrice + matPrice + framePrice;
+
+    // Buat objek data yang lebih detail untuk dikirim ke checkout
+    const orderData = {
+      frameModelName: state.frameModel.name,
+      frameModelImage: state.frameModel.image,
+      artworkWidth: state.artworkWidth,
+      artworkHeight: state.artworkHeight,
+      matWidth: state.matWidth,
+      matColor: state.matColor,
+      hasGlass: state.hasGlass,
+      artworkImageUrl: state.artworkImageUrl,
+      artworkImageUrl: state.artworkImageUrl,
+      // TAMBAHAN: Kirim data dimensi untuk estimasi berat
+      dimensions: {
+        areaM2: areaCm2 / 10000,
+        perimeterM: perimeterM,
+      },
+      priceBreakdown: {
+        frame: Math.round(framePrice),
+        mat: Math.round(matPrice),
+        glass: Math.round(glassPrice),
+        total: Math.round(totalPrice),
+      },
+    };
+
+    localStorage.setItem("customFrameOrder", JSON.stringify(orderData));
+    window.location.href = "/checkout";
   };
 
-  // --- EVENT LISTENERS (Tidak ada perubahan) ---
+  // * VERSI UNTUK KALO DIBUKAKAN FRAME + PRINT GAMBAR, * //
+  // const handleAddToCart = async () => {
+  //   if (!state.frameModel) {
+  //     alert("Please select a frame model first.");
+  //     return;
+  //   }
+
+  //   // Tampilkan status loading di tombol
+  //   dom.addToCartBtn.disabled = true;
+  //   dom.addToCartBtn.textContent = "Memproses...";
+
+  //   let finalArtworkUrl = null;
+
+  //   // Cek jika ada file baru yang perlu diunggah
+  //   if (state.artworkImageFile) {
+  //     const formData = new FormData();
+  //     formData.append("artworkImage", state.artworkImageFile);
+
+  //     try {
+  //       const response = await fetch(`${API_BASE_URL}/upload-image`, {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+  //       if (!response.ok) throw new Error("Upload failed before checkout");
+  //       const data = await response.json();
+  //       finalArtworkUrl = data.imageUrl; // Dapatkan URL permanen dari Cloudinary
+  //     } catch (error) {
+  //       console.error("Upload Error on Add to Cart:", error);
+  //       alert("Gagal mengunggah gambar Anda. Silakan coba lagi.");
+  //       dom.addToCartBtn.disabled = false;
+  //       dom.addToCartBtn.textContent = "Checkout Now";
+  //       return; // Hentikan proses jika upload gagal
+  //     }
+  //   }
+
+  //   // Lanjutkan dengan kalkulasi harga seperti biasa
+  //   const totalAddedDimension = state.matWidth * 2;
+  //   const finalWidth = state.artworkWidth + totalAddedDimension;
+  //   const finalHeight = state.artworkHeight + totalAddedDimension;
+  //   const areaCm2 = state.artworkWidth * state.artworkHeight;
+  //   const glassPrice = state.hasGlass ? areaCm2 * 20 : 0;
+  //   const matPrice = state.matWidth > 0 ? 20000 : 0;
+  //   const perimeterCm = (finalWidth + finalHeight) * 2;
+  //   const perimeterM = perimeterCm / 100;
+  //   const framePrice = perimeterM * state.frameModel.price;
+  //   const totalPrice = glassPrice + matPrice + framePrice;
+
+  //   const orderData = {
+  //     frameModelName: state.frameModel.name,
+  //     frameModelImage: state.frameModel.image,
+  //     artworkWidth: state.artworkWidth,
+  //     artworkHeight: state.artworkHeight,
+  //     matWidth: state.matWidth,
+  //     matColor: state.matColor,
+  //     hasGlass: state.hasGlass,
+  //     artworkImageUrl: finalArtworkUrl, // Gunakan URL dari Cloudinary
+  //     dimensions: { areaM2: areaCm2 / 10000, perimeterM: perimeterM },
+  //     priceBreakdown: {
+  //       frame: Math.round(framePrice),
+  //       mat: Math.round(matPrice),
+  //       glass: Math.round(glassPrice),
+  //       total: Math.round(totalPrice),
+  //     },
+  //   };
+
+  //   localStorage.setItem("customFrameOrder", JSON.stringify(orderData));
+  //   window.location.href = "/checkout";
+  // };
+
+  // --- EVENT LISTENERS ---
+
   dom.updateSizeBtn.addEventListener("click", () => {
     const width = parseInt(dom.artworkWidthInput.value, 10);
     const height = parseInt(dom.artworkHeightInput.value, 10);
@@ -203,17 +335,13 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Please enter valid width and height.");
     }
   });
+
   dom.uploadImageBtn.addEventListener("click", () => dom.imageUploader.click());
   dom.imageUploader.addEventListener("change", handleImageUpload);
-  // --- SALIN DAN TEMPEL BLOK KODE BARU INI ---
 
-  /** Fungsi baru untuk menangani pergantian frame dengan animasi */
   const handleFrameChange = (direction) => {
     if (FRAME_MODELS.length === 0) return;
-
     dom.framePreviewWrapper.classList.add("is-changing");
-
-    // Ubah durasi timeout menjadi 200ms
     setTimeout(() => {
       if (direction === "next") {
         currentFrameIndex = (currentFrameIndex + 1) % FRAME_MODELS.length;
@@ -222,18 +350,14 @@ document.addEventListener("DOMContentLoaded", () => {
           (currentFrameIndex - 1 + FRAME_MODELS.length) % FRAME_MODELS.length;
       }
       state.frameModel = FRAME_MODELS[currentFrameIndex];
-
       renderAll();
-
       dom.framePreviewWrapper.classList.remove("is-changing");
-    }, 200); // Durasinya sekarang 200ms
+    }, 200);
   };
 
-  // Gunakan fungsi baru ini untuk event listener
   dom.prevFrameBtn.addEventListener("click", () => handleFrameChange("prev"));
   dom.nextFrameBtn.addEventListener("click", () => handleFrameChange("next"));
 
-  // --- BATAS AKHIR KODE BARU ---
   dom.matWidthOptions.addEventListener("click", (e) => {
     if (e.target.classList.contains("mat-option")) {
       state.matWidth = parseInt(e.target.dataset.width, 10);
@@ -244,6 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderAll();
     }
   });
+
   dom.matColorOptions.addEventListener("click", (e) => {
     if (e.target.classList.contains("color-option")) {
       state.matColor = e.target.dataset.color;
@@ -254,6 +379,18 @@ document.addEventListener("DOMContentLoaded", () => {
       renderAll();
     }
   });
+
+  dom.glassOptions.addEventListener("click", (e) => {
+    if (e.target.classList.contains("mat-option")) {
+      state.hasGlass = e.target.dataset.glass === "true";
+      document
+        .querySelectorAll("#glassOptions .mat-option")
+        .forEach((btn) => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderAll();
+    }
+  });
+
   dom.addToCartBtn.addEventListener("click", handleAddToCart);
 
   // --- INISIALISASI ---

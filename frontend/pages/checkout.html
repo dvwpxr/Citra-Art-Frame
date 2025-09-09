@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Citra Frame</title>
+    <link rel="stylesheet" href="/assets/css/checkout.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="main-content">
+      <div class="container">
+        <h1 style="opacity: 0; animation: fadeInUp 0.5s ease-out forwards">
+          Checkout
+        </h1>
+        <div class="checkout-grid">
+          <div class="checkout-card">
+            <form id="customerForm" novalidate>
+              <h2>Informasi Kontak</h2>
+              <div class="form-group">
+                <label for="customerName">Nama Lengkap</label>
+                <div class="input-wrapper">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.095a1.23 1.23 0 00.41-1.412A9.99 9.99 0 0010 12a9.99 9.99 0 00-6.535 2.493z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Min. 3 karakter"
+                    required
+                    minlength="3"
+                  />
+                </div>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="customerEmail">Email</label>
+                <div class="input-wrapper">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"
+                    />
+                    <path
+                      d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"
+                    />
+                  </svg>
+                  <input
+                    type="email"
+                    id="customerEmail"
+                    placeholder="contoh@email.com"
+                    required
+                  />
+                </div>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="customerPhone"
+                  >Nomor Telepon Aktif / Whatsapp</label
+                >
+                <div class="input-wrapper">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5h-1.528a13.5 13.5 0 01-11.9-11.9V3.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <input
+                    type="tel"
+                    id="customerPhone"
+                    placeholder="9-14 digit angka"
+                    required
+                    pattern="[0-9]{9,14}"
+                  />
+                </div>
+                <div class="error-message"></div>
+              </div>
+
+              <h2 style="margin-top: 40px">Alamat Pengiriman</h2>
+
+              <div class="form-group">
+                <label for="tujuan">Zona Pengiriman (untuk Ongkir)</label>
+                <select id="tujuan" required>
+                  <option value="" disabled selected>
+                    -- Pilih Zona Pengiriman --
+                  </option>
+                  <option value="jabodetabek">Jabodetabek</option>
+                  <option value="jawa">Pulau Jawa (Luar Jabodetabek)</option>
+                  <option value="luar_jawa">Luar Pulau Jawa</option>
+                </select>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="provinsi">Provinsi</label>
+                <select id="provinsi" required>
+                  <option value="" disabled selected>
+                    -- Pilih Provinsi --
+                  </option>
+                </select>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="kota">Kota / Kabupaten</label>
+                <select id="kota" required disabled>
+                  <option value="" disabled selected>
+                    -- Pilih Kota / Kabupaten --
+                  </option>
+                </select>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="kecamatan">Kecamatan</label>
+                <select id="kecamatan" required disabled>
+                  <option value="" disabled selected>
+                    -- Pilih Kecamatan --
+                  </option>
+                </select>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="alamatLengkap">Alamat Lengkap</label>
+                <textarea
+                  id="alamatLengkap"
+                  placeholder="Contoh: Jl. Merdeka No. 10, RT 01/RW 02..."
+                  required
+                  minlength="10"
+                ></textarea>
+                <div class="error-message"></div>
+              </div>
+              <div class="form-group">
+                <label for="kodePos">Kode Pos</label>
+                <input
+                  type="text"
+                  id="kodePos"
+                  placeholder="5 digit angka"
+                  required
+                  pattern="\d{5}"
+                />
+                <div class="error-message"></div>
+              </div>
+            </form>
+          </div>
+
+          <div class="checkout-card">
+            <h2>Ringkasan Pesanan</h2>
+            <div id="summaryContainer">
+              <div id="summarySkeleton" class="skeleton">
+                <div class="summary-item-preview">
+                  <div class="skeleton-img"></div>
+                  <div style="flex: 1">
+                    <div class="skeleton-text" style="width: 80%"></div>
+                    <div class="skeleton-text" style="width: 60%"></div>
+                  </div>
+                </div>
+                <div class="price-breakdown">
+                  <div class="skeleton-text"></div>
+                  <div class="skeleton-text" style="width: 70%"></div>
+                </div>
+              </div>
+              <div id="summaryContent" style="display: none"></div>
+              <div id="shippingMethod" style="display: none"></div>
+              <div id="priceDetails" style="display: none"></div>
+            </div>
+            <button id="payNowBtn" class="btn-pay" disabled>
+              <span class="btn-text">Lengkapi Form untuk Membayar</span>
+              <div class="spinner" style="display: none"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="/assets/js/checkout.js"></script>
+    <script src="/assets/js/shipping.js"></script>
+  </body>
+</html>

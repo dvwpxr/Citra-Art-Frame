@@ -1,8 +1,14 @@
-/* Reset and Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --primary-blue: #0d2c4f;
+  --accent-gold: #c5a47e;
+  --light-bg: #fdfaf6;
+  --surface-bg: #ffffff;
+  --text-dark: #1a1a1a;
+  --text-light: #5c5c5c;
+  --border-color: #e5e0d8;
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 body {
@@ -75,12 +81,18 @@ a {
 }
 
 .icon-btn {
+  position: static !important;
+  overflow: visible !important;
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
   color: #333;
-  transition: color 0.3s ease;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.icon-btn:active {
+  transform: scale(1.2);
 }
 
 .icon-btn:hover {
@@ -1174,6 +1186,244 @@ input#imageUploader {
     background-image 0.3s ease-in-out;
 }
 
+/* ================================================= */
+/* ===== GAYA BARU UNTUK HALAMAN FRAME BUILDER ===== */
+/* ================================================= */
+
+/* Hapus styling lama agar tidak bentrok */
+.frame-builder .builder-header,
+.frame-builder .builder-content,
+.frame-builder .frame-configuration {
+  display: contents; /* Ini akan 'menonaktifkan' aturan layout lama */
+}
+
+.frame-builder .container {
+  display: grid;
+  grid-template-columns: 1fr 420px; /* Layout 2 kolom: preview | konfigurasi */
+  gap: 60px;
+  align-items: start;
+  padding: 60px 20px;
+}
+
+/* Panel Kiri: Preview */
+.builder-preview-panel {
+  position: sticky; /* Membuat panel preview tetap terlihat saat scroll */
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.frame-preview-large {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 450px;
+  padding: 24px;
+  border: 1px solid #e9ecef;
+}
+
+.builder-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dimension-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dimension-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c757d;
+}
+.dimension-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dimension-inputs input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  text-align: center;
+}
+.dimension-inputs span {
+  color: #adb5bd;
+}
+.builder-actions .btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+}
+
+/* Panel Kanan: Konfigurasi */
+.builder-config-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.builder-config-panel h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.config-group {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #e9ecef;
+}
+.config-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+.config-value {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.config-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.config-body label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #343a40;
+}
+.frame-selector {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Summary Section */
+.summary-section {
+  border-top: 1px solid #e9ecef;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.summary-item,
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.summary-total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #dee2e6;
+  font-size: 18px;
+  font-weight: 600;
+}
+.summary-total .price {
+  color: var(--primary-blue, #0d2c4f);
+}
+
+.btn-add-to-cart {
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ======================================================== */
+/* ===== GAYA BARU UNTUK PEMILIH FRAME (CHOOSE FRAME) ===== */
+/* ======================================================== */
+
+/* Selector baru untuk pemilih frame */
+.frame-selector-new {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Tombol | Preview | Tombol */
+  align-items: center;
+  justify-items: center;
+  gap: 16px;
+}
+
+/* Tombol Navigasi Baru (Kiri & Kanan) */
+.frame-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%; /* Membuat tombol menjadi bulat */
+  background-color: #f1f3f5;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.frame-nav-btn:hover {
+  background-color: #e9ecef;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.frame-nav-btn:active {
+  transform: scale(0.98);
+}
+
+/* Wrapper untuk Preview Swatch di Tengah */
+.frame-swatch-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 120px; /* Lebar area preview */
+}
+
+/* Gambar Swatch Frame */
+#frameSwatchPreview {
+  width: 100%;
+  height: 119px; /* Tinggi preview swatch */
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  object-fit: cover; /* Memastikan gambar tekstur pas */
+  background-color: #f8f9fa;
+  transition: opacity 0.3s ease;
+}
+
+/* Teks Nama Frame di Bawah Swatch */
+.frame-name-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  text-align: center;
+}
+
 /* ========================================= */
 /* ===== RESPONSIVE STYLES FOR MOBILE ===== */
 /* ========================================= */
@@ -1235,6 +1485,15 @@ input#imageUploader {
   .prints-content,
   .products-content {
     grid-template-columns: 200px 1fr;
+  }
+
+  .frame-builder .container {
+    grid-template-columns: 1fr; /* Stack layout di mobile */
+    gap: 40px;
+    padding: 30px 15px;
+  }
+  .builder-preview-panel {
+    position: static; /* Hapus sticky di mobile */
   }
 }
 

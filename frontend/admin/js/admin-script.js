@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     products.forEach((product) => {
       const row = document.createElement("tr");
       row.className = "border-b hover:bg-gray-200";
+      // === PERUBAHAN DI SINI ===
       row.innerHTML = `
         <td class="p-3">
           <img src="${
@@ -80,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="p-3 text-gray-600">${product.category}</td>
         <td class="p-3 text-gray-600">Rp ${product.price.toLocaleString(
           "id-ID"
-        )}</td>
+        )} / meter</td>
         <td class="p-3 text-gray-600">${product.stock}</td>
         <td class="p-3">
           <button class="edit-btn text-blue-500 hover:text-blue-700 mr-3" data-id="${

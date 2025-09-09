@@ -3,79 +3,75 @@ package routes
 import (
 	"backend/auth"
 	"backend/controllers"
+	"backend/handlers"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
 
 // servePage adalah fungsi helper untuk menyajikan file HTML
 func servePage(path string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, path)
-	}
+    return func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, path)
+    }
 }
 
 func SetupRoutes(r *mux.Router) {
-	r.Use(corsMiddleware)
+    r.Use(corsMiddleware)
 
-	// =================================================================
-	// BAGIAN 1: RUTE API
-	// =================================================================
+    // =================================================================
+    // BAGIAN 1: RUTE API
+    // =================================================================
+    api := r.PathPrefix("/api").Subrouter()
 
-	api := r.PathPrefix("/api").Subrouter()
+    // --- API PUBLIK ---
+    api.HandleFunc("/admin/login", controllers.HandleAdminLogin).Methods("POST", "OPTIONS")
+    api.HandleFunc("/admin/logout", controllers.HandleAdminLogout).Methods("POST", "OPTIONS")
+    api.HandleFunc("/products/frames", controllers.GetProducts).Methods("GET", "OPTIONS")
+    api.HandleFunc("/products", controllers.GetProducts).Methods("GET", "OPTIONS")
+    api.HandleFunc("/products/{id}", controllers.GetProduct).Methods("GET", "OPTIONS")
+    api.HandleFunc("/upload-image", handlers.UploadImageHandler).Methods("POST", "OPTIONS")
+    // Rute Pembayaran Flip
+    api.HandleFunc("/orders", handlers.GetOrdersHandler).Methods("GET")
+    api.HandleFunc("/orders/{id}/status", handlers.UpdateOrderStatusHandler).Methods("PUT", "OPTIONS")
+    api.HandleFunc("/flip/callback", handlers.FlipWebhookHandler).Methods("POST")
+    api.HandleFunc("/create-payment", handlers.CreatePaymentHandler).Methods("POST", "OPTIONS")
+     // Upload
 
-	// --- API PUBLIK ---
-	api.HandleFunc("/admin/login", controllers.HandleAdminLogin).Methods("POST", "OPTIONS")
-	api.HandleFunc("/admin/logout", controllers.HandleAdminLogout).Methods("POST", "OPTIONS")
-	// PENTING: Rute yang lebih spesifik (/products/frames) harus di atas rute variabel (/products/{id})
-	api.HandleFunc("/products/frames", controllers.GetProducts).Methods("GET", "OPTIONS")
-	api.HandleFunc("/products", controllers.GetProducts).Methods("GET", "OPTIONS")
-	api.HandleFunc("/products/{id}", controllers.GetProduct).Methods("GET", "OPTIONS")
+    // --- API TERPROTEKSI ---
+    apiProtected := api.PathPrefix("/").Subrouter()
+    apiProtected.Use(auth.JwtMiddleware)
+    apiProtected.HandleFunc("/products", controllers.CreateProduct).Methods("POST", "OPTIONS")
+    apiProtected.HandleFunc("/products/{id}", controllers.UpdateProduct).Methods("PUT", "OPTIONS")
+    apiProtected.HandleFunc("/products/{id}", controllers.DeleteProduct).Methods("DELETE", "OPTIONS")
+    apiProtected.HandleFunc("/orders", controllers.CreateOrder).Methods("POST", "OPTIONS")
 
-	// --- API TERPROTEKSI ---
-	apiProtected := r.PathPrefix("/api").Subrouter()
-	apiProtected.Use(auth.JwtMiddleware)
-	apiProtected.HandleFunc("/products", controllers.CreateProduct).Methods("POST", "OPTIONS")
-	apiProtected.HandleFunc("/products/{id}", controllers.UpdateProduct).Methods("PUT", "OPTIONS")
-	apiProtected.HandleFunc("/products/{id}", controllers.DeleteProduct).Methods("DELETE", "OPTIONS")
-	apiProtected.HandleFunc("/orders", controllers.CreateOrder).Methods("POST", "OPTIONS")
+    // =================================================================
+    // BAGIAN 2: RUTE HALAMAN HTML
+    // =================================================================
+    r.HandleFunc("/", servePage("../frontend/pages/index.html")).Methods("GET")
+	r.HandleFunc("/checkout", servePage("../frontend/pages/checkout.html")).Methods("GET")
+    r.HandleFunc("/products", servePage("../frontend/pages/products.html")).Methods("GET")
+    r.HandleFunc("/prints", servePage("../frontend/pages/prints.html")).Methods("GET")
+    r.HandleFunc("/custom", servePage("../frontend/pages/custom-frame.html")).Methods("GET")
+    r.HandleFunc("/login", servePage("../frontend/admin/login.html")).Methods("GET")
+    
+    dashboardHandler := http.HandlerFunc(servePage("../frontend/admin/dashboard.html"))
+    r.Handle("/dashboard", auth.JwtMiddleware(dashboardHandler)).Methods("GET")
+    productsHandler := http.HandlerFunc(servePage("../frontend/admin/pages/product.html"))
+    r.Handle("/dashboard/product", auth.JwtMiddleware(productsHandler)).Methods("GET")
+    orderHandler := http.HandlerFunc(servePage("../frontend/admin/pages/order.html"))
+    r.Handle("/dashboard/order", auth.JwtMiddleware(orderHandler)).Methods("GET")
 
-	// =================================================================
-	// BAGIAN 2: RUTE HALAMAN HTML (MODEL EKSPLISIT & AMAN)
-	// =================================================================
+    // =================================================================
+    // BAGIAN 3: HANDLER UNTUK ASET (CSS, JS, GAMBAR)
+    // =================================================================
+    uploadsHandler := http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads")))
+	r.PathPrefix("/uploads/").Handler(uploadsHandler).Methods("GET")
 
-	// --- HALAMAN PUBLIK ---
-	r.HandleFunc("/", servePage("../frontend/pages/index.html"))
-	r.HandleFunc("/products", servePage("../frontend/pages/products.html"))
-	r.HandleFunc("/prints", servePage("../frontend/pages/prints.html"))
-	// r.HandleFunc("/framing", servePage("../frontend/pages/framing.html"))
-	r.HandleFunc("/custom", servePage("../frontend/pages/custom-frame.html"))
-	r.HandleFunc("/login", servePage("../frontend/admin/login.html"))
-
-	// --- HALAMAN TERPROTEKSI ---
-	dashboardHandler := http.HandlerFunc(servePage("../frontend/admin/dashboard.html"))
-	r.Handle("/dashboard", auth.JwtMiddleware(dashboardHandler))
-	productsHandler := http.HandlerFunc(servePage("../frontend/admin/pages/product.html"))
-	r.Handle("/dashboard/product", auth.JwtMiddleware(productsHandler))
-	orderHandler := http.HandlerFunc(servePage("../frontend/admin/pages/order.html"))
-	r.Handle("/dashboard/order", auth.JwtMiddleware(orderHandler))
-
-	// =================================================================
-	// BAGIAN 3: HANDLER UNTUK ASET (CSS, JS, GAMBAR)
-	// =================================================================
-	
-	// Handler ini harus menjadi yang terakhir dan hanya melayani aset, bukan halaman.
-	assetHandler := http.FileServer(http.Dir("../frontend/"))
-	r.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Mencegah handler ini menyajikan file HTML secara langsung.
-		// Ini memaksa semua akses halaman melalui rute yang sudah kita definisikan di atas.
-		if strings.HasSuffix(r.URL.Path, ".html") {
-			http.NotFound(w, r)
-			return
-		}
-		assetHandler.ServeHTTP(w, r)
-	}))
+	// Sajikan semua file dari folder 'frontend/assets' di URL '/assets/'
+	assetHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir("../frontend/assets")))
+	r.PathPrefix("/assets/").Handler(assetHandler).Methods("GET")
 }
 
 // ... corsMiddleware tidak berubah ...
