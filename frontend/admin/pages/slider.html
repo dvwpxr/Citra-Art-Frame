@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Kelola Slider</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      .sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      .modal {
+        display: none;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .notification {
+        transition: transform 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 font-sans">
+    <div
+      id="sidebar"
+      class="sidebar fixed left-0 top-0 w-64 h-full bg-slate-900 p-4 z-50 transform -translate-x-full md:translate-x-0"
+    >
+      <a href="#" class="flex items-center pb-4 border-b border-b-slate-700">
+        <i class="ri-camera-lens-line text-2xl text-white mr-3"></i>
+        <span class="text-white text-lg font-bold">CitraFrame</span>
+      </a>
+      <ul class="mt-4">
+        <li class="mb-1 group">
+          <a
+            href="/dashboard"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+            ><i class="ri-home-2-line mr-3 text-lg"></i
+            ><span class="text-sm">Dashboard</span></a
+          >
+        </li>
+        <li class="mb-1 group">
+          <a
+            href="/dashboard/order"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+            ><i class="ri-shopping-cart-line mr-3 text-lg"></i
+            ><span class="text-sm">Orders</span></a
+          >
+        </li>
+        <li class="mb-1 group">
+          <a
+            href="/dashboard/product"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+            ><i class="ri-archive-line mr-3 text-lg"></i
+            ><span class="text-sm">Products</span></a
+          >
+        </li>
+        <li class="mb-1 group">
+          <a
+            href="/dashboard/prints"
+            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
+            ><i class="ri-image-line mr-3 text-lg"></i
+            ><span class="text-sm">Art Prints</span></a
+          >
+        </li>
+        <li class="mb-1 group active">
+          <a
+            href="/dashboard/slider"
+            class="flex items-center py-2 px-4 bg-slate-950 text-white rounded-md"
+            ><i class="ri-slideshow-2-line mr-3 text-lg"></i
+            ><span class="text-sm">Hero Slider</span></a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <main
+      class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-slate-50 min-h-screen transition-all main"
+    >
+      <div
+        class="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30"
+      >
+        <button
+          type-="button"
+          class="text-lg text-gray-600 mr-4 md:hidden"
+          id="sidebar-toggle"
+        >
+          <i class="ri-menu-line"></i>
+        </button>
+        <ul class="ml-auto flex items-center">
+          <li class="relative">
+            <button type="button" class="flex items-center">
+              <span class="text-sm mr-2 font-semibold">Admin</span
+              ><i class="ri-arrow-down-s-line"></i>
+            </button>
+          </li>
+          <li class="ml-4">
+            <button
+              id="logoutBtn"
+              class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm flex items-center"
+            >
+              <i class="ri-logout-box-r-line mr-2"></i>Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="p-6">
+        <h1 class="text-3xl font-bold mb-6">Hero Slider Management</h1>
+
+        <div class="bg-white p-6 rounded-md shadow-md mb-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">
+            Tambah Gambar Baru
+          </h2>
+          <form id="upload-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+              <div>
+                <label
+                  for="image"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Pilih Gambar (Disarankan 1920x1080)</label
+                >
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  required
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+              <div>
+                <label
+                  for="altText"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Teks Alternatif (Untuk SEO)</label
+                >
+                <input
+                  type="text"
+                  name="altText"
+                  id="altText"
+                  class="shadow-sm border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Contoh: Bingkai kayu di dinding modern"
+                />
+              </div>
+            </div>
+            <div class="mt-4 text-right">
+              <button
+                type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded flex items-center ml-auto"
+              >
+                <i class="ri-add-line mr-2"></i> Tambah ke Slider
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-md shadow-md">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">
+            Daftar Gambar di Slider
+          </h2>
+          <div
+            id="slider-list"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          ></div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="deleteModal"
+      class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
+        <h2 class="text-xl font-bold mb-4">Konfirmasi Hapus</h2>
+        <p class="mb-6 text-gray-600">
+          Apakah Anda yakin ingin menghapus gambar ini dari slider? Tindakan ini
+          tidak dapat dibatalkan.
+        </p>
+        <div class="flex justify-end gap-2">
+          <button
+            id="cancelDeleteBtn"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          >
+            Batal
+          </button>
+          <button
+            id="confirmDeleteBtn"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="notification"
+      class="notification fixed top-10 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md transform translate-x-[150%]"
+    ></div>
+
+    <script src="/admin/js/slider-script.js"></script>
+  </body>
+</html>

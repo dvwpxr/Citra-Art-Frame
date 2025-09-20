@@ -1,189 +1,199 @@
-/* === HERO SECTION === */
-.hero {
-  padding-top: 80px; /* Offset for fixed header */
-  background: url("https://images.unsplash.com/photo-1588422221034-68a379a1352e?auto=format&fit=crop&q=80&w=1920")
-    no-repeat center center/cover;
-  min-height: 95vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(13, 44, 79, 0.8) 0%,
-    rgba(13, 44, 79, 0.3) 100%
-  );
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 600px;
-  color: #fff;
-}
-.hero-content h1 {
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 24px;
-}
-.hero-content p {
-  font-size: 18px;
-  margin-bottom: 32px;
-  max-width: 500px;
-}
-.hero-content .btn-primary {
-  background-color: var(--accent-gold);
-  color: var(--text-dark);
-  font-size: 16px;
-  padding: 16px 36px;
-}
-.hero-content .btn-primary:hover {
-  background-color: #fff;
-}
+/* assets/css/home.css */
 
-/* === SECTION UMUM (HOMEPAGE) === */
-.section {
-  padding: 100px 0;
+/* Frames Section */
+#frames {
+  padding-top: 80px;
 }
-.section-title {
-  text-align: center;
-  font-size: 48px;
-  margin-bottom: 16px;
-  color: var(--primary-blue);
-}
-.section-subtitle {
-  text-align: center;
-  font-size: 18px;
-  color: var(--text-light);
-  max-width: 600px;
-  margin: 0 auto 60px auto;
-}
-
-/* === BAGIAN "OUR FRAMES" === */
 .frames-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
 }
 .frame-card {
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: var(--transition);
 }
 .frame-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-5px);
 }
 .frame-image {
+  /* PERUBAHAN 2: Perbesar tinggi bingkai dari 250px menjadi 350px */
+  height: 350px;
+  width: 100%;
   margin-bottom: 20px;
-  display: inline-block;
-  background-color: var(--surface-bg);
-  padding: 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
   box-shadow: var(--shadow);
-}
-.frame-image img {
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-}
-.frame-card h3 {
-  font-size: 22px;
-  margin-bottom: 5px;
-}
-.frame-card p {
-  font-size: 15px;
-  color: var(--text-light);
+  transition: box-shadow 0.3s ease;
+
+  border-style: solid;
+  border-width: 40px;
+  border-image-slice: 40;
+  border-image-repeat: repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 }
 
-/* === BAGIAN "WHY US" === */
+.frame-image img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.frame-card:hover .frame-image img {
+  transform: scale(1.05);
+}
+.frame-card h3 {
+  font-size: 1.3rem;
+  font-family: var(--font-primary);
+  font-weight: 600;
+}
+.frame-card p {
+  color: #666;
+}
+
+#frameElement {
+  position: relative; /* Penting agar matElement bisa diposisikan di dalamnya */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Why Section */
 .why-section {
-  background-color: var(--surface-bg);
+  background-color: var(--color-light-gray);
+  padding: 80px 0;
+  margin-top: 80px;
 }
 .why-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: 60px;
   align-items: center;
+}
+.section-tag {
+  color: var(--color-primary);
+  font-family: var(--font-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+.why-grid h2 {
+  font-size: 2.5rem;
+}
+.why-image-wrapper {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 .why-image {
   width: 100%;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-}
-.why-text h3 {
-  font-size: 36px;
-  color: var(--primary-blue);
-  margin-bottom: 20px;
-}
-.why-text p {
-  color: var(--text-light);
-  margin-bottom: 24px;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* === BAGIAN "SERVICES" === */
+/* Services Section */
+section#services {
+  padding: 3rem;
+}
 .services-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 30px;
+  margin-top: 50px;
 }
 .service-card {
-  background-color: var(--surface-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  border: 1px solid #eee;
   padding: 40px;
   text-align: center;
-  transition: all 0.3s ease;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
 }
 .service-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-5px);
+  border-color: transparent;
 }
 .service-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 24px auto;
-  background-color: #eaf2ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.service-icon img {
-  width: 40px;
-  height: 40px;
+  margin-bottom: 20px;
+  color: var(--color-primary);
 }
 .service-card h3 {
-  font-size: 28px;
-  margin-bottom: 16px;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 1.4rem;
 }
 .service-card p {
-  color: var(--text-light);
-  margin-bottom: 24px;
+  margin-bottom: 25px;
 }
 
-/* === RESPONSIVE (HOMEPAGE) === */
+/* Testimonial Section */
+.testimonial-section {
+  background-color: #f8f6f2; /* Warna latar yang lembut */
+  padding: 80px 0;
+  margin-top: 80px;
+}
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+.testimonial-card {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-card p {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.testimonial-author img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.testimonial-author span {
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+/* Responsive untuk home */
 @media (max-width: 992px) {
-  .hero-content {
-    text-align: center;
-    max-width: 100%;
-    padding: 0 20px;
+  .hero h1 {
+    font-size: 2.8rem;
   }
-  .hero-content h1 {
-    font-size: 48px;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 70vh;
   }
-  .why-grid,
-  .services-grid {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+  .why-grid {
     grid-template-columns: 1fr;
   }
-  .why-image {
-    order: -1;
-    margin-bottom: 40px;
+  .why-image-wrapper {
+    order: -1; /* Pindahkan gambar ke atas di mobile */
+  }
+  .services-grid {
+    grid-template-columns: 1fr;
   }
 }

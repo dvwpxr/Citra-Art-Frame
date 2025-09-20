@@ -1,5 +1,8 @@
+// frontend/assets/js/admin-script.js
+
 document.addEventListener("DOMContentLoaded", () => {
   // --- ELEMENTS ---
+  // --- PERUBAHAN DI SINI: Menggunakan ID yang benar dari HTML Anda ---
   const tableBody = document.getElementById("product-table-body");
   const modal = document.getElementById("productModal");
   const deleteModal = document.getElementById("deleteModal");
@@ -10,10 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebarToggle = document.getElementById("sidebar-toggle");
   const sidebar = document.getElementById("sidebar");
   const totalProductsEl = document.getElementById("total-products");
+  const imagePreviewContainer = document.getElementById(
+    "imagePreviewContainer"
+  );
+  const currentImagePreview = document.getElementById("currentImagePreview");
+  const imageInput = document.getElementById("image");
 
   // --- STATE ---
   let productToDeleteId = null;
-  let allProducts = []; // Cache untuk menyimpan semua produk dari API
+  let allProducts = [];
 
   // --- API CONFIG ---
   const API_URL = "http://localhost:8080/api/products";
@@ -41,13 +49,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("price").value = product.price || "";
     document.getElementById("stock").value = product.stock || "";
     document.getElementById("category").value = product.category || "";
-    document.getElementById("image").value = product.image || "";
     document.getElementById("detail_image_url").value =
       product.detail_image_url || "";
+
+    if (product.image_url) {
+      currentImagePreview.src = product.image_url;
+      imagePreviewContainer.classList.remove("hidden");
+    } else {
+      imagePreviewContainer.classList.add("hidden");
+    }
+    imageInput.value = "";
     modal.classList.add("active");
   };
 
-  const closeModal = () => modal.classList.remove("active");
+  const closeModal = () => {
+    modal.classList.remove("active");
+    imagePreviewContainer.classList.add("hidden");
+    currentImagePreview.src = "";
+  };
 
   const openDeleteModal = (id) => {
     productToDeleteId = id;
@@ -60,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderTable = (products) => {
+    // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
     tableBody.innerHTML = "";
     if (!products || products.length === 0) {
       tableBody.innerHTML =
@@ -70,11 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
     products.forEach((product) => {
       const row = document.createElement("tr");
       row.className = "border-b hover:bg-gray-200";
-      // === PERUBAHAN DI SINI ===
       row.innerHTML = `
         <td class="p-3">
           <img src="${
-            product.image || "https://via.placeholder.com/40"
+            product.image_url || "https://via.placeholder.com/40"
           }" alt="${product.name}" class="w-10 h-10 rounded-md object-cover">
         </td>
         <td class="p-3 font-medium text-gray-600">${product.name}</td>
@@ -92,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }" title="Delete"><i class="ri-delete-bin-5-fill"></i></button>
         </td>
       `;
+      // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
       tableBody.appendChild(row);
     });
   };
@@ -102,26 +122,27 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error("Failed to fetch products");
       const products = await response.json();
-      allProducts = products || []; // Simpan data asli
-      totalProductsEl.textContent = allProducts.length; // Update kartu statistik
+      allProducts = products || [];
+      if (totalProductsEl) totalProductsEl.textContent = allProducts.length;
       renderTable(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       showNotification(error.message, true);
-      tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">${error.message}</td></tr>`;
+      // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
+      if (tableBody)
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">${error.message}</td></tr>`;
     }
   };
 
-  const saveProduct = async (productData) => {
-    const id = productData.id;
+  const saveProduct = async (formData) => {
+    const id = formData.get("id");
     const method = id ? "PUT" : "POST";
     const url = id ? `${API_URL}/${id}` : API_URL;
 
     try {
       const response = await fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(productData),
+        body: formData,
       });
       if (!response.ok) {
         const errorData = await response.text();
@@ -132,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       showNotification(`Product successfully ${id ? "updated" : "created"}!`);
       closeModal();
-      fetchProducts(); // Refresh data
+      fetchProducts();
     } catch (error) {
       console.error("Error saving product:", error);
       showNotification(error.message, true);
@@ -145,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("Failed to delete product");
       showNotification("Product deleted successfully!");
       closeDeleteModal();
-      fetchProducts(); // Refresh data
+      fetchProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
       showNotification(error.message, true);
@@ -153,46 +174,39 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- EVENT LISTENERS ---
+  if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-full");
+    });
+  }
 
-  // Sidebar Toggle for mobile
-  sidebarToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("-translate-x-full");
-  });
-
-  // Modal Buttons
   document
     .getElementById("addProductBtn")
-    .addEventListener("click", () => openModal("Add New Product"));
+    ?.addEventListener("click", () => openModal("Add New Product"));
   document
     .getElementById("closeModalBtn")
-    .addEventListener("click", closeModal);
+    ?.addEventListener("click", closeModal);
   document
     .getElementById("cancelModalBtn")
-    .addEventListener("click", closeModal);
+    ?.addEventListener("click", closeModal);
 
-  // Form Submission
-  form.addEventListener("submit", (e) => {
+  form?.addEventListener("submit", (e) => {
     e.preventDefault();
+    const formData = new FormData(form);
     const idValue = document.getElementById("productId").value;
-    const productData = {
-      price: parseInt(document.getElementById("price").value, 10),
-      stock: parseInt(document.getElementById("stock").value, 10),
-      name: document.getElementById("name").value,
-      description: document.getElementById("description").value,
-      category: document.getElementById("category").value,
-      image: document.getElementById("image").value,
-      detail_image_url: document.getElementById("detail_image_url").value,
-    };
+    if (idValue) formData.append("id", idValue);
 
-    if (idValue) {
-      productData.id = parseInt(idValue, 10);
+    const imageFile = imageInput.files[0];
+    if (imageFile) {
+      formData.set("image", imageFile);
+    } else {
+      formData.delete("image");
     }
-
-    saveProduct(productData);
+    saveProduct(formData);
   });
 
-  // Table Actions (Edit & Delete)
-  tableBody.addEventListener("click", async (e) => {
+  // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
+  tableBody?.addEventListener("click", async (e) => {
     const editBtn = e.target.closest(".edit-btn");
     const deleteBtn = e.target.closest(".delete-btn");
 
@@ -214,18 +228,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Delete Confirmation Modal
   document
     .getElementById("cancelDeleteBtn")
-    .addEventListener("click", closeDeleteModal);
-  document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+    ?.addEventListener("click", closeDeleteModal);
+  document.getElementById("confirmDeleteBtn")?.addEventListener("click", () => {
     if (productToDeleteId) {
       deleteProduct(productToDeleteId);
     }
   });
 
-  // Search Functionality
-  searchInput.addEventListener("input", (e) => {
+  searchInput?.addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const filteredProducts = allProducts.filter(
       (product) =>
@@ -235,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable(filteredProducts);
   });
 
-  // Logout
   const logoutButton = document.getElementById("logoutBtn");
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {

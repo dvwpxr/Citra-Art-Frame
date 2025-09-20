@@ -1,17 +1,21 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/cloudinary/cloudinary-go/v2"
 	_ "github.com/go-sql-driver/mysql" // MySQL driver
 	"github.com/joho/godotenv"
 )
 
 // DB adalah koneksi database yang akan diekspor untuk digunakan oleh package lain
 var DB *sql.DB
+var Cld *cloudinary.Cloudinary
+var Ctx context.Context
 
 // Connect menginisialisasi koneksi ke database
 func Connect() {
@@ -39,6 +43,19 @@ func Connect() {
 	}
 
 	log.Println("Database terhubung!")
+
+	// --- Inisialisasi Cloudinary ---
+	cld, err := cloudinary.NewFromParams(
+		os.Getenv("CLOUDINARY_CLOUD_NAME"),
+		os.Getenv("CLOUDINARY_API_KEY"),
+		os.Getenv("CLOUDINARY_API_SECRET"),
+	)
+	if err != nil {
+		panic(err)
+	}
+	Cld = cld
+	Ctx = context.Background()
+	fmt.Println("Successfully connected to Cloudinary!")
 }
 
 func loadEnv() {
@@ -53,4 +70,19 @@ func mustEnv(key string) string {
 		log.Fatalf("Environment variable yang dibutuhkan tidak ditemukan: %s", key)
 	}
 	return v
+}
+
+
+func InitCloudinary() (*cloudinary.Cloudinary, context.Context) {
+	cld, err := cloudinary.NewFromParams(
+		os.Getenv("CLOUDINARY_CLOUD_NAME"),
+		os.Getenv("CLOUDINARY_API_KEY"),
+		os.Getenv("CLOUDINARY_API_SECRET"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected to Cloudinary!")
+	return cld, context.Background()
 }

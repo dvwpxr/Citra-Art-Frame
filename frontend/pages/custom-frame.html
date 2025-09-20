@@ -5,48 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Custom Frame Builder - Citra Frame</title>
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/base.css" />
+    <link rel="stylesheet" href="/assets/css/home.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+    <style>
+      /* Kontainer luar: Hanya sebagai wadah gambar dan patokan posisi */
+      #frameElement {
+        position: relative; /* Wajib untuk positioning anak */
+        width: 100%;
+        height: 100%;
+        color: #f8f9fa;
+      }
+      /* Kontainer dalam (mat): Diposisikan absolut dan menjadi flexbox */
+      #matElement {
+        display: flex; /* Menjadi flexbox untuk menengahkan isinya */
+        justify-content: center;
+        align-items: center;
+        width: auto; /* Lebar akan diatur oleh 'left' dan 'right' */
+        height: auto; /* Tinggi akan diatur oleh 'top' dan 'bottom' */
+      }
+    </style>
   </head>
   <body>
-    <header class="header">
+    <header class="header" id="main-header">
       <div class="container">
-        <div class="nav-brand">
-          <a href="/" class="logo" aria-label="Citra Frame">
-            <picture>
-              <img
-                src="/assets/img/logo-citraframe.svg"
-                alt="Citra Frame"
-                class="logo-img"
-                width="140"
-                height="32"
-                decoding="async"
-                loading="eager"
-              />
-            </picture>
-          </a>
-        </div>
-
+        <a href="/" class="logo">CITRAFRAME</a>
         <nav class="nav-menu" id="site-nav">
-          <a href="/#frames" class="nav-link">FRAMES</a>
-          <a href="/prints" class="nav-link">ART PRINTS</a>
-          <a href="/products" class="nav-link">PRODUCTS</a>
-          <a href="#" class="nav-link">BLOG</a>
-          <a href="/custom" class="btn-primary mobile-only">START FRAMING</a>
+          <a href="#frames" class="nav-link">Pilihan Frame</a>
+          <a href="/prints" class="nav-link">Art Prints</a>
+          <a href="/products" class="nav-link">Produk</a>
+          <a href="#testimonials" class="nav-link">Testimoni</a>
         </nav>
-
+        <div class="nav-actions">
+          <button class="icon-btn" aria-label="Akun">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+          <button class="icon-btn" aria-label="Keranjang">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
+            </svg>
+          </button>
+          <a href="/custom" class="btn-primary">Mulai Bingkai</a>
+        </div>
         <button
           class="mobile-menu-toggle"
+          id="menu-toggle"
           aria-label="Toggle menu"
-          aria-controls="site-nav"
-          aria-expanded="false"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="26"
-            height="26"
+            width="28"
+            height="28"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -59,41 +100,6 @@
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
-
-        <div class="nav-actions">
-          <button class="icon-btn" aria-label="Account">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </button>
-          <button class="icon-btn" aria-label="Cart">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
-              ></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-          </button>
-          <a href="/custom-frame" class="btn-primary desktop-only"
-            >START FRAMING</a
-          >
-        </div>
       </div>
     </header>
 
@@ -288,11 +294,11 @@
               </div>
               <div class="config-body">
                 <div id="glassOptions" class="mat-options">
-                  <button class="mat-option active" data-glass="true">
-                    With Glass
-                  </button>
-                  <button class="mat-option" data-glass="false">
+                  <button class="mat-option active" data-glass="false">
                     Without Glass
+                  </button>
+                  <button class="mat-option" data-glass="true">
+                    With Glass
                   </button>
                 </div>
                 <p

@@ -1,22 +1,24 @@
 :root {
-  --primary-blue: #0d2c4f;
-  --accent-gold: #c5a47e;
-  --light-bg: #fdfaf6;
-  --surface-bg: #ffffff;
-  --text-dark: #1a1a1a;
-  --text-light: #5c5c5c;
-  --border-color: #e5e0d8;
+  --font-primary: "Inter", sans-serif;
   --font-heading: "Playfair Display", serif;
-  --font-body: "Inter", sans-serif;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --color-text: #333;
+  --color-heading: #1a1a1a;
+  --color-background: #fdfdfd;
+  --color-primary: #c09553; /* Aksen emas/kayu */
+  --color-dark: #222;
+  --color-light-gray: #f4f4f4;
+  --container-width: 1140px;
+  --border-radius: 8px;
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease-in-out;
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: var(--color-background);
   line-height: 1.6;
-  color: #333;
-  background-color: #f8f9fa;
 }
 
 .container {
@@ -46,15 +48,6 @@ a {
   padding: 15px 20px;
 }
 
-.logo {
-  font-size: 18px;
-  font-weight: 700;
-  color: #333;
-  border: 2px solid #333;
-  padding: 8px 16px;
-  letter-spacing: 1px;
-}
-
 .nav-menu {
   display: flex;
   gap: 40px;
@@ -64,7 +57,7 @@ a {
   text-decoration: none;
   color: #333;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.5px;
   transition: color 0.3s ease;
 }
@@ -910,48 +903,52 @@ input#imageUploader {
 }
 
 #frameElement {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  padding: 30px;
-  transition: all 0.3s ease-in-out;
-  border: 30px solid transparent;
-  background: #e2e8f0;
+  border-style: solid;
+  /* Sesuaikan border-width sesuai dengan border-slice maksimum yang Anda gunakan */
+  /* Misalnya, jika slice Anda 100-120, border-width bisa 30-40px */
+  border-width: 35px !important; /* !important untuk memastikan override JavaScript jika perlu */
+  padding: 0; /* Pastikan tidak ada padding tambahan yang mengganggu border-image */
 }
 
 #matElement {
-  width: 100%;
+  position: relative; /* Penting untuk penempatan artwork */
   height: 100%;
-  box-sizing: border-box;
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) inset;
-  transition: all 0.3s ease-in-out;
-}
-
+  width: 100%;
+  box-sizing: border-box; /* Pastikan padding masuk dalam ukuran */
+  background-color: white; /* Warna default mat */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Efek bayangan ringan */
+} /* Kontainer artwork di dalam matboard */
 #artworkContainer {
-  width: 100%;
-  height: 100%;
-  background-color: #e0e0e0;
-  position: relative;
-  overflow: hidden;
+  position: absolute; /* Posisikan absolut di tengah mat */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Pusatkan */
+  max-width: 100%; /* Agar tidak keluar mat */
+  max-height: 100%;
+  width: auto; /* Disesuaikan dengan gambar */
+  height: auto;
+  display: flex; /* Untuk mempusatkan placeholder */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Sembunyikan jika gambar terlalu besar */
+  background-color: #f0f0f0; /* Warna latar default */
 }
 
 #artworkContainer img {
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
-  object-fit: cover;
+  object-fit: contain; /* Agar gambar tidak terpotong, bisa juga cover */
 }
 
+/* Placeholder content */
 .placeholder-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #888;
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 0.9em;
+}
+.placeholder-content svg {
+  margin-bottom: 10px;
 }
 
 .frame-configuration {
@@ -1174,8 +1171,8 @@ input#imageUploader {
 }
 
 #framePreviewWrapper {
-  max-width: 400px;
-  max-height: 400px;
+  max-width: 600px;
+  max-height: 600px;
   /* Animasikan opacity dan transform */
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
   transform: scale(1); /* Kondisi normal */
