@@ -82,12 +82,15 @@ document.addEventListener("DOMContentLoaded", () => {
         name: p.name,
         image: p.image_url,
         price: p.price,
+        // Fallback jika data insets tidak ada di database
         insets: {
-          top: p.inset_top || 20,
-          right: p.inset_right || 20,
-          bottom: p.inset_bottom || 20,
-          left: p.inset_left || 20,
+          top: p.inset_top || 15,
+          right: p.inset_right || 15,
+          bottom: p.inset_bottom || 15,
+          left: p.inset_left || 15,
         },
+        // Nilai slice untuk border-image. Sesuaikan dengan file gambar frame Anda.
+        slice: p.border_image_slice || 80,
       }));
 
       if (FRAME_MODELS.length === 0) {
@@ -112,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderFramePreview = () => {
-    const maxPreviewSize = 500; // Sedikit diperbesar
+    const maxPreviewSize = 550;
     const ratio = state.artworkWidth / state.artworkHeight;
     let previewWrapperWidth, previewWrapperHeight;
 
@@ -132,9 +135,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 1. Atur gambar frame sebagai background dari #frameElement
       Object.assign(dom.frameElement.style, {
-        backgroundImage: `url('${frame.image}')`,
-        backgroundSize: "100% 100%",
+        /* — BACKGROUND isi (bagian tengah) — */
+        backgroundSize: "100% 100%", // penuhi area isi
         backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundOrigin: "content-box", // hitung bg dari area konten
+        backgroundClip: "content-box", // bg tidak melebar ke area border
+        padding: "0", // jaga supaya isi benar2 'content-box'
+
+        /* — BORDER sebagai bingkai (9-slice) — */
+        borderStyle: "solid",
+        // Gunakan persen agar tebal bingkai proporsional terhadap ukuran elemen
+        borderWidth: `${frame.insets.top}% ${frame.insets.right}% ${frame.insets.bottom}% ${frame.insets.left}%`,
+        borderImageSource: `url('${frame.image}')`,
+        // 'fill' mengisi area tengah oleh potongan tengah gambar (agar benar2 full)
+        // Sesuaikan 'slice' (px) dengan lebar tebal bingkai pada file PNG Anda
+        borderImageSlice: `${frame.slice || 80} fill`,
+        borderImageRepeat: "stretch", // bisa 'repeat' bila pola harus diulang
       });
 
       // 2. Atur posisi #matElement agar pas di dalam "lubang" frame
@@ -170,6 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const frame = state.frameModel;
     if (!frame) return;
 
+    // === PERBAIKAN PERHITUNGAN UKURAN FINAL ===
+    // Matboard menambah ukuran di kedua sisi (kiri-kanan dan atas-bawah)
     const totalAddedDimension = state.matWidth * 1;
     const finalWidth = state.artworkWidth + totalAddedDimension;
     const finalHeight = state.artworkHeight + totalAddedDimension;
@@ -177,19 +196,22 @@ document.addEventListener("DOMContentLoaded", () => {
       1
     )} x ${finalHeight.toFixed(1)} cm`;
 
-    // Kalkulasi Harga
+    // Kalkulasi Harga (konsisten dengan handleAddToCart)
     const finalAreaCm2 = finalWidth * finalHeight;
     const glassPrice = state.hasGlass
       ? finalAreaCm2 * getGlassPriceMultiplier(finalWidth, finalHeight)
       : 0;
+
     const artworkAreaCm2 = state.artworkWidth * state.artworkHeight;
     const matPrice =
       state.matWidth > 0
         ? artworkAreaCm2 * getMatPriceMultiplier(state.matWidth)
         : 0;
+
     const perimeterM = ((finalWidth + finalHeight) * 2) / 100;
     const framePrice = perimeterM * frame.price;
     const totalPrice = glassPrice + matPrice + framePrice;
+
     dom.priceDisplay.textContent = `IDR ${Math.round(totalPrice).toLocaleString(
       "id-ID"
     )}`;
@@ -214,6 +236,56 @@ document.addEventListener("DOMContentLoaded", () => {
       month: "short",
       year: "numeric",
     });
+  };
+  const handleAddToCart = () => {
+    if (!state.frameModel) {
+      alert("Silakan pilih model bingkai terlebih dahulu.");
+      return;
+    }
+
+    // Perhitungan ini SEKARANG sama persis dengan di renderInfo
+    const totalAddedDimension = state.matWidth * 1;
+    const finalWidth = state.artworkWidth + totalAddedDimension;
+    const finalHeight = state.artworkHeight + totalAddedDimension;
+
+    const finalAreaCm2 = finalWidth * finalHeight;
+    const glassPrice = state.hasGlass
+      ? finalAreaCm2 * getGlassPriceMultiplier(finalWidth, finalHeight)
+      : 0;
+
+    const artworkAreaCm2 = state.artworkWidth * state.artworkHeight;
+    const matPrice =
+      state.matWidth > 0
+        ? artworkAreaCm2 * getMatPriceMultiplier(state.matWidth)
+        : 0;
+
+    const perimeterM = ((finalWidth + finalHeight) * 2) / 100;
+    const framePrice = perimeterM * state.frameModel.price;
+    const totalPrice = glassPrice + matPrice + framePrice;
+
+    const orderData = {
+      frameModelName: state.frameModel.name,
+      frameModelImage: state.frameModel.image,
+      artworkWidth: state.artworkWidth,
+      artworkHeight: state.artworkHeight,
+      matWidth: state.matWidth,
+      matColor: state.matColor,
+      hasGlass: state.hasGlass,
+      artworkImageUrl: state.artworkImageUrl,
+      dimensions: {
+        finalWidthCm: finalWidth,
+        finalHeightCm: finalHeight,
+      },
+      priceBreakdown: {
+        frame: Math.round(framePrice),
+        mat: Math.round(matPrice),
+        glass: Math.round(glassPrice),
+        total: Math.round(totalPrice),
+      },
+    };
+
+    localStorage.setItem("customFrameOrder", JSON.stringify(orderData));
+    window.location.href = "/checkout";
   };
 
   const handleImageUpload = (event) => {
@@ -314,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  dom.addToCartBtn.addEventListener("click", () => {});
+  dom.addToCartBtn.addEventListener("click", handleAddToCart);
 
   // --- INISIALISASI ---
   initializeBuilder();

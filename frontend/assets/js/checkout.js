@@ -2,6 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // === PERBAIKAN: Tambahkan baris ini ===
   const API_BASE_URL = "http://localhost:8080/api";
 
+  const getMatPriceMultiplier = (matWidth) => {
+    switch (matWidth) {
+      case 2:
+        return 20;
+      case 4:
+        return 30;
+      case 6:
+        return 45;
+      case 8:
+        return 60;
+      default:
+        return 0;
+    }
+  };
+
   // --- KONFIGURASI PENGIRIMAN ---
   const SHIPPING_RATES = {
     jabodetabek: [
@@ -111,18 +126,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const estimateWeight = () => {
     if (!orderData || !orderData.dimensions) return 0;
-    const { dimensions, hasGlass } = orderData;
+    const { finalWidthCm, finalHeightCm } = orderData.dimensions;
+    const perimeterM = ((finalWidthCm + finalHeightCm) * 2) / 100;
+    const areaM2 = (finalWidthCm * finalHeightCm) / 10000;
     return (
-      dimensions.perimeterM * KG_PER_M_FRAME +
-      dimensions.areaM2 * KG_PER_M2_BACKING +
-      (hasGlass ? dimensions.areaM2 * KG_PER_M2_GLASS : 0)
+      perimeterM * KG_PER_M_FRAME +
+      areaM2 * KG_PER_M2_BACKING +
+      (orderData.hasGlass ? areaM2 * KG_PER_M2_GLASS : 0)
     );
   };
 
   const updateShippingOptions = () => {
     const destination = tujuanSelect.value;
     if (!destination) {
-      shippingMethodEl.innerHTML = `<div class="shipping-method"><h3>Metode Pengiriman</h3><p style="font-size: 14px; color: var(--subtle-text-color);">Pilih tujuan pengiriman untuk melihat ongkir.</p></div>`;
+      shippingMethodEl.innerHTML = `<div class="shipping-method"><h3>Metode Pengiriman</h3><p class="shipping-placeholder">Pilih zona pengiriman untuk melihat ongkir.</p></div>`;
       currentShippingInfo.cost = 0;
     } else {
       const weight = currentShippingInfo.weight;
@@ -136,12 +153,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (shippingCost === 0 && weight > 0)
         shippingCost = rates[rates.length - 1].price;
+
       currentShippingInfo.cost = shippingCost;
-      shippingMethodEl.innerHTML = `<div class="shipping-method"><h3>Metode Pengiriman</h3><div class="shipping-option"><div><p style="margin:0; font-weight: 500;">Flat Rate Ongkir</p><span style="font-size: 13px; color: var(--subtle-text-color);">Estimasi berat: ${weight.toFixed(
-        2
-      )} kg</span></div><strong><span data-value="0">${formatCurrency(
-        shippingCost
-      )}</span></strong></div></div>`;
+      currentShippingInfo.destination = destination;
+
+      shippingMethodEl.innerHTML = `
+        <div class="shipping-method">
+          <h3>Metode Pengiriman</h3>
+          <div class="shipping-option">
+            <div>
+              <p>Flat Rate Ongkir</p>
+              <span>Estimasi berat: ${weight.toFixed(2)} kg</span>
+            </div>
+            <strong data-value="0">${formatCurrency(shippingCost)}</strong>
+          </div>
+        </div>`;
     }
     updateTotalPrice();
   };
@@ -149,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateTotalPrice = () => {
     const productTotal = orderData.priceBreakdown.total;
     const finalTotal = productTotal + currentShippingInfo.cost;
-    const shippingFeeEl = document.querySelector("#shippingFee");
+    const shippingFeeEl = priceDetailsEl.querySelector("#shippingFee");
     const finalTotalEl = priceDetailsEl.querySelector("#finalTotal span");
     if (shippingFeeEl) animateCountUp(shippingFeeEl, currentShippingInfo.cost);
     if (finalTotalEl) animateCountUp(finalTotalEl, finalTotal);
@@ -157,49 +183,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initializePage = () => {
     if (!orderData) {
-      summarySkeleton.innerHTML = `<p>Error: Rincian pesanan tidak ditemukan.</p>`;
+      summarySkeleton.innerHTML = `<p class="error-text">Error: Rincian pesanan tidak ditemukan. Silakan kembali dan buat pesanan baru.</p>`;
       payNowBtn.disabled = true;
       return;
     }
+
     currentShippingInfo.weight = estimateWeight();
     const {
       frameModelName,
       frameModelImage,
       artworkWidth,
       artworkHeight,
+      matWidth, // Ambil data matWidth
       priceBreakdown,
       hasGlass,
     } = orderData;
-    summaryContentEl.innerHTML = `<div class="summary-item-preview"><img src="${
-      frameModelImage || "https://via.placeholder.com/80"
-    }" alt="${frameModelName}"><div class="summary-item-details"><p>${frameModelName}</p><span>Ukuran Artwork: ${artworkWidth} x ${artworkHeight} cm</span></div></div>`;
+
+    // --- PERBAIKAN DIMULAI DI SINI ---
+    let sizeDescription;
+
+    if (matWidth > 0) {
+      // Matboard menambah ukuran di kedua sisi (kiri-kanan & atas-bawah)
+      const totalAddedDimension = matWidth * 1;
+      const finalWidth = artworkWidth + totalAddedDimension;
+      const finalHeight = artworkHeight + totalAddedDimension;
+
+      // Buat teks yang menampilkan kedua ukuran untuk kejelasan
+      sizeDescription = `Ukuran Artwork: ${artworkWidth} x ${artworkHeight} cm<br><span class="final-size-note">Total dengan Mat: ${finalWidth} x ${finalHeight} cm</span>`;
+    } else {
+      // Jika tidak ada mat, tampilkan ukuran artwork saja
+      sizeDescription = `Ukuran Artwork: ${artworkWidth} x ${artworkHeight} cm`;
+    }
+
+    summaryContentEl.innerHTML = `<div class="summary-item-preview">
+        <img src="${
+          frameModelImage || "https://via.placeholder.com/80"
+        }" alt="${frameModelName}">
+        <div class="summary-item-details">
+            <p>${frameModelName}</p>
+            <span>${sizeDescription}</span>
+        </div>
+    </div>`;
+    // --- AKHIR PERBAIKAN ---
+
     updateShippingOptions();
+
     priceDetailsEl.innerHTML = `
-            <div class="price-breakdown">
-                <div class="price-line"><span>Harga Frame</span><strong>${formatCurrency(
-                  priceBreakdown.frame
-                )}</strong></div>
-                ${
-                  priceBreakdown.mat > 0
-                    ? `<div class="price-line"><span>Biaya Matboard</span><strong>${formatCurrency(
-                        priceBreakdown.mat
-                      )}</strong></div>`
-                    : ""
-                }
-                ${
-                  hasGlass
-                    ? `<div class="price-line"><span>Biaya Kaca Pelindung</span><strong>${formatCurrency(
-                        priceBreakdown.glass
-                      )}</strong></div>`
-                    : ""
-                }
-                <div class="price-line" id="shippingFeeLine"><span>Ongkos Kirim</span><strong id="shippingFee"><span data-value="0">${formatCurrency(
-                  0
-                )}</span></strong></div>
-            </div>
-            <div class="price-total"><span>Total</span><strong id="finalTotal"><span data-value="${
-              priceBreakdown.total
-            }">${formatCurrency(priceBreakdown.total)}</span></strong></div>`;
+      <div class="price-breakdown">
+          <div class="price-line"><span>Harga Frame</span><strong>${formatCurrency(
+            priceBreakdown.frame
+          )}</strong></div>
+          ${
+            priceBreakdown.mat > 0
+              ? `<div class="price-line"><span>Biaya Matboard</span><strong>${formatCurrency(
+                  priceBreakdown.mat
+                )}</strong></div>`
+              : ""
+          }
+          ${
+            hasGlass
+              ? `<div class="price-line"><span>Biaya Kaca Pelindung</span><strong>${formatCurrency(
+                  priceBreakdown.glass
+                )}</strong></div>`
+              : ""
+          }
+          <div class="price-line" id="shippingFeeLine"><span>Ongkos Kirim</span><strong id="shippingFee" data-value="0">${formatCurrency(
+            0
+          )}</strong></div>
+      </div>
+      <div class="price-total"><span>Total</span><strong id="finalTotal"><span data-value="${
+        priceBreakdown.total
+      }">${formatCurrency(priceBreakdown.total)}</span></strong></div>`;
 
     setTimeout(() => {
       summarySkeleton.style.display = "none";
@@ -215,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     tujuanSelect.addEventListener("change", updateShippingOptions);
     payNowBtn.addEventListener("click", handlePayment);
-    formInputs.forEach(validateField);
+    formInputs.forEach((input) => validateField(input));
   };
 
   const handlePayment = async () => {
