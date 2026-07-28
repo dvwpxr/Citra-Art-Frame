@@ -653,8 +653,8 @@ class ARWallVisualizer {
       preserveDrawingBuffer: true,
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.toneMappingExposure = 0.95;
     renderer.setClearColor(0x000000, 0);
     this._threeRenderer = renderer;
 
@@ -662,11 +662,11 @@ class ARWallVisualizer {
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     pmrem.dispose();
-    scene.add(new THREE.HemisphereLight(0xfff8ef, 0x4b5563, 2.4));
-    const key = new THREE.DirectionalLight(0xffffff, 3.2);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x4b5563, 1.4));
+    const key = new THREE.DirectionalLight(0xffffff, 1.8);
     key.position.set(2, 3, 4);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffe1b8, 1.4);
+    const fill = new THREE.DirectionalLight(0xffe1b8, 0.7);
     fill.position.set(-3, 1, 2);
     scene.add(fill);
 
@@ -714,7 +714,7 @@ class ARWallVisualizer {
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       materials.forEach((material) => {
         if (!material) return;
-        material.envMapIntensity = 1.45;
+        material.envMapIntensity = 1.0;
         ["map", "emissiveMap"].forEach((keyName) => {
           if (material[keyName]) {
             material[keyName].colorSpace = THREE.SRGBColorSpace;

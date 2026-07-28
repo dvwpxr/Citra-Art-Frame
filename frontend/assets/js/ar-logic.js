@@ -211,8 +211,11 @@ function setupRenderer() {
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType("local");
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  // Reinhard lebih neutral dari ACES Filmic: tidak mengangkat shadows maupun
+  // melembutkan highlights secara agresif, sehingga warna material gelap
+  // (kayu mahogany, dll.) tampil mendekati warna asli file GLB.
+  renderer.toneMapping = THREE.ReinhardToneMapping;
+  renderer.toneMappingExposure = 0.95;
   renderer.shadowMap.enabled = false;
   document.body.appendChild(renderer.domElement);
 
@@ -233,17 +236,18 @@ function setupEnvironment() {
 }
 
 function setupLighting() {
-  scene.add(new THREE.AmbientLight(0xfff8f0, 2.0));
+  // Warna neutral (bukan warm) agar material tidak mengalami color shift.
+  scene.add(new THREE.AmbientLight(0xffffff, 1.2));
 
-  const key = new THREE.DirectionalLight(0xffffff, 3.5);
+  const key = new THREE.DirectionalLight(0xffffff, 1.8);
   key.position.set(1, 2, 2);
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0xfff0e0, 1.5);
+  const fill = new THREE.DirectionalLight(0xfff0e0, 0.7);
   fill.position.set(-2, 1, 1);
   scene.add(fill);
 
-  const rim = new THREE.DirectionalLight(0xffe8c0, 1.0);
+  const rim = new THREE.DirectionalLight(0xffe8c0, 0.4);
   rim.position.set(0, -1, -2);
   scene.add(rim);
 }
@@ -1708,7 +1712,7 @@ function applyMaterials(frame) {
     const materials = Array.isArray(child.material) ? child.material : [child.material];
     materials.forEach((material) => {
       if (!material) return;
-      material.envMapIntensity = 1.5;
+      material.envMapIntensity = 1.0;
       ["map", "emissiveMap"].forEach((key) => {
         if (material[key]) {
           material[key].colorSpace = THREE.SRGBColorSpace;

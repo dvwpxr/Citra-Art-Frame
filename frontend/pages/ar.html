@@ -172,7 +172,7 @@
       .ar-back-link:hover { color: #c09553; }
 
     </style>
-    <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260727.1" />
+    <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260728-ui-v2" />
   </head>
   <body class="page-ar">
     <!-- ===== MODE SELECTOR ===== -->
@@ -397,7 +397,7 @@
     <!-- Diinject oleh ar-visualizer.js secara dinamis -->
 
     <script type="module">
-	  import { openARVisualizer } from "/assets/js/ar-visualizer.js?v=20260726-border-slice-1";
+	  import { openARVisualizer } from "/assets/js/ar-visualizer.js?v=20260728-color-fix-1";
       import { initAuthModal } from "/assets/js/firebase-auth.js";
 
       // ── Init auth modal (untuk navbar dropdown login/logout) ──
@@ -582,7 +582,7 @@
               <div class="ar-loading-head">
                 <span class="ar-loading-icon" aria-hidden="true"><span class="ar-loading-spinner"></span></span>
                 <div class="ar-loading-copy">
-                  <span id="ar-model-preload-status" class="ar-loading-label">Memuat model 3D bingkai…</span>
+                  <span id="ar-model-preload-status" class="ar-loading-label">Mengunduh model 3D…</span>
                   <span id="ar-progress-detail" class="ar-loading-detail">Menghubungi server…</span>
                 </div>
                 <span id="ar-progress-text" class="ar-loading-percent">0%</span>
@@ -590,6 +590,7 @@
               <div id="ar-progress-container" class="ar-loading-track is-indeterminate">
                 <div id="ar-progress-bar" class="ar-loading-fill"></div>
               </div>
+              <div id="ar-progress-size-row" class="ar-loading-size-row" aria-live="polite"></div>
             </div>
             <div class="ar-pre-guide-actions">
               <button id="start-ar-confirm" type="button" disabled>Menyiapkan model 3D…</button>
@@ -614,17 +615,30 @@
         const progressContainer = document.getElementById("ar-progress-container");
         const progressDetail = document.getElementById("ar-progress-detail");
         const preloadPanel = document.getElementById("ar-preload-panel");
+        const progressSizeRow = document.getElementById("ar-progress-size-row");
 
         const formatMB = (bytes) =>
           (bytes / (1024 * 1024)).toFixed(1).replace(".", ",") + " MB";
 
         const progressListener = (e) => {
           const { progress, loaded, total } = e.detail || {};
-          if (progressDetail && Number.isFinite(loaded)) {
-            progressDetail.textContent = Number.isFinite(total) && total
-              ? `${formatMB(loaded)} dari ${formatMB(total)}`
-              : `${formatMB(loaded)} diunduh`;
+
+          // Update detail teks & baris MB
+          if (Number.isFinite(loaded)) {
+            const mbLoaded = formatMB(loaded);
+            const mbTotal = Number.isFinite(total) && total ? formatMB(total) : null;
+            if (progressDetail) {
+              progressDetail.textContent = mbTotal
+                ? `${mbLoaded} dari ${mbTotal}`
+                : `${mbLoaded} diunduh`;
+            }
+            if (progressSizeRow) {
+              progressSizeRow.textContent = mbTotal
+                ? `${mbLoaded} / ${mbTotal}`
+                : mbLoaded;
+            }
           }
+
           if (!Number.isFinite(progress) || progress === null) {
             progressContainer?.classList.add("is-indeterminate");
             return;
@@ -636,10 +650,11 @@
         };
         window.addEventListener("ar-model-progress", progressListener);
 
-        const finishPreloadUI = (percentText) => {
+        const finishPreloadUI = (percentText, sizeText) => {
           progressContainer?.classList.remove("is-indeterminate");
           if (progressBar) progressBar.style.width = "100%";
           if (progressText) progressText.textContent = percentText;
+          if (progressSizeRow && sizeText !== undefined) progressSizeRow.textContent = sizeText;
         };
 
         modelReadyPromise
@@ -648,11 +663,11 @@
             startARConfirm.disabled = false;
             startARConfirm.textContent = "Mengerti, mulai AR →";
             modelPreloadStatus.textContent = loadedModel
-              ? "Model 3D siap"
-              : "Model cadangan siap";
-            if (progressDetail) progressDetail.textContent = "Kamera AR dapat dimulai";
+              ? "Model 3D siap ✓"
+              : "Model cadangan siap ✓";
+            if (progressDetail) progressDetail.textContent = "Kamera AR siap dimulai";
             preloadPanel?.classList.add("is-ready");
-            finishPreloadUI("100%");
+            finishPreloadUI("100%", "Unduhan selesai");
             startARConfirm.focus({ preventScroll: true });
           })
           .catch(() => {
@@ -662,7 +677,7 @@
             modelPreloadStatus.textContent = "Model utama gagal dimuat";
             if (progressDetail) progressDetail.textContent = "Model cadangan akan digunakan";
             preloadPanel?.classList.add("is-warning");
-            finishPreloadUI("—");
+            finishPreloadUI("—", "");
           });
 
         startARConfirm.addEventListener("click", () => {
@@ -705,6 +720,6 @@
       });
     </script>
 
-	<script type="module" src="/assets/js/ar-logic.js?v=20260727-wall-anchor-1"></script>
+	<script type="module" src="/assets/js/ar-logic.js?v=20260728-color-fix-1"></script>
   </body>
 </html>
