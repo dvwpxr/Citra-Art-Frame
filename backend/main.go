@@ -4,7 +4,10 @@ import (
 	"backend/database"
 	"backend/routes"
 	"log"
+	"net"
 	"net/http"
+	"os"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -27,8 +30,13 @@ func main() {
 	routes.SetupRoutes(r)
 
 	// 4. Jalankan server
-	log.Println("Server dimulai pada port :8080")
-	log.Fatal(http.ListenAndServe(":8080", enableCORS(r)))
+	port := strings.TrimSpace(os.Getenv("PORT"))
+	if port == "" {
+		port = "8080"
+	}
+	address := net.JoinHostPort("0.0.0.0", port)
+	log.Printf("Server dimulai pada %s", address)
+	log.Fatal(http.ListenAndServe(address, enableCORS(r)))
 }
 
 func enableCORS(next http.Handler) http.Handler {

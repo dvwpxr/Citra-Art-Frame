@@ -26,3 +26,19 @@ func TestAdminStatsRouteRequiresAdminJWT(t *testing.T) {
 		t.Fatalf("expected JSON API error, got redirect to %q", got)
 	}
 }
+
+func TestHealthRouteIsReady(t *testing.T) {
+	router := mux.NewRouter()
+	SetupRoutes(router)
+
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected health route status 200, got %d", rr.Code)
+	}
+	if rr.Body.String() != "ok" {
+		t.Fatalf("expected health route body %q, got %q", "ok", rr.Body.String())
+	}
+}

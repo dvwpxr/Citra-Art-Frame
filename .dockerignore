@@ -1,0 +1,16 @@
+.git
+.gitignore
+.DS_Store
+**/.DS_Store
+**/.env
+**/.env.*
+**/*_test.go
+
+.agents
+.claude
+.codex
+docs
+frontend/tests
+backend/cmd
+backend/test-db.js
+Tugas

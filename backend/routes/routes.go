@@ -39,6 +39,14 @@ func SetupRoutes(r *mux.Router) {
 	r.Use(corsMiddleware)
 	api := r.PathPrefix("/api").Subrouter()
 
+	// Railway menggunakan endpoint ini untuk memastikan deployment siap
+	// menerima traffic sebelum versi baru diaktifkan.
+	r.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
+	}).Methods("GET")
+
 	// --- RUTE PUBLIK ---
 	api.HandleFunc("/admin/login", controllers.HandleAdminLogin).Methods("POST", "OPTIONS")
 	api.HandleFunc("/admin/logout", controllers.HandleAdminLogout).Methods("POST", "OPTIONS")
