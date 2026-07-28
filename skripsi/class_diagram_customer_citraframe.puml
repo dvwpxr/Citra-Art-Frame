@@ -1,0 +1,181 @@
+@startuml Class_Diagram_Customer_CitraFrame
+
+title Class Diagram (Sisi Customer) - Sistem CitraFrame
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam roundcorner 8
+skinparam nodesep 50
+skinparam ranksep 60
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  HeaderBackgroundColor #1AA09C
+  BorderColor #CCCCCC
+  BorderThickness 1
+  ArrowColor #444444
+  FontColor #111111
+  FontSize 11
+  AttributeIconSize 0
+}
+
+skinparam stereotype {
+  CBackgroundColor #1AA09C
+  CBorderColor #1AA09C
+  CFontColor #FFFFFF
+}
+
+class Customer << (C,#1AA09C) >> {
+  -firebaseUid : string
+  -email : string
+  -displayName : string
+  -photoUrl : string
+  --
+  +register() : bool
+  +login() : bool
+  +lihatKatalog() : List<Product>
+  +kelolaAlamat() : void
+  +buatPesanan() : Order
+}
+
+class UserAddress << (C,#1AA09C) >> {
+  -id : long
+  -firebaseUid : string
+  -label : string
+  -receiverName : string
+  -phone : string
+  -provinceCode : string
+  -regencyCode : string
+  -districtCode : string
+  -villageCode : string
+  -province : string
+  -city : string
+  -district : string
+  -village : string
+  -postalCode : string
+  -fullAddress : text
+  -latitude : double
+  -longitude : double
+  -isDefault : bool
+  --
+  +getAddresses(uid : string) : List<UserAddress>
+  +createAddress() : bool
+  +updateAddress() : bool
+  +deleteAddress() : bool
+}
+
+class CartItem << (C,#1AA09C) >> {
+  -id : long
+  -firebaseUid : string
+  -itemType : string
+  -productId : int
+  -name : string
+  -artworkWidth : float
+  -artworkHeight : float
+  -matWidth : float
+  -matColor : string
+  -hasGlass : bool
+  -dimensions : JSON
+  -priceBreakdown : JSON
+  -price : int
+  -quantity : int
+  -subtotal : int
+  --
+  +getCart(uid : string) : List<CartItem>
+  +addToCart() : bool
+  +updateCartItem() : bool
+  +deleteCartItem() : bool
+  +clearCart() : void
+}
+
+class Order << (C,#1AA09C) >> {
+  -id : int
+  -orderUid : string
+  -firebaseUid : string
+  -customerName : string
+  -customerEmail : string
+  -customerPhone : string
+  -totalAmount : int
+  -subtotal : int
+  -shippingCost : int
+  -orderStatus : string
+  -courierCode : string
+  -courierName : string
+  -shippingPrice : int
+  -shippingEstimation : string
+  -weight : double
+  -flipLinkId : string
+  -createdAt : datetime
+  --
+  +createPayment() : OrderResponse
+  +getUserOrders(uid : string) : List<Order>
+  +getOrderDetail(id : int) : Order
+  +updateStatus(status : string) : bool
+}
+
+class OrderItem << (C,#1AA09C) >> {
+  -id : int
+  -orderId : int
+  -productId : int
+  -itemName : string
+  -category : string
+  -price : int
+  -quantity : int
+  -details : JSON
+  --
+  +getOrderItems(orderId : int) : List<OrderItem>
+}
+
+class Product << (C,#1AA09C) >> {
+  -id : int
+  -name : string
+  -description : text
+  -price : int
+  -stock : int
+  -category : string
+  -imageUrl : string
+  -isPopular : bool
+  -renderMode : string
+  --
+  +getProducts() : List<Product>
+  +getDetail(id : int) : Product
+}
+
+class ArtPrint << (C,#1AA09C) >> {
+  -id : int
+  -title : string
+  -artist : string
+  -category : string
+  -price : int
+  -stock : int
+  -imageUrl : string
+  --
+  +getArtPrints() : List<ArtPrint>
+  +getDetail(id : int) : ArtPrint
+}
+
+' Layout grouping
+together {
+  class UserAddress
+  class CartItem
+}
+
+together {
+  class Product
+  class ArtPrint
+}
+
+' Relationships
+Customer "1" -down-> "0..*" UserAddress : memiliki >
+Customer "1" -down-> "0..*" CartItem    : menyimpan >
+Customer "1" -down-> "0..*" Order       : melakukan >
+
+Order "1" *-down- "1..*" OrderItem : komposit >
+
+CartItem "0..*" -down-> "1" Product  : memilih (custom) >
+CartItem "0..*" -down-> "1" ArtPrint : memilih (artprint) >
+
+OrderItem "0..*" -down-> "1" Product  : referensi >
+OrderItem "0..*" -down-> "1" ArtPrint : referensi >
+
+@enduml

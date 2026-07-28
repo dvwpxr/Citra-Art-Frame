@@ -1,0 +1,146 @@
+<mxfile host="app.diagrams.net" modified="2026-07-20T16:30:00.000Z" agent="Codex" version="26.0.16" type="device">
+  <diagram id="usecase-citraframe-template" name="Use Case Citra Art Frame">
+    <mxGraphModel dx="1700" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="system-boundary" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4d4d4d;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="150" y="20" width="1400" height="1140" as="geometry"/>
+        </mxCell>
+        <mxCell id="system-title" value="&lt;b&gt;Sistem Web Citra Art Frame&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="610" y="30" width="480" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="actor-customer" value="Customer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=17;fontColor=#222222;strokeColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="35" y="490" width="70" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="actor-admin" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=17;fontColor=#222222;strokeColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="1595" y="490" width="70" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc-public" value="Mengakses Fitur Publik" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="725" y="85" width="250" height="78" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-catalog" value="Melihat Katalog Produk" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="205" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-detail-product" value="Melihat Detail Produk" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="520" y="205" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-custom-frame" value="Membuat Custom Frame" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="790" y="205" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-ar" value="Visualisasi AR" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="205" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-manipulate-3d" value="Manipulasi Objek 3D" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="305" width="230" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc-register-customer" value="Registrasi Customer" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="340" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-login-customer" value="Login Customer" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="520" y="340" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-cart" value="Mengelola Keranjang" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="465" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-address" value="Mengelola Alamat Pengiriman" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="585" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-order" value="Melakukan Pemesanan" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="705" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-payment" value="Melakukan Pembayaran" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="825" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-history" value="Melihat Riwayat Pemesanan" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="250" y="945" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-logout-customer" value="Logout Customer" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="520" y="945" width="230" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc-login-admin" value="Login Admin" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="790" y="340" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-dashboard" value="Melihat Dashboard" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="405" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-manage-product" value="Kelola Produk Frame, Model 3D &amp; Art Print" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="505" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-manage-content" value="Kelola Hero Slider &amp; Popular Frame" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="605" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-manage-orders" value="Kelola Pesanan Customer" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="705" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-update-order" value="Perbarui Status Pesanan" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="825" width="230" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc-logout-admin" value="Logout Admin" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="945" width="230" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uc-order-detail" value="Melihat Detail Pesanan &amp; Invoice" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#555555;strokeWidth=1.5;fontSize=14;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="725" y="1050" width="250" height="78" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="assoc-customer-public" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.4;" edge="1" parent="1" source="actor-customer" target="uc-public">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="120" y="95"/><mxPoint x="700" y="95"/></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="assoc-admin-public" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.4;" edge="1" parent="1" source="actor-admin" target="uc-public">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1580" y="95"/><mxPoint x="1000" y="95"/></Array></mxGeometry>
+        </mxCell>
+
+        <mxCell id="include-public-catalog" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-public" target="uc-catalog"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="850" y="180"/><mxPoint x="365" y="180"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-public-custom" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-public" target="uc-custom-frame"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="include-public-ar" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-public" target="uc-ar"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="850" y="180"/><mxPoint x="1175" y="180"/></Array></mxGeometry></mxCell>
+        <mxCell id="extend-detail-catalog" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-detail-product" target="uc-catalog"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="include-ar-manipulate" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-ar" target="uc-manipulate-3d"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="assoc-customer-register" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-register-customer"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-catalog" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-catalog"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-custom" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-custom-frame"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="180" y="300"/><mxPoint x="905" y="300"/></Array></mxGeometry></mxCell>
+        <mxCell id="assoc-customer-ar" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-ar"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="180" y="320"/><mxPoint x="1035" y="320"/><mxPoint x="1035" y="242"/></Array></mxGeometry></mxCell>
+        <mxCell id="assoc-customer-cart" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-cart"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-address" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-address"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-order" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-order"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-payment" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-payment"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-customer-history" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-history"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="180" y="982"/></Array></mxGeometry></mxCell>
+        <mxCell id="assoc-customer-logout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-customer" target="uc-logout-customer"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="180" y="1030"/><mxPoint x="635" y="1030"/></Array></mxGeometry></mxCell>
+
+        <mxCell id="include-cart-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-cart" target="uc-login-customer"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="include-address-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-address" target="uc-login-customer"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="500" y="622"/><mxPoint x="500" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-order-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-order" target="uc-login-customer"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="505" y="742"/><mxPoint x="505" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-history-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-history" target="uc-login-customer"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="510" y="982"/><mxPoint x="510" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-order-payment" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-order" target="uc-payment"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="assoc-admin-dashboard" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-dashboard"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-admin-product" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-manage-product"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-admin-content" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-manage-content"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-admin-orders" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-manage-orders"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-admin-update" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-update-order"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="assoc-admin-logout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.3;" edge="1" parent="1" source="actor-admin" target="uc-logout-admin"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1520" y="982"/></Array></mxGeometry></mxCell>
+
+        <mxCell id="include-dashboard-admin-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-dashboard" target="uc-login-admin"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="include-product-admin-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-manage-product" target="uc-login-admin"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1040" y="542"/><mxPoint x="1040" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-content-admin-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-manage-content" target="uc-login-admin"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1035" y="642"/><mxPoint x="1035" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="include-orders-admin-login" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-manage-orders" target="uc-login-admin"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1030" y="742"/><mxPoint x="1030" y="377"/></Array></mxGeometry></mxCell>
+        <mxCell id="extend-update-orders" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-update-order" target="uc-manage-orders"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="assoc-customer-order-detail" value="Pesanan sendiri" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.4;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-customer" target="uc-order-detail">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="120" y="1090"/><mxPoint x="700" y="1090"/></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="assoc-admin-order-detail" value="Seluruh pesanan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#555555;strokeWidth=1.4;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-admin" target="uc-order-detail">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1580" y="1090"/><mxPoint x="1000" y="1090"/></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="extend-detail-history" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-order-detail" target="uc-history"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="include-manage-detail" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 4;endArrow=open;endFill=0;strokeColor=#555555;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="uc-manage-orders" target="uc-order-detail"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1010" y="742"/><mxPoint x="1010" y="1089"/></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

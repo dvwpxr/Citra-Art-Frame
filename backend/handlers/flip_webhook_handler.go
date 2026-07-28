@@ -1,73 +1,114 @@
+// backend/handlers/flip_webhook.go
 package handlers
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"backend/database"
 )
 
-// Struct untuk menangkap data dari webhook Flip
-type FlipWebhookPayload struct {
-	Data struct {
-		BillKey string `json:"bill_key"` // ID Unik yang kita kirim
+type flipBillEvent struct {
+	Event string `json:"event"`
+	Bill  struct {
+		LinkID  string `json:"link_id"`
+		BillKey string `json:"bill_key"`
 		Status  string `json:"status"`
-	} `json:"data"`
+		Amount  int    `json:"amount"`
+		Title   string `json:"title"`
+	} `json:"bill"`
+}
+
+func verifyFlipToken(r *http.Request) bool {
+	secret := os.Getenv("FLIP_WEBHOOK_SECRET")
+	if secret == "" {
+		log.Println("WARN: FLIP_WEBHOOK_SECRET is empty")
+		return false
+	}
+
+	// Flip Accept Payment webhook sends token in form data
+	token := r.FormValue("token")
+	if token == "" {
+		// Fallback to headers
+		token = r.Header.Get("X-Callback-Token")
+		if token == "" {
+			token = r.Header.Get("x-callback-token")
+		}
+	}
+	return token != "" && token == secret
 }
 
 func FlipWebhookHandler(w http.ResponseWriter, r *http.Request) {
-	// 1. Verifikasi Tanda Tangan (SANGAT PENTING UNTUK KEAMANAN)
-	webhookSecret := os.Getenv("FLIP_WEBHOOK_SECRET")
-	flipSignature := r.Header.Get("x-flip-signature")
-
-	bodyBytes, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Cannot read body", http.StatusBadRequest)
+	// Parse form data because Flip sends application/x-www-form-urlencoded
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Flip webhook error parsing form: %v", err)
+		http.Error(w, "cannot parse form", http.StatusBadRequest)
 		return
 	}
 
-	mac := hmac.New(sha256.New, []byte(webhookSecret))
-	mac.Write(bodyBytes)
-	expectedSignature := hex.EncodeToString(mac.Sum(nil))
-
-	if !hmac.Equal([]byte(flipSignature), []byte(expectedSignature)) {
-		log.Println("Invalid Flip webhook signature")
-		http.Error(w, "Invalid signature", http.StatusForbidden)
+	// Verifikasi token
+	if !verifyFlipToken(r) {
+		log.Printf("Flip webhook rejected: bad token, headers=%v form=%v", r.Header, r.Form)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	// 2. Proses data webhook
-	var payload FlipWebhookPayload
-	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
-		http.Error(w, "Invalid webhook payload", http.StatusBadRequest)
+	dataJSON := r.FormValue("data")
+	if dataJSON == "" {
+		log.Printf("Flip webhook empty data")
+		http.Error(w, "empty data", http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("Received Flip webhook for Order UID %s with status %s", payload.Data.BillKey, payload.Data.Status)
+	var payload map[string]interface{}
+	decoder := json.NewDecoder(strings.NewReader(dataJSON))
+	decoder.UseNumber()
+	if err := decoder.Decode(&payload); err != nil {
+		log.Printf("Flip webhook bad json in data: %v", err)
+		http.Error(w, "bad json", http.StatusBadRequest)
+		return
+	}
 
-	// 3. Update status pesanan di database
-	if payload.Data.Status == "SUCCESSFUL" {
-		_, err := database.DB.Exec(`
-			UPDATE orders SET payment_status = 'PAID', order_status = 'PROCESSING'
-			WHERE order_uid = ? AND payment_status = 'PENDING'
-		`, payload.Data.BillKey)
+	statusStr, _ := payload["status"].(string)
+	status := strings.ToUpper(strings.TrimSpace(statusStr))
 
+	targetStatus := orderStatusFromFlipPaymentStatus(status)
+	if targetStatus == "" {
+		targetStatus = "PENDING"
+	}
+
+	// Flip Accept Payment sends bill_title which we set as "Citra Artframe Order #123".
+	// Prefix lama "CitraFrame Order #" tetap diterima untuk pesanan yang
+	// dibuat sebelum rebranding dan belum selesai dibayar.
+	billTitle, _ := payload["bill_title"].(string)
+	var orderID string
+	if strings.HasPrefix(billTitle, "Citra Artframe Order #") {
+		orderID = strings.TrimPrefix(billTitle, "Citra Artframe Order #")
+	} else if strings.HasPrefix(billTitle, "CitraFrame Order #") {
+		orderID = strings.TrimPrefix(billTitle, "CitraFrame Order #")
+	}
+
+	if orderID != "" {
+		_, err := database.DB.Exec("UPDATE orders SET order_status = ? WHERE id = ?", targetStatus, orderID)
 		if err != nil {
-			log.Printf("Failed to update order status for UID %s: %v", payload.Data.BillKey, err)
-			// Kirim status error agar Flip bisa mencoba lagi (jika dikonfigurasi)
-			http.Error(w, "Failed to update database", http.StatusInternalServerError)
+			log.Printf("Flip webhook: update error: %v", err)
+			http.Error(w, "db error", http.StatusInternalServerError)
 			return
 		}
-		log.Printf("Order UID %s successfully updated to PAID/PROCESSING.", payload.Data.BillKey)
+	} else {
+		log.Printf("Flip webhook: could not extract order ID from payload: %v", payload)
+		// Try to fallback to flip_link_id if possible
+		if linkIDStr := stringFromAny(payload["bill_link_id"]); linkIDStr != "" {
+			database.DB.Exec("UPDATE orders SET order_status = ? WHERE flip_link_id = ?", targetStatus, linkIDStr)
+		} else {
+			http.Error(w, "bad payload", http.StatusBadRequest)
+			return
+		}
 	}
 
-	// 4. Kirim balasan OK ke Flip
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Webhook received successfully"))
+	_, _ = w.Write([]byte(`{"ok":true}`))
 }

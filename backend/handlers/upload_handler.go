@@ -52,8 +52,8 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(map[string]string{
 		"imageUrl": uploadResult.SecureURL, // Pastikan key ini "imageUrl"
 	})
-    if err != nil {
-        // Jika ada error saat mengirim JSON, log error tersebut
-        http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-    }
+	if err != nil {
+		// Jika ada error saat mengirim JSON, log error tersebut
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }

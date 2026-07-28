@@ -1,0 +1,143 @@
+@startuml Activity_Customer_CitraFrame
+
+title Activity Diagram Pelanggan (Customer) - Sistem CitraFrame
+
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+  BackgroundColor #FFFDE7
+  BorderColor #C09553
+  ArrowColor #333333
+}
+skinparam partition {
+  BackgroundColor #FAFAFA
+  BorderColor #CCCCCC
+}
+
+|#FFF8F0|Pelanggan|
+|#FAFAFA|Sistem CitraFrame|
+|#EEF7FF|Sistem Eksternal|
+
+|Pelanggan|
+start
+:Mengakses Aplikasi Web CitraFrame\n(Beranda / Landing Page);
+
+if (Sudah Punya Akun / Login?) then (Belum)
+  :Memilih Menu Login / Register;
+  |Sistem Eksternal|
+  :Autentikasi Akun via\nFirebase Auth (Email / Google);
+  |Sistem CitraFrame|
+  :Memverifikasi Token Firebase\n& Membuka Sesi Pelanggan;
+  |Pelanggan|
+else (Sudah)
+endif
+
+:Berada di Beranda & Melihat Promo/Slider;
+
+fork
+  :Melihat Katalog Bingkai\n(Products);
+  :Memilih & Melihat Detail\nProduk Bingkai;
+fork again
+  :Melihat Katalog Koleksi Seni\n(Art Prints);
+  :Memilih & Melihat Detail\nArt Print;
+fork again
+  :Membuka Custom Frame Builder;
+  :Memilih Model & Ukuran Bingkai;
+  :Mengatur Spesifikasi Mat Board\n(Warna & Ketebalan Border);
+  :Memilih Jenis Pelindung Kaca\n(Glass Type);
+  if (Menggunakan Artwork Sendiri?) then (Ya)
+    :Mengunggah Foto / Artwork Pribadi;
+  else (Tidak)
+    :Memilih Artwork dari Katalog;
+  endif
+end merge
+
+if (Ingin Melihat Visualisasi AR\nSebelum Membeli?) then (Ya)
+  :Membuka Fitur Visualisasi AR\n(Augmented Reality);
+  if (Pilih Mode AR) then (WebXR 3D)
+    :Menampilkan Simulasi 3D\ndi Ruang Nyata (WebXR);
+  else (Kamera Preview)
+    :Menampilkan Preview\nvia Kamera Perangkat;
+  endif
+  :Menempatkan Bingkai di Dinding\n& Mengambil Foto Preview (Capture);
+else (Tidak)
+endif
+
+:Menekan Tombol "Tambah ke Keranjang";
+
+|Sistem CitraFrame|
+:Menyimpan Item ke Keranjang Belanja\n(Database Cart);
+
+|Pelanggan|
+:Membuka Halaman Keranjang Belanja (Cart);
+if (Ada Perubahan Item?) then (Ya)
+  :Mengubah Jumlah Kuantitas atau\nMenghapus Item dari Keranjang;
+  |Sistem CitraFrame|
+  :Memperbarui Data Keranjang;
+  |Pelanggan|
+else (Tidak)
+endif
+
+:Menekan Tombol "Checkout";
+
+|Sistem CitraFrame|
+:Menampilkan Halaman Checkout;
+
+|Pelanggan|
+if (Pilih Alamat Pengiriman) then (Tambah Alamat Baru)
+  :Mengisi Data Penerima & Nomor Telepon;
+  :Memilih Wilayah (Provinsi, Kabupaten,\nKecamatan, Desa);
+  |Sistem Eksternal|
+  :Menyediakan Data Wilayah\nAdministrasi Indonesia (API.co.id);
+  |Pelanggan|
+  :Mengisi Alamat Lengkap & Kode Pos;
+  if (Pin Lokasi di Peta?) then (Ya)
+    :Menandai Titik Koordinat\ndi Peta Interaktif (Leaflet);
+  else (Tidak)
+  endif
+  |Sistem CitraFrame|
+  :Menyimpan Alamat Baru ke Buku Alamat;
+  |Pelanggan|
+else (Pilih Alamat Tersedia)
+  :Memilih Alamat dari Daftar Tersimpan;
+endif
+
+:Memilih Ekspedisi / Kurir Pengiriman;
+
+|Sistem Eksternal|
+:Menghitung Tarif Ongkos Kirim\nBerdasarkan Alamat & Berat (API.co.id);
+
+|Sistem CitraFrame|
+:Menampilkan Subtotal Barang,\nOngkos Kirim, & Total Bayar;
+
+|Pelanggan|
+:Menekan Tombol "Buat Pesanan / Bayar";
+
+|Sistem CitraFrame|
+if (Item Art Print & Stok Tersedia?) then (Ya)
+  :Mengurangi Stok Art Print\ndi Database;
+else (Tidak / Produk Frame Custom)
+endif
+:Menyimpan Data Pesanan ke Database\ndengan Status "PENDING";
+:Mengirim Permintaan Pembuatan\nTagihan Pembayaran (Bill);
+
+|Sistem Eksternal|
+:Membuat Tautan Pembayaran\n(Flip Payment Gateway);
+
+|Sistem CitraFrame|
+:Mengarahkan (Redirect) Pelanggan\nke Halaman Pembayaran Flip;
+
+|Pelanggan|
+:Melakukan Pembayaran Sesuai Tagihan\nSebelum Batas Waktu (Expired Date);
+
+|Sistem Eksternal|
+:Memproses Pembayaran &\nMengirim Notifikasi Callback / Webhook;
+
+|Sistem CitraFrame|
+:Menerima Validasi Pembayaran &\nMemperbarui Status Pesanan;
+
+|Pelanggan|
+:Menerima Bukti Pemesanan,\nNomor Pesanan, & Faktur (Invoice);
+:Mengakses Manajemen Akun\n(Melihat Riwayat & Status Pesanan);
+
+stop
+@enduml

@@ -3,29 +3,41 @@ document.addEventListener("DOMContentLoaded", function () {
   const header = document.getElementById("main-header");
   const menuToggle = document.getElementById("menu-toggle");
   const navMenu = document.getElementById("site-nav");
-  const mainContent = document.querySelector("main");
+  const navOverlay = document.getElementById("nav-overlay");
 
-  if (header && mainContent) {
-    const initialHeaderHeight = header.offsetHeight;
-    mainContent.style.marginTop = `${initialHeaderHeight}px`;
-  }
-
+  // Scroll shadow
   if (header) {
     window.addEventListener("scroll", () => {
       header.classList.toggle("scrolled", window.scrollY > 50);
     });
   }
 
+  // Hamburger toggle with overlay & aria
+  function openMenu() {
+    navMenu?.classList.add("active");
+    navOverlay?.classList.add("active");
+    document.body.style.overflow = "hidden";
+    if (menuToggle) menuToggle.setAttribute("aria-expanded", "true");
+  }
+  function closeMenu() {
+    navMenu?.classList.remove("active");
+    navOverlay?.classList.remove("active");
+    document.body.style.overflow = "";
+    if (menuToggle) menuToggle.setAttribute("aria-expanded", "false");
+  }
+
   if (menuToggle && navMenu) {
     menuToggle.addEventListener("click", () => {
-      navMenu.classList.toggle("active");
+      navMenu.classList.contains("active") ? closeMenu() : openMenu();
     });
   }
 
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      navMenu?.classList.remove("active");
-    });
+  // Close on overlay click
+  navOverlay?.addEventListener("click", closeMenu);
+
+  // Close on any link/button inside nav
+  document.querySelectorAll(".nav-link, .btn-ar-nav, .btn-nav-custom, .mobile-nav-link").forEach((el) => {
+    el.addEventListener("click", closeMenu);
   });
 
   // === Animasi Fade ===
@@ -69,24 +81,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
       slidesData.forEach((slideData) => {
         const slide = document.createElement("div");
-        slide.className =
-          "slider-slide absolute inset-0 w-full h-full transition-transform duration-700 ease-in-out";
-        slide.innerHTML = `<img src="${slideData.imageUrl}" alt="${slideData.altText}" class="w-full h-full object-cover">`;
+        slide.className = "slider-slide";
+        slide.style.cssText = "position:absolute; inset:0; width:100%; height:100%;";
+        slide.innerHTML = `
+          <picture style="display:block; width:100%; height:100%;">
+            <source media="(max-width: 767px)" srcset="${slideData.mobileImageUrl || slideData.imageUrl}">
+            <img src="${slideData.imageUrl}" alt="${slideData.altText || 'Citra Artframe Hero Slide'}" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+          </picture>
+        `;
         sliderWrapper.appendChild(slide);
       });
 
-      prevBtn.classList.remove("opacity-0");
-      nextBtn.classList.remove("opacity-0");
+      prevBtn.style.opacity = "1";
+      nextBtn.style.opacity = "1";
 
-      const slides = document.querySelectorAll(".slider-slide");
+      const slides = sliderWrapper.querySelectorAll(".slider-slide");
       let currentSlide = 0;
       let slideInterval;
+      let touchStartX = null;
+      let touchStartY = null;
 
       slides.forEach((_, index) => {
         const dot = document.createElement("button");
-        dot.className =
-          "dot w-3 h-3 bg-white/50 rounded-full transition-all duration-300";
-        dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
+        dot.className = "dot";
+        dot.type = "button";
+        dot.setAttribute("aria-label", `Tampilkan banner ${index + 1}`);
+        dot.setAttribute("aria-current", "false");
         dot.addEventListener("click", () => {
           showSlide(index);
           resetInterval();
@@ -94,19 +114,28 @@ document.addEventListener("DOMContentLoaded", function () {
         dotsContainer.appendChild(dot);
       });
 
-      const dots = document.querySelectorAll(".dot");
+      const dots = dotsContainer.querySelectorAll(".dot");
 
       function showSlide(index) {
-        if (index >= slides.length) index = 0;
-        if (index < 0) index = slides.length - 1;
+        if (!slides.length) return;
+
+        const normalizedIndex =
+          ((index % slides.length) + slides.length) % slides.length;
+
         slides.forEach((slide, i) => {
-          slide.style.transform = `translateX(${(i - index) * 100}%)`;
+          const isActive = i === normalizedIndex;
+          slide.style.transform = `translateX(${(i - normalizedIndex) * 100}%)`;
+          slide.classList.toggle("active", isActive);
+          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
         });
+
         dots.forEach((dot, i) => {
-          dot.classList.toggle("bg-white", i === index);
-          dot.classList.toggle("bg-white/50", i !== index);
+          const isActive = i === normalizedIndex;
+          dot.classList.toggle("active", isActive);
+          dot.setAttribute("aria-current", isActive ? "true" : "false");
         });
-        currentSlide = index;
+
+        currentSlide = normalizedIndex;
       }
 
       function nextSlide() {
@@ -117,7 +146,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       function resetInterval() {
         clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 5000);
+        if (slides.length > 1 && !document.hidden) {
+          slideInterval = setInterval(nextSlide, 5000);
+        }
       }
 
       nextBtn.addEventListener("click", () => {
@@ -128,6 +159,57 @@ document.addEventListener("DOMContentLoaded", function () {
         prevSlide();
         resetInterval();
       });
+
+      // Swipe horizontal pada ponsel juga harus memakai showSlide agar dot tetap sinkron.
+      sliderWrapper.addEventListener(
+        "touchstart",
+        (event) => {
+          const touch = event.changedTouches[0];
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+          clearInterval(slideInterval);
+        },
+        { passive: true }
+      );
+
+      sliderWrapper.addEventListener(
+        "touchend",
+        (event) => {
+          if (touchStartX === null || touchStartY === null) return;
+
+          const touch = event.changedTouches[0];
+          const distanceX = touch.clientX - touchStartX;
+          const distanceY = touch.clientY - touchStartY;
+          const swipeThreshold = Math.max(45, sliderWrapper.clientWidth * 0.08);
+
+          if (
+            Math.abs(distanceX) >= swipeThreshold &&
+            Math.abs(distanceX) > Math.abs(distanceY)
+          ) {
+            distanceX < 0 ? nextSlide() : prevSlide();
+          }
+
+          touchStartX = null;
+          touchStartY = null;
+          resetInterval();
+        },
+        { passive: true }
+      );
+
+      sliderWrapper.addEventListener("touchcancel", () => {
+        touchStartX = null;
+        touchStartY = null;
+        resetInterval();
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        document.hidden ? clearInterval(slideInterval) : resetInterval();
+      });
+
+      const hasMultipleSlides = slides.length > 1;
+      prevBtn.hidden = !hasMultipleSlides;
+      nextBtn.hidden = !hasMultipleSlides;
+      dotsContainer.hidden = !hasMultipleSlides;
 
       showSlide(0);
       resetInterval();

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Akun Saya - Citra Artframe</title>
+  <link rel="stylesheet" href="/assets/css/base.css?v=20260727.1"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/assets/css/account.css?v=20260722.3"/>
+  <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260727.1"/>
+</head>
+<body class="page-account">
+  <header class="page-header">
+    <div class="page-header-inner">
+      <a href="/" class="logo" aria-label="Citra Artframe - Beranda">CITRA ARTFRAME</a>
+      <a href="/" class="back-btn" aria-label="Kembali ke beranda">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/><path d="M9 12h10"/></svg>
+        <span>Beranda</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Sidebar -->
+    <aside class="user-sidebar">
+      <div class="user-avatar-lg" id="user-avatar-lg">U</div>
+      <div class="user-info">
+        <h2 id="acc-name">Memuat...</h2>
+        <p id="acc-email">—</p>
+      </div>
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-tab="orders">Riwayat Pesanan</button>
+        <button class="nav-btn" data-tab="addresses">Buku Alamat</button>
+        <button class="nav-btn" id="logout-btn" style="color: #DC2626; margin-top: 16px;">Keluar</button>
+      </nav>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Orders Tab -->
+      <div class="tab-content active" id="tab-orders">
+        <div class="section-header">
+          <h1 class="section-title">Riwayat Pesanan</h1>
+        </div>
+        
+        <div class="order-tabs" id="order-status-tabs">
+          <button class="order-filter active" data-status="">Semua Pesanan</button>
+          <button class="order-filter" data-status="PENDING">Belum Bayar</button>
+          <button class="order-filter" data-status="PROCESSING">Diproses</button>
+          <button class="order-filter" data-status="SHIPPED">Dikirim</button>
+          <button class="order-filter" data-status="DELIVERED">Selesai</button>
+        </div>
+
+        <div id="orders-list">
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <p>Memuat riwayat pesanan...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Addresses Tab -->
+      <div class="tab-content" id="tab-addresses">
+        <div class="section-header">
+          <h1 class="section-title">Buku Alamat</h1>
+          <button class="btn-gold" style="height: 40px;" id="add-address-btn">+ Tambah Alamat</button>
+        </div>
+        <div id="addresses-list">
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <p>Memuat daftar alamat...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Address Form Modal -->
+  <div class="modal-overlay" id="address-modal">
+    <div class="modal-box">
+      <h3 id="address-modal-title">Tambah Alamat Baru</h3>
+      <form id="address-form">
+        <input type="hidden" id="addr-id"/>
+        
+        <div class="form-group">
+          <label>Label Alamat</label>
+          <input type="text" class="form-control" id="addr-label" placeholder="Contoh: Rumah, Kantor" required/>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nama Penerima</label>
+            <input type="text" class="form-control" id="addr-receiver" placeholder="Nama lengkap" required/>
+          </div>
+          <div class="form-group">
+            <label>No. Telepon</label>
+            <input type="tel" class="form-control" id="addr-phone" placeholder="08xxxxxxxxxx" required/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Provinsi</label>
+          <select id="addr-province" class="form-control" required disabled>
+            <option value="" disabled selected>-- Memuat Provinsi... --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Kota / Kabupaten</label>
+          <select id="addr-city" class="form-control" required disabled>
+            <option value="" disabled selected>-- Pilih Provinsi Dulu --</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kecamatan</label>
+            <select id="addr-district" class="form-control" required disabled>
+              <option value="" disabled selected>-- Pilih Kota Dulu --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Kelurahan / Desa</label>
+            <select id="addr-village" class="form-control" required disabled>
+              <option value="" disabled selected>-- Pilih Kecamatan Dulu --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Alamat Lengkap</label>
+          <textarea class="form-control" id="addr-full" placeholder="Nama jalan, nomor gedung, RT/RW, detail lainnya..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Kode Pos</label>
+          <input type="text" class="form-control" id="addr-postal" placeholder="5 digit kode pos" required pattern="[0-9]{5}"/>
+        </div>
+
+        <div class="form-group">
+          <label>Pin Lokasi Pengiriman (Opsional tapi disarankan)</label>
+          <div id="map-container"></div>
+          <p class="map-hint">Geser peta atau klik untuk menetapkan pin. Titik saat ini: <span id="map-coords" style="font-weight: 600;">Pilih lokasi</span></p>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="addr-default"/>
+          <label for="addr-default">Jadikan sebagai alamat utama</label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-outline" id="cancel-addr-btn">Batal</button>
+          <button type="submit" class="btn-gold">Simpan Alamat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const app = initializeApp({
+      apiKey:"AIzaSyBbKW8bjdh8J4k7ZJNh0z1bV6YBMWPlNHE",authDomain:"citraartframe-13ab5.firebaseapp.com",
+      projectId:"citraartframe-13ab5",storageBucket:"citraartframe-13ab5.firebasestorage.app",
+      messagingSenderId:"96864426754",appId:"1:96864426754:web:202e3c6a4e6c58771bc01b"
+    });
+    const auth = getAuth(app);
+    const API = "/api";
+    let currentUID = null;
+    let currentUser = null;
+    let map = null, marker = null, lat = -6.2, lng = 106.8;
+
+    // Formatters
+    const fmtCurrency = n => `Rp ${Number(n||0).toLocaleString("id-ID")}`;
+    const fmtDate = d => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+    
+    const statusLabels = {
+      pending_payment: "Menunggu Pembayaran", awaiting_payment: "Menunggu Pembayaran",
+      payment_failed: "Pembayaran Gagal",
+      PENDING: "Belum Bayar", PROCESSING: "Diproses", 
+      SHIPPED: "Dikirim", DELIVERED: "Selesai", CANCELED: "Dibatalkan"
+    };
+
+    const authFetch = async (url, options = {}) => {
+      const token = await currentUser?.getIdToken();
+      if (!token) throw new Error("Login diperlukan.");
+
+      const headers = new Headers(options.headers || {});
+      headers.set("Authorization", `Bearer ${token}`);
+      return fetch(url, { ...options, headers });
+    };
+
+    onAuthStateChanged(auth, user => {
+      if (!user) { window.location.href = "/"; return; }
+      currentUser = user;
+      currentUID = user.uid;
+      document.getElementById("acc-name").textContent = user.displayName || "Pelanggan Citra Artframe";
+      document.getElementById("acc-email").textContent = user.email;
+      document.getElementById("user-avatar-lg").textContent = (user.displayName || user.email || "C").charAt(0).toUpperCase();
+      loadOrders();
+      loadAddresses();
+    });
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      signOut(auth).then(() => window.location.href = "/");
+    });
+
+    // Navigation Tabs
+    document.querySelectorAll(".nav-btn[data-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    // Order Filters
+    document.querySelectorAll(".order-filter").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".order-filter").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderOrders(btn.dataset.status);
+      });
+    });
+
+    // --- ORDERS LOGIC ---
+    let allOrders = [];
+    async function loadOrders() {
+      try {
+        const res = await authFetch(`${API}/user/orders?uid=${currentUID}`);
+        if(res.ok) {
+          allOrders = await res.json();
+          renderOrders("");
+        } else throw new Error();
+      } catch(e) {
+        document.getElementById("orders-list").innerHTML = `<div class="empty-state"><p>Gagal memuat riwayat pesanan.</p></div>`;
+      }
+    }
+
+    function renderOrders(filterStatus) {
+      const pendingStatuses = ["PENDING", "pending_payment", "awaiting_payment"];
+      const list = filterStatus
+        ? allOrders.filter(o => filterStatus === "PENDING" ? pendingStatuses.includes(o.order_status) : o.order_status === filterStatus)
+        : allOrders;
+      const container = document.getElementById("orders-list");
+      
+      if (!list || list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <p>Belum ada pesanan${filterStatus ? " dengan status ini" : " di akun Anda"}.</p>
+            ${!filterStatus ? '<a href="/products" class="btn-gold" style="text-decoration:none;">Belanja Sekarang</a>' : ''}
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(o => {
+        const status = o.order_status || 'PENDING';
+        const isPending = pendingStatuses.includes(status);
+        
+        return `
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-id-group">
+              <span class="order-id">Pesanan #${o.order_uid || o.id}</span>
+              <span class="order-date">${fmtDate(o.created_at)}</span>
+            </div>
+            <span class="status-pill status-${status}">${statusLabels[status] || status}</span>
+          </div>
+          
+          <div class="order-body">
+            <div class="order-thumb" style="overflow:hidden;">
+               ${o.image_url ? `<img src="${o.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" alt="Product"/>` : 
+               `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`}
+            </div>
+            <div class="order-items-info">
+              <div class="order-items-text">${o.items_summary || "Detail pesanan..."}</div>
+              <div class="order-total-price">Total: ${fmtCurrency(o.total_amount)}</div>
+            </div>
+          </div>
+          
+          <div class="order-footer" style="display:flex; justify-content:flex-end; gap:12px;">
+            <a href="/invoice?id=${o.id}" class="btn-outline" style="text-decoration:none; padding:8px 16px; display:inline-flex; align-items:center;">Detail & Invoice</a>
+            ${isPending ? `<button class="btn-gold continue-payment-btn" data-payment-url="${encodeURIComponent(o.payment_url || '')}">Lanjut Bayar</button>` : ''}
+          </div>
+        </div>
+      `}).join("");
+
+      container.querySelectorAll(".continue-payment-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const paymentUrl = decodeURIComponent(btn.dataset.paymentUrl || "");
+          if (!paymentUrl) {
+            alert("Link pembayaran belum tersedia. Silakan buat checkout ulang atau hubungi admin.");
+            return;
+          }
+          window.location.href = paymentUrl;
+        });
+      });
+    }
+
+    // --- WILAYAH API LOGIC (via Backend Proxy → API.co.id) ---
+    const addrProvince = document.getElementById("addr-province");
+    const addrCity = document.getElementById("addr-city");
+    const addrDistrict = document.getElementById("addr-district");
+    const addrVillage = document.getElementById("addr-village");
+    const addrPostal = document.getElementById("addr-postal");
+
+    const resetDD = (dd, ph) => { dd.innerHTML = `<option value="" disabled selected>-- ${ph} --</option>`; dd.disabled = true; };
+    const loadDD = (dd, msg) => { dd.innerHTML = `<option value="">${msg}</option>`; dd.disabled = true; };
+    const fillDD = (dd, items, labelKey = "name", valueKey = "code") => {
+      dd.innerHTML = `<option value="" disabled selected>-- Pilih --</option>`;
+      (items || []).forEach(i => {
+        const opt = document.createElement("option");
+        opt.value = i[valueKey] || "";
+        opt.textContent = i[labelKey] || "";
+        opt.dataset.name = i[labelKey] || "";
+        if (i.postal_code) opt.dataset.postal = i.postal_code;
+        dd.appendChild(opt);
+      });
+      dd.disabled = false;
+    };
+
+    // Load provinces on page load
+    (async () => {
+      loadDD(addrProvince, "Memuat provinsi...");
+      try {
+        const r = await fetch(`${API}/regional/provinces`);
+        const d = await r.json();
+        fillDD(addrProvince, Array.isArray(d) ? d : (d.data || []), "name", "code");
+      } catch(e) { resetDD(addrProvince, "Gagal memuat provinsi"); }
+    })();
+
+    addrProvince.addEventListener("change", async () => {
+      resetDD(addrCity, "Memuat kota..."); resetDD(addrDistrict, "Pilih Kota Dulu"); resetDD(addrVillage, "Pilih Kecamatan Dulu"); addrPostal.value = "";
+      try {
+        const r = await fetch(`${API}/regional/regencies?province_code=${addrProvince.value}`);
+        const d = await r.json();
+        fillDD(addrCity, Array.isArray(d) ? d : (d.data || []), "name", "code");
+      } catch(e) { resetDD(addrCity, "Gagal memuat kota"); }
+    });
+
+    addrCity.addEventListener("change", async () => {
+      resetDD(addrDistrict, "Memuat kecamatan..."); resetDD(addrVillage, "Pilih Kecamatan Dulu"); addrPostal.value = "";
+      try {
+        const r = await fetch(`${API}/regional/districts?regency_code=${addrCity.value}`);
+        const d = await r.json();
+        fillDD(addrDistrict, Array.isArray(d) ? d : (d.data || []), "name", "code");
+      } catch(e) { resetDD(addrDistrict, "Gagal memuat kecamatan"); }
+    });
+
+    addrDistrict.addEventListener("change", async () => {
+      resetDD(addrVillage, "Memuat kelurahan..."); addrPostal.value = "";
+      try {
+        const r = await fetch(`${API}/regional/villages?district_code=${addrDistrict.value}`);
+        const d = await r.json();
+        fillDD(addrVillage, Array.isArray(d) ? d : (d.data || []), "name", "code");
+      } catch(e) { resetDD(addrVillage, "Gagal memuat kelurahan"); }
+    });
+
+    addrVillage.addEventListener("change", () => {
+      const sel = addrVillage.options[addrVillage.selectedIndex];
+      if (sel && sel.dataset.postal) addrPostal.value = sel.dataset.postal;
+    });
+
+    // --- ADDRESSES LOGIC ---
+    let allAddresses = [];
+    async function loadAddresses() {
+      try {
+        const res = await authFetch(`${API}/user/addresses?uid=${currentUID}`);
+        if(res.ok) {
+          allAddresses = await res.json();
+          renderAddresses();
+        } else throw new Error();
+      } catch(e) {
+        document.getElementById("addresses-list").innerHTML = `<div class="empty-state"><p>Gagal memuat alamat.</p></div>`;
+      }
+    }
+
+    function renderAddresses() {
+      const container = document.getElementById("addresses-list");
+      if (!allAddresses || allAddresses.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <p>Anda belum menyimpan alamat apapun.</p>
+            <button class="btn-gold" onclick="document.getElementById('add-address-btn').click()">Tambah Alamat Baru</button>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = allAddresses.map(a => {
+        const noVillage = !a.village_code;
+        return `
+        <div class="address-card ${a.is_default ? "default-addr" : ""}">
+          ${a.is_default ? '<span class="badge-default">Alamat Utama</span>' : ""}
+          ${noVillage ? '<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:0.85rem;color:#D97706;">⚠️ Alamat ini belum lengkap (kelurahan belum diisi). Silakan ubah alamat untuk bisa cek ongkir.</div>' : ''}
+          <div class="addr-label">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            ${a.label}
+          </div>
+          <div class="addr-name-phone">${a.receiver_name} | ${a.phone}</div>
+          <div class="addr-full">${a.full_address}${a.village ? ', Kel. ' + a.village : ''}${a.district ? ', Kec. ' + a.district : ''}, ${a.city}, ${a.province} ${a.postal_code}</div>
+          
+          <div class="addr-actions">
+            <button class="action-link" onclick="editAddress(${a.id})">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+              Ubah Alamat
+            </button>
+            ${!a.is_default ? `
+            <button class="action-link delete" onclick="deleteAddress(${a.id})">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Hapus
+            </button>` : ''}
+          </div>
+        </div>
+      `}).join("");
+    }
+
+    function getProvinceLabel(val) {
+      if (val === 'jabodetabek') return "Jabodetabek";
+      if (val === 'jawa') return "Jawa (Luar Jabodetabek)";
+      if (val === 'luar_jawa') return "Luar Jawa";
+      return val || "";
+    }
+
+    // Modal Logic
+    document.getElementById("add-address-btn").addEventListener("click", () => openAddressModal());
+    document.getElementById("cancel-addr-btn").addEventListener("click", () => closeAddressModal());
+    document.getElementById("address-modal").addEventListener("click", e => { if(e.target === e.currentTarget) closeAddressModal(); });
+
+    function openAddressModal(addr = null) {
+      const modal = document.getElementById("address-modal");
+      document.getElementById("address-modal-title").textContent = addr ? "Ubah Alamat" : "Tambah Alamat Baru";
+      
+      document.getElementById("addr-id").value = addr ? addr.id : "";
+      document.getElementById("addr-label").value = addr?.label || "";
+      document.getElementById("addr-receiver").value = addr?.receiver_name || "";
+      document.getElementById("addr-phone").value = addr?.phone || "";
+      
+      // Reset all cascading dropdowns
+      resetDD(addrCity, "Pilih Provinsi Dulu");
+      resetDD(addrDistrict, "Pilih Kota Dulu");
+      resetDD(addrVillage, "Pilih Kecamatan Dulu");
+      
+      document.getElementById("addr-postal").value = addr?.postal_code || "";
+      document.getElementById("addr-full").value = addr?.full_address || "";
+      document.getElementById("addr-default").checked = addr?.is_default || false;
+      
+      lat = addr?.latitude && addr.latitude !== 0 ? addr.latitude : -6.200000;
+      lng = addr?.longitude && addr.longitude !== 0 ? addr.longitude : 106.816666;
+      
+      modal.classList.add("active");
+      document.body.classList.add("address-modal-open");
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => initMap(), 300);
+    }
+
+    function closeAddressModal() {
+      document.getElementById("address-modal").classList.remove("active");
+      document.body.classList.remove("address-modal-open");
+      document.body.style.overflow = '';
+    }
+
+    function initMap() {
+      const container = document.getElementById("map-container");
+      if (map) { map.remove(); map = null; }
+      
+      map = L.map(container).setView([lat, lng], 14);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+      
+      if (lat !== -6.200000 || lng !== 106.816666 || document.getElementById("addr-id").value) {
+        marker = L.marker([lat, lng]).addTo(map);
+      }
+      
+      updateCoordsText(lat, lng);
+      
+      map.on("click", e => {
+        lat = e.latlng.lat; lng = e.latlng.lng;
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+        updateCoordsText(lat, lng);
+      });
+      
+      map.invalidateSize();
+    }
+    
+    function updateCoordsText(lat, lng) {
+        document.getElementById("map-coords").textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    }
+
+    document.getElementById("address-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const id = document.getElementById("addr-id").value;
+      const btn = e.target.querySelector('button[type="submit"]');
+      
+      const getSelText = (sel) => sel.options[sel.selectedIndex]?.dataset?.name || sel.options[sel.selectedIndex]?.text || "";
+
+      const payload = {
+        firebase_uid: currentUID,
+        label: document.getElementById("addr-label").value,
+        receiver_name: document.getElementById("addr-receiver").value,
+        phone: document.getElementById("addr-phone").value,
+        province_code: addrProvince.value || "",
+        regency_code: addrCity.value || "",
+        district_code: addrDistrict.value || "",
+        village_code: addrVillage.value || "",
+        province: getSelText(addrProvince),
+        city: getSelText(addrCity),
+        district: getSelText(addrDistrict),
+        village: getSelText(addrVillage),
+        postal_code: document.getElementById("addr-postal").value,
+        full_address: document.getElementById("addr-full").value,
+        latitude: lat, longitude: lng,
+        is_default: document.getElementById("addr-default").checked
+      };
+
+      try {
+        btn.disabled = true;
+        btn.textContent = "Menyimpan...";
+        const url = id ? `${API}/user/addresses/${id}` : `${API}/user/addresses`;
+        const res = await authFetch(url, { 
+          method: id ? "PUT" : "POST", 
+          headers: {"Content-Type":"application/json"}, 
+          body: JSON.stringify(payload) 
+        });
+        
+        if(!res.ok) throw new Error();
+        
+        closeAddressModal();
+        loadAddresses();
+      } catch(err) { 
+        alert("Gagal menyimpan alamat. Silakan coba lagi."); 
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Simpan Alamat";
+      }
+    });
+
+    window.editAddress = function(id) {
+      const addr = allAddresses.find(a => a.id === id);
+      if (addr) openAddressModal(addr);
+    };
+    
+    window.deleteAddress = async function(id) {
+      if (!confirm("Apakah Anda yakin ingin menghapus alamat ini?")) return;
+      try {
+        const res = await authFetch(`${API}/user/addresses/${id}`, { method: "DELETE" });
+        if(res.ok) loadAddresses();
+        else throw new Error();
+      } catch(e) { alert("Gagal menghapus alamat."); }
+    };
+  </script>
+</body>
+</html>

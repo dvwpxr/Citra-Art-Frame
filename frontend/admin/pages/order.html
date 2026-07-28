@@ -1,392 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Orders - CitraFrame</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-    <style>
-      .sidebar {
-        transition: transform 0.3s ease-in-out;
-      }
-      .modal {
-        display: none;
-      }
-      .modal.active {
-        display: flex;
-      }
-      .badge {
-        @apply px-2 py-1 rounded text-xs font-semibold;
-      }
-    </style>
-  </head>
-  <body class="bg-slate-50 font-sans">
-    <!-- Sidebar -->
-    <div
-      id="sidebar"
-      class="sidebar fixed left-0 top-0 w-64 h-full bg-slate-900 p-4 z-50 transform -translate-x-full md:translate-x-0"
-    >
-      <a href="#" class="flex items-center pb-4 border-b border-b-slate-700">
-        <i class="ri-camera-lens-line text-2xl text-white mr-3"></i>
-        <span class="text-white text-lg font-bold">CitraFrame</span>
-      </a>
-      <ul class="mt-4">
-        <li class="mb-1 group">
-          <a
-            href="/dashboard"
-            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
-            ><i class="ri-home-2-line mr-3 text-lg"></i
-            ><span class="text-sm">Dashboard</span></a
-          >
-        </li>
-        <li class="mb-1 group active">
-          <a
-            href="/dashboard/order"
-            class="flex items-center py-2 px-4 bg-slate-950 text-white rounded-md"
-            ><i class="ri-shopping-cart-line mr-3 text-lg"></i
-            ><span class="text-sm">Orders</span></a
-          >
-        </li>
-        <li class="mb-1 group">
-          <a
-            href="/dashboard/product"
-            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
-            ><i class="ri-archive-line mr-3 text-lg"></i
-            ><span class="text-sm">Products</span></a
-          >
-        </li>
-        <li class="mb-1 group">
-          <a
-            href="/dashboard/prints"
-            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
-            ><i class="ri-image-line mr-3 text-lg"></i
-            ><span class="text-sm">Art Prints</span></a
-          >
-        </li>
-        <li class="mb-1 group">
-          <a
-            href="/dashboard/slider"
-            class="flex items-center py-2 px-4 text-slate-300 hover:bg-slate-950 hover:text-white rounded-md"
-            ><i class="ri-slideshow-2-line mr-3 text-lg"></i
-            ><span class="text-sm">Hero Slider</span></a
-          >
-        </li>
-      </ul>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - Citra Artframe</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#0c0c0f;color:#e0e0e0;min-height:100vh;display:flex}
+    /* Sidebar */
+    .sidebar{width:260px;background:linear-gradient(180deg,#111115 0%,#0c0c0f 100%);border-right:1px solid rgba(255,255,255,0.06);height:100vh;position:fixed;left:0;top:0;z-index:50;display:flex;flex-direction:column;transition:transform 0.3s}
+    .sidebar-brand{padding:24px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+    .sidebar-brand i{font-size:1.5rem;color:#c09553}
+    .sidebar-brand span{font-size:1rem;font-weight:800;color:#fff;letter-spacing:2px}
+    .sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:10px;color:rgba(255,255,255,0.45);font-size:0.85rem;font-weight:500;text-decoration:none;transition:all 0.2s}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
+    .nav-item.active{background:linear-gradient(135deg,rgba(192,149,83,0.15),rgba(192,149,83,0.05));color:#c09553;font-weight:600}
+    .nav-item i{font-size:1.15rem;width:20px;text-align:center}
+    .nav-section{font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:2px;padding:20px 16px 8px;text-transform:uppercase}
+    /* Main */
+    .main{flex:1;margin-left:260px;min-height:100vh}
+    .topbar{position:sticky;top:0;z-index:40;padding:16px 28px;background:rgba(12,12,15,0.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between}
+    .topbar h1{font-size:1.15rem;font-weight:700;color:#fff}
+    .topbar-actions{display:flex;align-items:center;gap:12px}
+    .btn-logout{display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:10px;padding:8px 16px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+    .btn-logout:hover{background:rgba(239,68,68,0.2)}
+    .content{padding:28px}
+    /* Stats Grid */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px}
+    .stat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:22px;transition:all 0.3s;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+    .stat-card.gold::before{background:linear-gradient(90deg,#c09553,#e8b96a)}
+    .stat-card.blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+    .stat-card.green::before{background:linear-gradient(90deg,#22c55e,#4ade80)}
+    .stat-card.purple::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .stat-card.red::before{background:linear-gradient(90deg,#ef4444,#f87171)}
+    .stat-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
+    .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .stat-icon.gold{background:rgba(192,149,83,0.12);color:#c09553}
+    .stat-icon.blue{background:rgba(59,130,246,0.12);color:#60a5fa}
+    .stat-icon.green{background:rgba(34,197,94,0.12);color:#4ade80}
+    .stat-icon.purple{background:rgba(139,92,246,0.12);color:#a78bfa}
+    .stat-icon.red{background:rgba(239,68,68,0.12);color:#f87171}
+    .stat-label{font-size:0.78rem;color:rgba(255,255,255,0.4);font-weight:500}
+    .stat-value{font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px}
+    .stat-sub{font-size:0.72rem;color:rgba(255,255,255,0.3)}
+    /* Card */
+    .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;margin-bottom:24px}
+    .card-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
+    .card-subtitle{font-size:0.85rem;color:rgba(255,255,255,0.35);margin-bottom:20px}
+    /* Table */
+    .table-container{overflow-x:auto; margin-top: 16px;}
+    table{width:100%;border-collapse:collapse}
+    thead th{text-align:left;padding:12px 16px;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.06);text-transform:uppercase;letter-spacing:0.5px}
+    tbody td{padding:16px 16px;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7)}
+    tbody tr:hover{background:rgba(255,255,255,0.02)}
+    /* Badges */
+    .badge{padding:4px 10px;border-radius:8px;font-size:0.7rem;font-weight:700;letter-spacing:0.3px}
+    .badge-pending{background:rgba(250,204,21,0.12);color:#fbbf24;border:1px solid rgba(250,204,21,0.2)}
+    .badge-processing{background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+    .badge-shipped{background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)}
+    .badge-delivered{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
+    .badge-canceled{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+    /* Forms & Actions */
+    .form-group{margin-bottom:16px}
+    label{display:block;font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:8px}
+    input, select, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(192,149,83,0.5);
+      background: rgba(255,255,255,0.05);
+    }
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary { background: #c09553; color: #000; }
+    .btn-primary:hover { background: #e8b96a; }
+    .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; }
+    .btn-danger:hover { background: rgba(239,68,68,0.25); }
+    .btn-icon { padding: 8px; border-radius: 8px; font-size: 1.1rem; }
+    .btn-icon.edit { color: #60a5fa; background: rgba(59,130,246,0.1); }
+    .btn-icon.edit:hover { background: rgba(59,130,246,0.2); }
+    .btn-icon.delete { color: #f87171; background: rgba(239,68,68,0.1); }
+    .btn-icon.delete:hover { background: rgba(239,68,68,0.2); }
+    .btn-icon.view { color: #c09553; background: rgba(192,149,83,0.1); }
+    .btn-icon.view:hover { background: rgba(192,149,83,0.2); }
+    .header-actions { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+    .filter-group { display: flex; gap: 12px; align-items: center; }
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 20px; }
+    .modal.active { display: flex; }
+    .modal-content { background: #111115; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; width: 100%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-content.lg { max-width: 800px; }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h2 { font-size: 1.2rem; font-weight: 700; color: #fff; }
+    .modal-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.5rem; cursor: pointer; }
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+    .modal-footer { padding: 20px 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 12px; }
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+    /* Pagination */
+    .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .page-info { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+    /* Notification */
+    .notification { position: fixed; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; z-index: 1000; transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .notification.show { transform: translateX(0); }
+    .notification.error { background: #ef4444; }
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}}
+    .text-sm { font-size: 0.85rem; } .text-xs { font-size: 0.75rem; }
+    .text-gray-400 { color: rgba(255,255,255,0.4); }
+    .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+    .mt-4 { margin-top: 16px; } .mb-2 { margin-bottom: 8px; }
+    .flex { display: flex; } .justify-between { justify-content: space-between; }
+    /* Modal details specific to orders */
+    .detail-section { margin-bottom: 24px; }
+    .detail-section h3 { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px; }
+    .detail-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
+    .detail-text strong { color: #fff; }
+    .items-list { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px; }
+    .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .item-row:last-child { border-bottom: none; }
+    .item-name { font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .item-meta { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+    .totals-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+    .totals-row.grand { font-weight: 700; color: #fff; font-size: 1rem; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px; padding-top: 12px; }
+  
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(192, 149, 83, 0.5); }
+    * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.15) transparent; }
+</style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <i class="ri-camera-lens-line"></i>
+      <span>CITRA ARTFRAME</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Menu</div>
+      <a href="/dashboard" class="nav-item"><i class="ri-dashboard-3-line"></i>Dashboard</a>
+      <a href="/dashboard/order" class="nav-item active"><i class="ri-shopping-bag-3-line"></i>Pesanan</a>
+      <a href="/dashboard/product" class="nav-item "><i class="ri-archive-2-line"></i>Produk</a>
+      <a href="/dashboard/prints" class="nav-item "><i class="ri-image-2-line"></i>Art Prints</a>
+      <div class="nav-section">Pengaturan</div>
+      <a href="/dashboard/slider" class="nav-item "><i class="ri-slideshow-3-line"></i>Hero Slider</a>
+      <a href="/dashboard/popular-frames" class="nav-item"><i class="ri-star-line"></i>Popular Frames</a>
+      <a href="/dashboard/frame-models" class="nav-item"><i class="ri-box-3-line"></i>Frame Models 3D</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <button type="button" id="sidebar-toggle" style="display:none;background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;margin-right:12px"><i class="ri-menu-line"></i></button>
+        <h1>Pesanan</h1>
+      </div>
+      <div class="topbar-actions">
+        <span style="font-size:0.82rem;color:rgba(255,255,255,0.4)">Admin</span>
+        <button class="btn-logout" id="logoutBtn"><i class="ri-logout-box-r-line"></i>Logout</button>
+      </div>
     </div>
 
-    <!-- Main -->
-    <main
-      class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-slate-50 min-h-screen transition-all"
-    >
-      <!-- Topbar -->
-      <div
-        class="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30"
-      >
-        <button
-          type="button"
-          class="text-lg text-gray-600 mr-4 md:hidden"
-          id="sidebar-toggle"
-        >
-          <i class="ri-menu-line"></i>
-        </button>
-        <ul class="ml-auto flex items-center">
-          <li class="relative">
-            <button type="button" class="flex items-center">
-              <span class="text-sm mr-2 font-semibold">Admin</span
-              ><i class="ri-arrow-down-s-line"></i>
-            </button>
-          </li>
-          <li class="ml-4">
-            <button
-              id="logoutBtn"
-              class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm flex items-center"
-            >
-              <i class="ri-logout-box-r-line mr-2"></i> Logout
-            </button>
-          </li>
-        </ul>
-      </div>
+    <div class="content">
+      
+<div class="card">
+  <div class="header-actions">
+    <div>
+      <h2 class="card-title">Order Management</h2>
+      <p class="card-subtitle">Kelola seluruh pesanan pelanggan.</p>
+    </div>
+    <div class="filter-group">
+      <input type="date" id="fromDate" style="display:none" />
+      <input type="date" id="toDate" style="display:none" />
+      <select id="statusFilter" style="width:140px">
+        <option value="">All Status</option>
+        <option value="pending_payment">Pending Payment</option>
+        <option value="awaiting_payment">Awaiting Payment</option>
+        <option value="payment_failed">Payment Failed</option>
+        <option value="PENDING">Pending</option>
+        <option value="PROCESSING">Processing</option>
+        <option value="SHIPPED">Shipped</option>
+        <option value="DELIVERED">Delivered</option>
+        <option value="CANCELED">Canceled</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Search by customer/order #" style="width:240px" />
+    </div>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="orders-table-body">
+        <tr><td colspan="7" style="text-align:center;padding:32px;color:rgba(255,255,255,0.25)">Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <div class="page-info" id="orders-count">0 orders</div>
+    <div style="display:flex;gap:8px">
+      <button id="prevPage" class="btn btn-secondary">Prev</button>
+      <button id="nextPage" class="btn btn-secondary">Next</button>
+    </div>
+  </div>
+</div>
 
-      <div class="p-6">
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
-            <div class="flex justify-between mb-4">
-              <div>
-                <p class="text-sm font-medium text-gray-500">
-                  New Orders (Today)
-                </p>
-                <p
-                  class="text-2xl font-semibold text-gray-800"
-                  id="stat-new-orders"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-blue-100 text-blue-600 w-12 h-12 flex items-center justify-center rounded-full"
-              >
-                <i class="ri-shopping-bag-3-line text-2xl"></i>
-              </div>
-            </div>
-            <p class="text-xs text-gray-500" id="stat-new-orders-sub">—</p>
-          </div>
-          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
-            <div class="flex justify-between mb-4">
-              <div>
-                <p class="text-sm font-medium text-gray-500">Pending</p>
-                <p
-                  class="text-2xl font-semibold text-gray-800"
-                  id="stat-pending"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-yellow-100 text-yellow-600 w-12 h-12 flex items-center justify-center rounded-full"
-              >
-                <i class="ri-time-line text-2xl"></i>
-              </div>
-            </div>
-            <p class="text-xs text-gray-500">Menunggu diproses</p>
-          </div>
-          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
-            <div class="flex justify-between mb-4">
-              <div>
-                <p class="text-sm font-medium text-gray-500">Shipped</p>
-                <p
-                  class="text-2xl font-semibold text-gray-800"
-                  id="stat-shipped"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-indigo-100 text-indigo-600 w-12 h-12 flex items-center justify-center rounded-full"
-              >
-                <i class="ri-truck-line text-2xl"></i>
-              </div>
-            </div>
-            <p class="text-xs text-gray-500">Dalam pengiriman</p>
-          </div>
-          <div class="bg-white rounded-md border border-gray-200 p-6 shadow-sm">
-            <div class="flex justify-between mb-4">
-              <div>
-                <p class="text-sm font-medium text-gray-500">Canceled</p>
-                <p
-                  class="text-2xl font-semibold text-gray-800"
-                  id="stat-canceled"
-                >
-                  0
-                </p>
-              </div>
-              <div
-                class="bg-red-100 text-red-600 w-12 h-12 flex items-center justify-center rounded-full"
-              >
-                <i class="ri-close-circle-line text-2xl"></i>
-              </div>
-            </div>
-            <p class="text-xs text-gray-500">Dibatalkan</p>
-          </div>
+    </div>
+  </main>
+  
+  
+<div id="orderModal" class="modal">
+  <div class="modal-content lg">
+    <div class="modal-header">
+      <h2 id="orderModalTitle">Order Detail</h2>
+      <button id="closeOrderModalBtn" class="modal-close"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2" style="margin-bottom:24px">
+        <div class="detail-section">
+          <h3>Customer</h3>
+          <div class="detail-text" id="od-customer">—</div>
+          <h3 style="margin-top:16px">Shipping Address</h3>
+          <div class="detail-text" id="od-address">—</div>
         </div>
-
-        <!-- Orders Table Card -->
-        <div class="bg-white p-6 rounded-md shadow-md">
-          <div
-            class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6"
-          >
-            <div>
-              <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
-              <p class="text-sm text-gray-500">
-                Kelola seluruh pesanan pelanggan.
-              </p>
-            </div>
-            <div class="flex flex-col md:flex-row gap-3">
-              <div class="flex gap-2">
-                <input
-                  type="date"
-                  id="fromDate"
-                  class="p-2 border border-gray-300 rounded-md text-sm"
-                />
-                <input
-                  type="date"
-                  id="toDate"
-                  class="p-2 border border-gray-300 rounded-md text-sm"
-                />
-              </div>
-              <select
-                id="statusFilter"
-                class="p-2 border border-gray-300 rounded-md text-sm"
-              >
-                <option value="">All Status</option>
-                <option value="PENDING">Pending</option>
-                <option value="PROCESSING">Processing</option>
-                <option value="SHIPPED">Shipped</option>
-                <option value="DELIVERED">Delivered</option>
-                <option value="CANCELED">Canceled</option>
-              </select>
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search by customer/order #"
-                class="p-2 border border-gray-300 rounded-md text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full min-w-[720px]">
-              <thead class="bg-gray-50">
-                <tr class="text-sm font-semibold text-left text-gray-600">
-                  <th class="p-3">Order #</th>
-                  <th class="p-3">Customer</th>
-                  <th class="p-3">Items</th>
-                  <th class="p-3">Total</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3">Created</th>
-                  <th class="p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="orders-table-body"></tbody>
-            </table>
-          </div>
-
-          <!-- (Optional) simple pagination -->
-          <div class="flex items-center justify-between mt-4">
-            <p class="text-sm text-gray-500" id="orders-count">0 orders</p>
-            <div class="flex gap-2">
-              <button
-                id="prevPage"
-                class="px-3 py-1 border rounded text-sm disabled:opacity-50"
-              >
-                Prev
-              </button>
-              <button
-                id="nextPage"
-                class="px-3 py-1 border rounded text-sm disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
+        <div class="detail-section">
+          <h3>Order Info</h3>
+          <div class="detail-text" id="od-meta">—</div>
+          <h3 style="margin-top:16px">Update Status</h3>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="od-status">
+              <option value="pending_payment">Pending Payment</option>
+              <option value="awaiting_payment">Awaiting Payment</option>
+              <option value="payment_failed">Payment Failed</option>
+              <option value="PENDING">Pending</option>
+              <option value="PROCESSING">Processing</option>
+              <option value="SHIPPED">Shipped</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="CANCELED">Canceled</option>
+            </select>
+            <button id="saveStatusBtn" class="btn btn-primary">Save</button>
           </div>
         </div>
       </div>
-    </main>
-
-    <!-- View/Edit Order Modal -->
-    <div
-      id="orderModal"
-      class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl">
-        <div class="flex justify-between items-center mb-4">
-          <h2 id="orderModalTitle" class="text-2xl font-bold text-gray-800">
-            Order Detail
-          </h2>
-          <button
-            id="closeOrderModalBtn"
-            class="text-gray-500 hover:text-gray-800 text-2xl"
-          >
-            &times;
-          </button>
-        </div>
-
-        <div
-          id="orderSummary"
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
-        >
-          <!-- Left: Customer & Shipping -->
-          <div class="space-y-2">
-            <h3 class="font-semibold text-gray-800">Customer</h3>
-            <p class="text-sm text-gray-600" id="od-customer">—</p>
-            <h3 class="font-semibold text-gray-800 mt-3">Shipping Address</h3>
-            <p class="text-sm text-gray-600" id="od-address">—</p>
+      <div class="detail-section">
+        <h3>Items</h3>
+        <div class="items-list">
+          <div id="od-items"></div>
+          <div class="totals-row" style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
+            <span>Subtotal</span><span id="od-subtotal">Rp 0</span>
           </div>
-          <!-- Right: Meta -->
-          <div class="space-y-2">
-            <h3 class="font-semibold text-gray-800">Order Info</h3>
-            <p class="text-sm text-gray-600" id="od-meta">—</p>
-            <div class="mt-3">
-              <label class="block text-sm font-semibold text-gray-800 mb-1"
-                >Update Status</label
-              >
-              <div class="flex gap-2">
-                <select id="od-status" class="p-2 border rounded w-full">
-                  <option value="PENDING">Pending</option>
-                  <option value="PROCESSING">Processing</option>
-                  <option value="SHIPPED">Shipped</option>
-                  <option value="DELIVERED">Delivered</option>
-                  <option value="CANCELED">Canceled</option>
-                </select>
-                <button
-                  id="saveStatusBtn"
-                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+          <div class="totals-row">
+            <span>Shipping Courier</span><span id="od-courier" style="font-weight:500">—</span>
           </div>
-        </div>
-
-        <!-- Items -->
-        <div class="border rounded-md">
-          <div class="bg-gray-50 px-4 py-2 font-semibold text-gray-700">
-            Items
+          <div class="totals-row">
+            <span>Shipping Cost</span><span id="od-shipping">Rp 0</span>
           </div>
-          <div id="od-items" class="divide-y max-h-64 overflow-auto"></div>
-          <div class="px-4 py-3 flex flex-col gap-1">
-            <div class="flex justify-between text-sm">
-              <span>Subtotal</span><span id="od-subtotal">Rp 0</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span>Shipping</span><span id="od-shipping">Rp 0</span>
-            </div>
-            <div class="flex justify-between font-semibold text-gray-800">
-              <span>Total</span><span id="od-total">Rp 0</span>
-            </div>
+          <div class="totals-row grand">
+            <span>Total</span><span id="od-total">Rp 0</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Delete/Cancel Modal -->
-    <div
-      id="deleteModal"
-      class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
-        <h2 class="text-xl font-bold mb-4">Confirm Action</h2>
-        <p class="mb-6 text-gray-600" id="deleteModalMsg">Are you sure?</p>
-        <div class="flex justify-end gap-2">
-          <button
-            id="cancelDeleteBtn"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-          >
-            Cancel
-          </button>
-          <button
-            id="confirmDeleteBtn"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Confirm
-          </button>
-        </div>
-      </div>
-    </div>
+  
+  <div id="notification" class="notification">Notification message</div>
+  
+  <script>
+    // Logout
+    document.getElementById("logoutBtn")?.addEventListener("click", async()=>{
+      await fetch("/api/admin/logout",{method:"POST"});
+      document.cookie = "jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.href = "/login";
+    });
 
-    <!-- Toast -->
-    <div
-      id="notification"
-      class="fixed top-10 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 translate-x-[150%]"
-    >
-      Notification message
-    </div>
-
-    <script src="/admin/js/orders-script.js"></script>
-  </body>
+    // Mobile sidebar toggle
+    if(window.innerWidth<=768){
+        const toggle = document.getElementById("sidebar-toggle");
+        if(toggle) toggle.style.display="inline-block";
+    }
+    document.getElementById("sidebar-toggle")?.addEventListener("click",()=>{
+        document.getElementById("sidebar").classList.toggle("open");
+    });
+  </script>
+  <script src="/admin/js/orders-script.js"></script>
+</body>
 </html>

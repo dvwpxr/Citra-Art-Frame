@@ -72,7 +72,6 @@ func mustEnv(key string) string {
 	return v
 }
 
-
 func InitCloudinary() (*cloudinary.Cloudinary, context.Context) {
 	cld, err := cloudinary.NewFromParams(
 		os.Getenv("CLOUDINARY_CLOUD_NAME"),

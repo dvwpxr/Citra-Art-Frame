@@ -3,21 +3,25 @@
 /* Frames Section */
 #frames {
   padding-top: 80px;
+  padding-bottom: 4rem;
 }
+
 .frames-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 40px;
 }
+
 .frame-card {
   text-align: center;
   transition: var(--transition);
 }
+
 .frame-card:hover {
   transform: translateY(-5px);
 }
+
 .frame-image {
-  /* PERUBAHAN 2: Perbesar tinggi bingkai dari 250px menjadi 350px */
   height: 350px;
   width: 100%;
   margin-bottom: 20px;
@@ -41,20 +45,25 @@
   object-fit: cover;
   transition: transform 0.4s ease;
 }
+
 .frame-card:hover .frame-image img {
   transform: scale(1.05);
 }
+
 .frame-card h3 {
   font-size: 1.3rem;
   font-family: var(--font-primary);
   font-weight: 600;
+  padding-top: 1.4rem;
 }
+
 .frame-card p {
   color: #666;
 }
 
 #frameElement {
-  position: relative; /* Penting agar matElement bisa diposisikan di dalamnya */
+  position: relative;
+  /* Penting agar matElement bisa diposisikan di dalamnya */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,12 +75,14 @@
   padding: 80px 0;
   margin-top: 80px;
 }
+
 .why-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
 }
+
 .section-tag {
   color: var(--color-primary);
   font-family: var(--font-primary);
@@ -80,66 +91,134 @@
   letter-spacing: 1px;
   font-size: 0.9rem;
 }
+
 .why-grid h2 {
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  line-height: 1.25;
 }
+
 .why-image-wrapper {
   border-radius: var(--border-radius);
   overflow: hidden;
   box-shadow: var(--shadow);
 }
+
 .why-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Services Section */
+/* Minimalist Modern Services Section */
 section#services {
-  padding: 3rem;
+  padding: 100px 0;
+  background-color: #faf9f6;
 }
+
 .services-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-top: 50px;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 60px;
 }
+
+@media (min-width: 900px) {
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .service-card {
-  border: 1px solid #eee;
-  padding: 40px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 50px 40px;
   text-align: center;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 }
+
 .service-card:hover {
-  box-shadow: var(--shadow-hover);
   transform: translateY(-5px);
-  border-color: transparent;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
 }
-.service-icon {
-  margin-bottom: 20px;
-  color: var(--color-primary);
+
+.service-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
+
+.service-icon-wrapper {
+  margin-bottom: 25px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-icon-wrapper svg {
+  width: 46px;
+  height: 46px;
+  stroke-width: 1.2;
+}
+
 .service-card h3 {
   font-family: var(--font-primary);
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 15px;
 }
+
 .service-card p {
-  margin-bottom: 25px;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 35px;
+  max-width: 90%;
+  flex-grow: 1;
+}
+
+.service-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  border-radius: 50px;
+  background: #c09554;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.service-btn:hover {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 /* Testimonial Section */
 .testimonial-section {
-  background-color: #f8f6f2; /* Warna latar yang lembut */
+  background-color: #f8f6f2;
+  /* Warna latar yang lembut */
   padding: 80px 0;
   margin-top: 80px;
 }
+
 .testimonial-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
 }
+
 .testimonial-card {
   background-color: #fff;
   padding: 30px;
@@ -148,34 +227,40 @@ section#services {
   display: flex;
   flex-direction: column;
 }
+
 .testimonial-card p {
   font-style: italic;
   color: #555;
   margin-bottom: 20px;
   flex-grow: 1;
 }
+
 .testimonial-author {
   display: flex;
   align-items: center;
   gap: 15px;
 }
+
 .testimonial-author img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
 }
+
 .testimonial-author span {
   font-weight: 600;
   color: var(--color-heading);
 }
+
 /* ==== FRAME PREVIEW: rapi & proporsional ==== */
 #framePreviewWrapper {
   display: grid;
   place-items: center;
   max-width: 560px;
   width: min(90vw, 560px);
-  aspect-ratio: 1/1; /* kanvas stabil */
+  aspect-ratio: 1/1;
+  /* kanvas stabil */
   background: #fafafa;
   border-radius: 16px;
   padding: 16px;
@@ -194,8 +279,7 @@ section#services {
 
 #matElement {
   position: absolute;
-  inset: var(--mat-top, 10%) var(--mat-right, 10%) var(--mat-bottom, 10%)
-    var(--mat-left, 10%);
+  inset: var(--mat-top, 10%) var(--mat-right, 10%) var(--mat-bottom, 10%) var(--mat-left, 10%);
   display: grid;
   place-items: center;
   background: transparent;
@@ -215,8 +299,10 @@ section#services {
 #artworkContainer img {
   max-width: 100%;
   max-height: 100%;
-  width: auto; /* jaga rasio */
-  height: auto; /* jaga rasio */
+  width: auto;
+  /* jaga rasio */
+  height: auto;
+  /* jaga rasio */
   object-fit: contain;
   display: block;
 }
@@ -224,6 +310,7 @@ section#services {
 .has-mat #matElement {
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
 }
+
 .is-changing {
   opacity: 0.75;
   filter: saturate(0.9);
@@ -240,18 +327,24 @@ section#services {
   .hero {
     height: 70vh;
   }
+
   .hero h1 {
     font-size: 2.2rem;
   }
+
   .hero p {
     font-size: 1rem;
   }
+
   .why-grid {
     grid-template-columns: 1fr;
   }
+
   .why-image-wrapper {
-    order: -1; /* Pindahkan gambar ke atas di mobile */
+    order: -1;
+    /* Pindahkan gambar ke atas di mobile */
   }
+
   .services-grid {
     grid-template-columns: 1fr;
   }

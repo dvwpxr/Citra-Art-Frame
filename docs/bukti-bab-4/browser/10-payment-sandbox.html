@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bukti Payment Link Sandbox</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #eef2f7;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+    }
+    .card {
+      width: min(920px, 100%);
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, .12);
+      padding: 42px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 800;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 34px;
+      margin: 0 0 8px;
+      color: #111827;
+    }
+    p {
+      margin: 0;
+      color: #667085;
+    }
+    .box {
+      margin-top: 30px;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .label {
+      background: #f9fafb;
+      padding: 18px 20px;
+      font-weight: 800;
+      color: #475467;
+    }
+    .value {
+      padding: 18px 20px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      word-break: break-word;
+    }
+    .status {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+      font-weight: 900;
+    }
+    .note {
+      margin-top: 24px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #475467;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="eyebrow">Flip Sandbox</div>
+    <h1>Bukti Payment Link Sandbox</h1>
+    <p>Payment link dibuat pada mode sandbox untuk alur pembayaran CitraFrame dan tidak dilakukan pembayaran dengan uang nyata.</p>
+    <section class="box">
+      <div class="row">
+        <div class="label">Order uji</div>
+        <div class="value">Order checkout katalog CitraFrame</div>
+      </div>
+      <div class="row">
+        <div class="label">Payment URL</div>
+        <div class="value">https://flip.id/...</div>
+      </div>
+      <div class="row">
+        <div class="label">Status order</div>
+        <div class="value"><span class="status">awaiting_payment</span></div>
+      </div>
+      <div class="row">
+        <div class="label">Waktu bukti</div>
+        <div class="value">13/7/2026, 05.06.40 WIB</div>
+      </div>
+    </section>
+    <div class="note">URL disamarkan agar tidak memuat token/link unik secara penuh. Bukti ini menampilkan link pembayaran sandbox yang diterima backend.</div>
+  </main>
+</body>
+</html>

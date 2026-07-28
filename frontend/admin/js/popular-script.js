@@ -12,14 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const showNotification = (message, isError = false) => {
     notification.textContent = message;
-    notification.className = `notification fixed top-5 right-5 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 ${
-      isError ? "bg-red-600" : "bg-green-500"
-    } translate-x-0`;
+    notification.className = "notification";
+    if (isError) {
+        notification.classList.add("error");
+    }
+    notification.classList.add("show");
+    
     setTimeout(() => {
-      notification.className = notification.className.replace(
-        "translate-x-0",
-        "translate-x-[150%]"
-      );
+      notification.classList.remove("show");
     }, 3000);
   };
 
@@ -73,20 +73,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (popularFrames && popularFrames.length > 0) {
         popularFrames.forEach((frame) => {
           const frameEl = document.createElement("div");
-          frameEl.className =
-            "border rounded-lg shadow-sm overflow-hidden bg-white";
+          frameEl.className = "card";
+          frameEl.style.padding = "0";
+          frameEl.style.marginBottom = "0";
           frameEl.innerHTML = `
-                        <img src="${frame.image_url}" alt="${frame.name}" class="w-full h-32 object-cover">
-                        <div class="p-3">
-                            <h3 class="font-semibold text-gray-800 truncate">${frame.name}</h3>
-                            <button data-id="${frame.id}" class="remove-popular-btn text-sm text-red-500 hover:text-red-700 mt-2 w-full text-left">Hapus dari Populer</button>
-                        </div>
-                    `;
+            <img src="${frame.image_url}" alt="${frame.name}" style="width:100%;height:150px;object-fit:cover;border-radius:16px 16px 0 0">
+            <div style="padding:16px">
+                <h3 style="font-weight:600;color:#fff;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${frame.name}</h3>
+                <button data-id="${frame.id}" class="remove-popular-btn btn btn-danger" style="width:100%;margin-top:12px;font-size:0.8rem;justify-content:center"><i class="ri-delete-bin-line"></i> Hapus dari Populer</button>
+            </div>
+          `;
           popularFramesList.appendChild(frameEl);
         });
       } else {
         popularFramesList.innerHTML =
-          '<p class="text-gray-500 col-span-full">Belum ada frame yang ditandai populer.</p>';
+          '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:32px;grid-column:1/-1">Belum ada frame yang ditandai populer.</p>';
       }
     } catch (error) {
       console.error(error);

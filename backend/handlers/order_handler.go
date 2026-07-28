@@ -4,7 +4,6 @@ import (
 	"database/sql" // Pastikan 'database/sql' di-import
 	"encoding/json"
 	"net/http"
-	"strings"
 	"time"
 
 	"backend/database"
@@ -14,20 +13,19 @@ import (
 
 // ... (Struct OrderAdminView tetap sama) ...
 type OrderAdminView struct {
-	ID             int64     `json:"id"`
-	OrderUID       string    `json:"order_uid"`
-	CustomerName   string    `json:"customer_name"`
-	ItemsSummary   string    `json:"items_summary"`
-	TotalAmount    int       `json:"total_amount"`
-	OrderStatus    string    `json:"order_status"`
-	CreatedAt      time.Time `json:"created_at"`
-	CustomerEmail  string    `json:"customer_email"`
-	CustomerPhone  string    `json:"customer_phone"`
-	ShippingAddress string   `json:"shipping_address"`
-	Subtotal       int       `json:"subtotal"`
-	ShippingCost   int       `json:"shipping_cost"`
+	ID              int64     `json:"id"`
+	OrderUID        string    `json:"order_uid"`
+	CustomerName    string    `json:"customer_name"`
+	ItemsSummary    string    `json:"items_summary"`
+	TotalAmount     int       `json:"total_amount"`
+	OrderStatus     string    `json:"order_status"`
+	CreatedAt       time.Time `json:"created_at"`
+	CustomerEmail   string    `json:"customer_email"`
+	CustomerPhone   string    `json:"customer_phone"`
+	ShippingAddress string    `json:"shipping_address"`
+	Subtotal        int       `json:"subtotal"`
+	ShippingCost    int       `json:"shipping_cost"`
 }
-
 
 // UBAH FUNGSI INI
 func GetOrdersHandler(w http.ResponseWriter, r *http.Request) {
@@ -111,9 +109,17 @@ func UpdateOrderStatusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validasi status
-	validStatuses := "PENDING,PROCESSING,SHIPPED,DELIVERED,CANCELED"
-	if !strings.Contains(validStatuses, payload.Status) {
+	validStatuses := map[string]bool{
+		"pending_payment":  true,
+		"awaiting_payment": true,
+		"payment_failed":   true,
+		"PENDING":          true,
+		"PROCESSING":       true,
+		"SHIPPED":          true,
+		"DELIVERED":        true,
+		"CANCELED":         true,
+	}
+	if !validStatuses[payload.Status] {
 		http.Error(w, "Invalid status value", http.StatusBadRequest)
 		return
 	}
@@ -127,4 +133,3 @@ func UpdateOrderStatusHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Status updated successfully"})
 }
-

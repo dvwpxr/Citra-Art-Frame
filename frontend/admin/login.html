@@ -1,122 +1,458 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Login - CitraFrame</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin Login - Citra Artframe</title>
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      /* Anda bisa menambahkan font kustom di sini jika mau */
+      :root {
+        --bg: #0c0c0f;
+        --bg-soft: #111115;
+        --panel: rgba(255, 255, 255, 0.04);
+        --panel-strong: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.09);
+        --text: #f5f5f5;
+        --muted: rgba(255, 255, 255, 0.52);
+        --gold: #c09553;
+        --gold-soft: rgba(192, 149, 83, 0.14);
+        --danger: #f87171;
+        --danger-soft: rgba(248, 113, 113, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: "Inter", sans-serif; /* Contoh menggunakan font Inter */
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(192, 149, 83, 0.18), transparent 32%),
+          radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.1), transparent 28%),
+          linear-gradient(180deg, #111115 0%, #0c0c0f 100%);
+        color: var(--text);
+      }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .brand-panel {
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-right: 1px solid var(--border);
+      }
+
+      .brand-mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        font-size: 0.95rem;
+      }
+
+      .brand-mark i {
+        color: var(--text);
+        font-size: 1.5rem;
+      }
+
+      .hero-copy {
+        max-width: 540px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--gold-soft);
+        border: 1px solid rgba(192, 149, 83, 0.25);
+        color: var(--gold);
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-copy h1 {
+        margin: 22px 0 14px;
+        font-size: clamp(2.3rem, 4vw, 4.4rem);
+        line-height: 0.98;
+        font-weight: 800;
+      }
+
+      .hero-copy p {
+        margin: 0;
+        max-width: 440px;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        max-width: 560px;
+      }
+
+      .feature-card {
+        padding: 18px;
+        border-radius: 16px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .feature-card i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        background: rgba(192, 149, 83, 0.1);
+        color: var(--gold);
+        font-size: 1.15rem;
+      }
+
+      .feature-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.92rem;
+      }
+
+      .feature-card span {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+
+      .login-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 28px;
+      }
+
+      .login-shell {
+        width: min(100%, 440px);
+        padding: 30px;
+        border-radius: 24px;
+        background: rgba(15, 15, 19, 0.86);
+        border: 1px solid var(--border);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(18px);
+      }
+
+      .login-head {
+        margin-bottom: 26px;
+      }
+
+      .login-head h2 {
+        margin: 0 0 8px;
+        font-size: 1.8rem;
+        font-weight: 800;
+      }
+
+      .login-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.74);
+      }
+
+      .input-shell {
+        position: relative;
+      }
+
+      .input-shell i {
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.32);
+        font-size: 1.05rem;
+      }
+
+      .input-shell input {
+        width: 100%;
+        height: 54px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text);
+        padding: 0 16px 0 48px;
+        font: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      }
+
+      .input-shell input::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      .input-shell input:focus {
+        outline: none;
+        border-color: rgba(192, 149, 83, 0.5);
+        background: rgba(255, 255, 255, 0.045);
+        box-shadow: 0 0 0 4px rgba(192, 149, 83, 0.12);
+      }
+
+      .error-message {
+        min-height: 22px;
+        margin: 2px 0 16px;
+        color: var(--danger);
+        font-size: 0.82rem;
+      }
+
+      .error-message:not(:empty) {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--danger-soft);
+        border: 1px solid rgba(248, 113, 113, 0.16);
+      }
+
+      .submit-btn {
+        width: 100%;
+        height: 54px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #c09553, #e0af62);
+        color: #161616;
+        font: inherit;
+        font-size: 0.95rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+        box-shadow: 0 18px 36px rgba(192, 149, 83, 0.22);
+      }
+
+      .submit-btn:hover {
+        filter: brightness(1.03);
+        transform: translateY(-1px);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: wait;
+        transform: none;
+      }
+
+      .login-note {
+        margin-top: 18px;
+        color: rgba(255, 255, 255, 0.34);
+        font-size: 0.76rem;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      @media (max-width: 980px) {
+        .page {
+          grid-template-columns: 1fr;
+        }
+
+        .brand-panel {
+          padding: 32px 24px 10px;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+          gap: 28px;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .login-panel {
+          padding: 24px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .brand-panel {
+          padding: 24px 20px 0;
+        }
+
+        .login-panel {
+          padding: 20px;
+        }
+
+        .login-shell {
+          padding: 22px;
+          border-radius: 20px;
+        }
       }
     </style>
   </head>
-  <body
-    class="h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-  >
-    <div class="w-full max-w-md space-y-8">
-      <div>
-        <h2
-          class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900"
-        >
-          CitraFrame Admin
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Selamat datang kembali! Silakan masuk ke akun Anda.
-        </p>
-      </div>
-      <form
-        id="login-form"
-        class="mt-8 space-y-6 bg-white p-8 shadow-xl rounded-lg"
-      >
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div class="mb-4">
-            <label for="username" class="sr-only">Username</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              placeholder="Username"
-            />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              placeholder="Password"
-            />
-          </div>
+  <body>
+    <main class="page">
+      <section class="brand-panel">
+        <a class="brand-mark" href="/">
+          <i class="ri-camera-lens-line"></i>
+          <span>CITRA ARTFRAME</span>
+        </a>
+
+        <div class="hero-copy">
+          <span class="eyebrow">
+            <i class="ri-shield-keyhole-line"></i>
+            Admin Access
+          </span>
+          <h1>Kelola pesanan, produk, dan konten dari satu panel.</h1>
+          <p>
+            Ruang kerja internal untuk operasional Citra Artframe. Gunakan akun admin
+            untuk mengakses dashboard, pembaruan stok, art print, dan hero slider.
+          </p>
         </div>
 
-        <div id="error-message" class="text-sm text-red-600"></div>
-
-        <div>
-          <button
-            type="submit"
-            class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <i
-                class="ri-lock-line h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-              ></i>
-            </span>
-            Sign in
-          </button>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <i class="ri-dashboard-3-line"></i>
+            <strong>Operational Overview</strong>
+            <span>Pantau pendapatan, status pesanan, dan aktivitas harian dari satu layar.</span>
+          </div>
+          <div class="feature-card">
+            <i class="ri-shopping-bag-3-line"></i>
+            <strong>Order Handling</strong>
+            <span>Proses pesanan masuk lebih cepat dengan alur yang konsisten dan terpusat.</span>
+          </div>
+          <div class="feature-card">
+            <i class="ri-image-2-line"></i>
+            <strong>Content Control</strong>
+            <span>Atur art print, hero slider, dan popular frames tanpa keluar dari panel admin.</span>
+          </div>
+          <div class="feature-card">
+            <i class="ri-lock-password-line"></i>
+            <strong>Protected Session</strong>
+            <span>Akses dashboard menggunakan sesi login admin yang terverifikasi.</span>
+          </div>
         </div>
-      </form>
-    </div>
+      </section>
+
+      <section class="login-panel">
+        <div class="login-shell">
+          <div class="login-head">
+            <h2>Masuk ke Dashboard</h2>
+            <p>Gunakan kredensial admin untuk melanjutkan ke panel pengelolaan Citra Artframe.</p>
+          </div>
+
+          <form id="login-form" novalidate>
+            <div class="input-group">
+              <label for="username">Username</label>
+              <div class="input-shell">
+                <i class="ri-user-3-line"></i>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  autocomplete="username"
+                  placeholder="Masukkan username admin"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="password">Password</label>
+              <div class="input-shell">
+                <i class="ri-lock-2-line"></i>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Masukkan password"
+                  required
+                />
+              </div>
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">
+              Sign in
+            </button>
+          </form>
+
+          <div class="login-note">
+            Halaman ini khusus admin internal. Akses tanpa kredensial yang valid akan ditolak.
+          </div>
+        </div>
+      </section>
+    </main>
 
     <script>
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
-          const errorMessageDiv = document.getElementById("error-message");
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-          errorMessageDiv.textContent = ""; // Kosongkan pesan error sebelumnya
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorMessageDiv = document.getElementById("error-message");
+        const submitButton = document.getElementById("submit-btn");
 
-          fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
+        errorMessageDiv.textContent = "";
+        submitButton.disabled = true;
+        submitButton.textContent = "Signing in...";
+
+        fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response
+                .json()
+                .then((err) => {
+                  throw new Error(err.message || "Username atau password salah.");
+                })
+                .catch(() => {
+                  throw new Error("Login gagal. Username atau password salah.");
+                });
+            }
+
+            window.location.href = "/dashboard";
           })
-            .then((response) => {
-              if (!response.ok) {
-                // Coba parse error dari body jika ada
-                return response
-                  .json()
-                  .then((err) => {
-                    throw new Error(
-                      err.message || "Username atau password salah."
-                    );
-                  })
-                  .catch(() => {
-                    throw new Error(
-                      "Login gagal! Username atau password salah."
-                    );
-                  });
-              }
-              // Jika berhasil, backend akan set cookie dan kita redirect
-              window.location.href = "/dashboard";
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              errorMessageDiv.textContent = error.message;
-            });
-        });
+          .catch((error) => {
+            errorMessageDiv.textContent = error.message;
+          })
+          .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = "Sign in";
+          });
+      });
     </script>
   </body>
 </html>

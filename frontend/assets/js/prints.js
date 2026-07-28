@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- VARIABEL KONTROL ---
   let currentPage = 1;
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
   let activeArtist = "Semua";
   let activeCategory = "Semua";
 
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (filteredItems.length === 0) {
       gridContainer.innerHTML =
         '<p class="text-center col-span-full text-gray-500">Tidak ada hasil yang cocok dengan filter Anda.</p>';
-      setupPagination(filteredItems); // setup pagination untuk menampilkan/menyembunyikan
+      setupPagination(filteredItems);
       return;
     }
 
@@ -68,24 +68,35 @@ document.addEventListener("DOMContentLoaded", () => {
       currentPage * itemsPerPage
     );
 
+    // === BAGIAN YANG DIUBAH ===
     paginatedItems.forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "art-card";
-      card.innerHTML = `
-                <img src="${
-                  item.image_url || "https://via.placeholder.com/300"
-                }" alt="${item.title}" class="art-card-img">
-                <div class="art-card-info">
-                    <div>
-                        <h3 class="art-card-title">${item.title}</h3>
-                        <p class="art-card-artist">oleh ${item.artist}</p>
-                    </div>
-                    <p class="art-card-price">Rp ${item.price.toLocaleString(
-                      "id-ID"
-                    )}</p>
-                </div>
-            `;
-      gridContainer.appendChild(card);
+      // 1. Buat elemen anchor (link)
+      const link = document.createElement("a");
+      link.href = `/print-detail?id=${item.id}`; // Arahkan ke halaman detail dengan ID
+      link.className = "art-card-link"; // Kelas untuk styling jika diperlukan
+
+      // 2. Buat konten kartu seperti sebelumnya
+      const cardContent = `
+              <div class="art-card">
+                  <div class="art-card-img-wrapper">
+                      <img src="${item.image_url || "https://via.placeholder.com/300"
+        }" alt="${item.title}" class="art-card-img">
+                  </div>
+                  <div class="art-card-info">
+                      <div>
+                          <h3 class="art-card-title">${item.title}</h3>
+                          <p class="art-card-artist">oleh ${item.artist}</p>
+                      </div>
+                      <p class="art-card-price">Rp ${item.price.toLocaleString(
+          "id-ID"
+        )}</p>
+                  </div>
+              </div>
+          `;
+
+      // 3. Masukkan konten ke dalam link dan tambahkan ke grid
+      link.innerHTML = cardContent;
+      gridContainer.appendChild(link);
     });
     setupPagination(filteredItems);
   }

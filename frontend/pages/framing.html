@@ -3,25 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Custom Framing - Citra Frame</title>
+    <title>Custom Framing - Citra Artframe</title>
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/base.css?v=20260727.1" />
+    <link rel="stylesheet" href="/assets/css/cart.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260727.1" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
-  <body>
-    <header class="header">
+  <body class="site-page page-framing">
+    <div class="nav-overlay" id="nav-overlay"></div>
+    <header class="header" id="main-header">
       <div class="container">
         <div class="nav-brand">
-          <a href="/" class="logo">Citra Frame</a>
+          <a href="/" class="logo">Citra Artframe</a>
         </div>
 
-        <nav class="nav-menu">
-          <a href="/#frames" class="nav-link">FRAMES</a>
-          <a href="/prints" class="nav-link">ART PRINTS</a>
-          <a href="products.html" class="nav-link">PRODUCTS</a>
-          <a href="#" class="nav-link">BLOG</a>
+        <nav class="nav-menu" id="site-nav">
+          <div class="mobile-cta-group mobile-only" style="flex-direction: column; width: 100%; gap: 10px; margin-bottom: 20px;">
+            <a href="/#ar-section" class="btn-ar-nav mobile-only">Lihat Bingkai di Dindingmu <span class="sparkle">✨</span></a>
+            <a href="/custom" class="btn-nav-custom mobile-only">Buat Bingkai Custom</a>
+          </div>
+          <a href="/#frames" class="nav-link">Pilihan Frame</a>
+          <a href="/prints" class="nav-link">Art Prints</a>
+          <a href="/products" class="nav-link">Produk</a>
+          <a href="/#testimonials" class="nav-link">Testimoni</a>
         </nav>
 
         <div class="nav-actions">
@@ -54,8 +63,16 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </button>
-          <a href="framing.html" class="btn-primary">START FRAMING</a>
+          <a href="/#ar-section" class="btn-ar-nav desktop-only">Lihat Bingkai di Dindingmu <span class="sparkle">✨</span></a>
+          <a href="/custom" class="btn-nav-custom desktop-only">Buat Bingkai Custom</a>
         </div>
+        <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Buka menu navigasi" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </header>
 
@@ -166,7 +183,7 @@
 
             <p>
               If you have any questions, please contact us via chat or by
-              emailing ask@Citra Frame.com
+              emailing ask@citraartframe.com
             </p>
 
             <p>
@@ -185,7 +202,7 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-brand">
-            <div class="logo">Citra Frame</div>
+            <div class="logo">Citra Artframe</div>
             <div class="footer-contact">
               <p>Need Help?</p>
               <div class="contact-icons">
@@ -261,7 +278,7 @@
 
         <div class="footer-bottom">
           <p>
-            Copyright © 2025 Citra Frame. Designed by Fullstop Indonesia. All
+            Copyright © 2025 Citra Artframe. Designed by Fullstop Indonesia. All
             Rights Reserved.
           </p>
         </div>

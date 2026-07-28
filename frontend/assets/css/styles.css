@@ -398,6 +398,54 @@ input#imageUploader {
   font-style: italic;
 }
 
+/* Popular Frames Image Sizing Control */
+.frame-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  padding: 20px;
+  transition: all 0.3s ease;
+  height: 260px; /* Ensure consistent height for alignment */
+}
+
+.frame-card:hover .frame-image-container {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  border-color: #c09553;
+}
+
+.frame-raw-image {
+  max-width: 180px !important;
+  max-height: 180px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transition: transform 0.3s ease;
+}
+
+.frame-card:hover .frame-raw-image {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .frame-image-container {
+    height: 180px !important;
+    padding: 15px !important;
+    margin-bottom: 12px !important;
+  }
+  .frame-raw-image {
+    max-width: 120px !important;
+    max-height: 120px !important;
+  }
+}
+
 /* Why Section */
 .why-section {
   padding: 80px 0;
@@ -1120,7 +1168,7 @@ input#imageUploader {
 
   /* --- INI BAGIAN UTAMA UNTUK FRAME --- */
   border-style: solid;
-  border-image-source: url("path/to/your/frame-texture.jpg"); /* Akan diubah oleh JS */
+  border-image-source: none; /* Diisi oleh JS dari image_url produk */
 
   /* Angka 'slice' ini harus disesuaikan dengan lebar pinggiran gambar frame Anda.
      Misal, jika pinggiran gambar frame Anda tebalnya 110px, gunakan 110. */
@@ -1266,6 +1314,99 @@ input#imageUploader {
   padding: 12px 20px;
   grid-column: 2 / 3;
   grid-row: 1 / 3;
+}
+
+/* Premium High-Impact AR Selling Point Button */
+.btn-ar-selling-point {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #c09553, #a87e41);
+  color: #fff !important;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(192, 149, 83, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  animation: pulse-glow-ar 2s infinite alternate;
+}
+
+.btn-ar-selling-point:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(192, 149, 83, 0.55);
+  background: linear-gradient(135deg, #d4af37, #b48540);
+}
+
+.btn-ar-selling-point:active {
+  transform: translateY(1px);
+}
+
+/* Moving metallic sweep light effect */
+.btn-ar-selling-point::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+  animation: shine-ar 3.5s infinite;
+}
+
+/* Holographic dynamic pill badge */
+.ar-badge-pill {
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animated sparkle */
+.btn-ar-selling-point .sparkle {
+  animation: sparkle-spin-ar 1.8s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes shine-ar {
+  0% { left: -150%; }
+  35%, 100% { left: 150%; }
+}
+
+@keyframes pulse-glow-ar {
+  0% {
+    box-shadow: 0 4px 12px rgba(192, 149, 83, 0.3);
+  }
+  100% {
+    box-shadow: 0 8px 22px rgba(192, 149, 83, 0.55);
+  }
+}
+
+@keyframes sparkle-spin-ar {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.25) rotate(15deg); }
 }
 
 /* Panel Kanan: Konfigurasi */

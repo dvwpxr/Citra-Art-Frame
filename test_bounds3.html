@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js",
+      "GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js"
+    }
+  }
+</script>
+</head>
+<body>
+<script type="module">
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'GLTFLoader';
+  
+  const loader = new GLTFLoader();
+  loader.load('/uploads/models/1784746714583535000-thick_simple_picture_frame.glb', (gltf) => {
+    const sourceModel = gltf.scene;
+    
+    // First print bounding box WITHOUT reset
+    const sourceBox = new THREE.Box3().setFromObject(sourceModel);
+    const sourceSize = new THREE.Vector3();
+    sourceBox.getSize(sourceSize);
+    console.log("Source Size (With Root Transform):", sourceSize.toArray());
+    
+    // Now simulate resetExporterPresentationRotation
+    const root = sourceModel.children[0];
+    root.quaternion.identity();
+    root.rotation.set(0, 0, 0);
+    root.updateMatrixWorld(true);
+    
+    const rawBox = new THREE.Box3().setFromObject(sourceModel);
+    const rawSize = new THREE.Vector3();
+    rawBox.getSize(rawSize);
+    console.log("Source Size (WITHOUT Root Transform):", rawSize.toArray());
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+BAB IV
+HASIL DAN PEMBAHASAN
+4.1 Spesifikasi Sistem
+Implementasi CitraFrame dilakukan pada lingkungan pengujian beta berbasis website. Sistem terdiri atas antarmuka pelanggan, antarmuka admin, layanan backend berbasis Golang, basis data MySQL Aiven, penyimpanan media Cloudinary, autentikasi Firebase, integrasi ongkos kirim API.co.id, dan pembayaran Flip. Pengujian pada Bab IV menggunakan data sintetis dengan prefix TEST_BAB4_20260713_040254 dan validasi ulang TEST_BAB4_20260713_042711 sehingga data uji dapat dipisahkan dari data lain pada lingkungan beta.
+Tabel 4.1 menunjukkan perangkat keras yang digunakan untuk pengujian otomatis. Pengujian kamera dan markerless Augmented Reality pada perangkat fisik belum dilakukan sehingga masih ditandai sebagai memerlukan smartphone.
+Tabel 4.1 Spesifikasi Perangkat Keras
+No
+Komponen
+Spesifikasi
+Fungsi
+1
+Perangkat pengembangan dan pengujian otomatis
+macOS 26.4.1, Apple M1, RAM 8 GB, arsitektur arm64
+Menjalankan backend, static server frontend, unit test, integration test, dan pembuatan dokumen
+2
+Perangkat uji smartphone
+Belum diuji pada sesi otomatis
+Diperlukan untuk pengujian kamera, WebXR, dan penempatan objek 3D pada dinding
+3
+Browser otomatis
+Tidak tersedia pada sesi pengujian
+Diperlukan untuk screenshot, inspeksi console, dan inspeksi network secara visual
+Tabel 4.2 Spesifikasi Perangkat Lunak
+No
+Kategori
+Teknologi
+Fungsi
+1
+Frontend
+HTML, CSS, JavaScript statis
+Antarmuka pelanggan dan admin
+2
+Backend/API
+Golang 1.25.1, Gorilla Mux
+Logika bisnis, validasi, otorisasi, dan REST API
+3
+Basis data
+MySQL Aiven beta
+Penyimpanan produk, art print, alamat, keranjang, pesanan, item pesanan, slider, dan pesanan kustom
+4
+AR/3D
+WebXR, Three.js, aset GLB
+Visualisasi bingkai dalam mode AR berbasis browser
+5
+Autentikasi
+Firebase Authentication dan JWT admin
+Autentikasi pelanggan dan otorisasi admin
+6
+Layanan eksternal
+Cloudinary, API.co.id, Flip sandbox
+Penyimpanan media, ongkos kirim, dan pembayaran uji
+7
+Alat pengujian
+Go test, Go build, Node.js 24.9.0, Pandoc 3.8.1
+Pengujian otomatis, validasi JavaScript, dan pembuatan dokumen
+Versi kode yang diuji berada pada commit lokal 53376cc. Sistem frontend tidak memiliki package.json, sehingga tahap frontend build tidak berlaku. Sebagai gantinya, semua berkas JavaScript pada direktori frontend divalidasi menggunakan node --check.
+4.2 Gambaran Umum Hasil Penelitian
+Hasil penelitian berupa sistem CitraFrame berbasis website yang mendukung katalog produk bingkai, katalog art print, custom frame builder, keranjang belanja, alamat pelanggan, checkout, invoice, dashboard admin, CRUD produk, CRUD art print, CRUD slider, manajemen pesanan, serta halaman WebAR. Sistem dikembangkan untuk menjawab kebutuhan Citra Art Frame dalam memberikan visualisasi produk yang lebih realistis dibanding katalog dua dimensi.
+Berdasarkan pengujian otomatis pada lingkungan beta, fungsi inti sistem telah berjalan pada sisi backend, basis data, integrasi pembayaran sandbox, integrasi Cloudinary, integrasi API.co.id, serta sebagian besar endpoint HTTP lokal. Perbaikan keamanan yang sebelumnya menjadi prioritas juga telah diverifikasi, yaitu proteksi /api/admin/stats, proteksi detail order pelanggan, respons JSON 401/403 pada API tanpa redirect 302, validasi checkout, perhitungan ulang harga di backend, penanganan kegagalan Flip, dan perbaikan referensi aset placeholder.
+Bagian yang belum dapat dinyatakan selesai adalah pengujian kamera WebAR pada smartphone, pengambilan screenshot otomatis, inspeksi console browser, inspeksi network browser, pengukuran performa, dan pengujian usability menggunakan SUS. Status tersebut tidak dianggap gagal karena membutuhkan perangkat, browser otomatis, atau responden yang belum tersedia pada sesi pengujian ini.
+4.3 Hasil Implementasi Sistem
+4.3.1 Implementasi Antarmuka Publik
+Antarmuka publik terdiri atas halaman beranda, katalog produk, katalog art print, detail produk, custom frame builder, halaman AR, keranjang, halaman alamat, checkout, dan invoice. Pengujian HTTP lokal menunjukkan halaman publik utama dapat diakses dengan status 200. Aset JavaScript, CSS, dan model frame.glb juga berhasil dimuat melalui static server lokal.
+Tabel 4.3 Ringkasan Implementasi Antarmuka Publik
+Modul
+Hasil implementasi
+Hasil uji aktual
+Status
+Homepage
+Menampilkan halaman awal CitraFrame
+GET / menghasilkan 200
+PASS
+Katalog produk
+Menampilkan daftar produk dari basis data
+GET /products menghasilkan 200
+PASS
+Art print
+Menampilkan katalog art print
+GET /prints menghasilkan 200
+PASS
+Detail produk
+Menampilkan halaman detail
+GET /print-detail menghasilkan 200
+PASS
+Custom frame builder
+Menyediakan pilihan bingkai, ukuran, matboard, dan perhitungan harga
+Halaman dapat diakses; interaksi browser visual belum diuji
+PASS untuk akses HTTP, BELUM DIUJI untuk interaksi visual
+Halaman AR
+Menyediakan mode visualisasi AR
+Halaman dan frame.glb dapat diakses
+PASS untuk akses HTTP dan aset GLB
+4.3.2 Implementasi Autentikasi dan Otorisasi
+Autentikasi pelanggan menggunakan Firebase, sedangkan admin menggunakan JWT. Middleware JWT untuk endpoint API telah disesuaikan agar mengembalikan respons JSON dengan status 401 atau 403, bukan redirect 302. Endpoint /api/admin/stats dipindahkan ke grup route yang membutuhkan JWT admin.
+Detail pesanan pada /api/orders/{id} dilindungi oleh middleware pelanggan atau admin. Pelanggan Firebase hanya dapat membaca pesanannya sendiri. Pengguna tanpa autentikasi menerima 401. Pengguna yang tidak berhak menerima 403 dengan pesan generik sehingga respons tidak membocorkan keberadaan pesanan milik pengguna lain. Admin dapat membaca detail pesanan sesuai otorisasi admin.
+Tabel 4.4 Ringkasan Pengujian Otorisasi
+Skenario
+Hasil diharapkan
+Hasil aktual
+Status
+/api/admin/stats tanpa JWT
+401 JSON
+401, tanpa Location header
+PASS
+/api/orders/{id} tanpa autentikasi
+401 JSON
+401, tanpa redirect
+PASS
+Pemilik membaca order sendiri
+200
+200
+PASS
+User lain membaca order
+403 generik
+403
+PASS
+Admin membaca order
+200
+200
+PASS
+JWT invalid
+401 JSON
+401, tanpa redirect
+PASS
+4.3.3 Implementasi Checkout dan Pembayaran
+Logika checkout diperkuat dengan validasi backend. Validasi mencakup item tidak boleh kosong, nama pelanggan wajib dan panjangnya valid, email wajib dan harus sesuai format, nomor telepon wajib dan harus sesuai format, alamat dan village_code wajib, pilihan pengiriman wajib, jumlah item harus lebih dari nol, produk harus ditemukan, serta stok harus tersedia.
+Sistem tidak lagi mempercayai harga, subtotal, ongkos kirim, atau total dari frontend. Harga produk diambil dari basis data, ongkos kirim diambil dari layanan backend, subtotal dihitung dari harga basis data dikalikan jumlah item, dan total dihitung ulang di backend. Pengujian manipulasi harga membuktikan bahwa payload dengan harga, subtotal, dan total bernilai 1 tetap menghasilkan subtotal 123456, ongkos kirim 22000, dan total 145456 sesuai data uji dan perhitungan server.
+Alur pembayaran dibuat sebagai berikut. Order dibuat dengan status pending_payment, stok ditangani secara konsisten, kemudian backend memanggil Flip sandbox. Jika Flip berhasil, sistem menyimpan payment URL dan mengubah status menjadi awaiting_payment. Jika Flip gagal, sistem menandai order sebagai payment_failed dan mengembalikan stok melalui transaksi kompensasi. Pengujian memastikan tidak ada order yang ditinggalkan dalam status berhasil tanpa payment link.
+Tabel 4.5 Ringkasan Pengujian Checkout
+Skenario
+Hasil diharapkan
+Hasil aktual
+Status
+Item kosong
+Ditolak
+400
+PASS
+Email tidak valid
+Ditolak
+400
+PASS
+Nomor telepon tidak valid
+Ditolak
+400
+PASS
+Alamat tidak lengkap
+Ditolak
+400
+PASS
+Produk tidak ditemukan
+Ditolak
+400
+PASS
+Stok tidak cukup
+Ditolak
+400
+PASS
+Harga frontend dimanipulasi
+Backend menghitung ulang
+Total dihitung dari basis data dan ongkir server
+PASS
+Order sebelum pembayaran
+pending_payment
+pending_payment
+PASS
+Flip sandbox berhasil
+awaiting_payment dan payment URL tersimpan
+Payment URL absolut dan status awaiting_payment
+PASS
+Flip gagal
+payment_failed dan stok kembali
+Status gagal dan stok kembali
+PASS
+4.3.4 Implementasi Admin
+Panel admin mendukung statistik dashboard, pengelolaan produk, pengelolaan art print, pengelolaan slider, daftar pesanan, detail pesanan, dan pembaruan status pesanan. Pengujian HTTP lokal membuktikan bahwa operasi CRUD produk, art print, dan slider berhasil menggunakan data sintetis. Pengujian admin order juga membuktikan daftar order, detail order, dan pembaruan status order berjalan.
+Login admin berhasil melalui JWT yang dibentuk dari konfigurasi runtime untuk kebutuhan pengujian API. Namun, skenario login UI admin menggunakan password plaintext akun uji belum diuji karena tidak tersedia kredensial akun uji khusus yang aman untuk ditampilkan atau dicatat. Pengujian login gagal telah dilakukan dan menghasilkan status 401.
+4.3.5 Implementasi Basis Data dan Migration
+Migration repository dilengkapi untuk tabel yang digunakan sistem, yaitu products, art_prints, orders, order_items, sliders, custom_orders, user_addresses, dan cart_items. Migration juga menambahkan kolom dan indeks yang diperlukan secara aman tanpa menghapus tabel atau data. Pada database Aiven beta, migration menambahkan orders.payment_url, orders.artwork_image_url, serta beberapa indeks yang belum ada.
+Pengujian migration pada database Aiven beta berhasil. Pengujian unit juga memverifikasi bahwa migration mendefinisikan tabel aktif yang dibutuhkan sistem. Namun, pembuatan database testing kosong terpisah belum dilakukan karena sesi ini diarahkan untuk memakai database Aiven beta yang sudah ada dan tidak membuat database Aiven baru.
+4.3.6 Implementasi WebAR
+Halaman WebAR dan aset frame.glb tersedia pada server lokal. File frontend/assets/3d/frame.glb berukuran 1.522.172 byte dan dapat diakses melalui HTTP dengan status 200. Referensi placeholder path/to/your/frame-texture.jpg tidak lagi ditemukan pada kode sehingga tidak menghasilkan 404 dari referensi runtime.
+Pengujian WebAR yang membutuhkan kamera, WebXR, dan deteksi bidang pada perangkat smartphone belum dilakukan. Oleh karena itu, kemampuan menempatkan objek 3D secara markerless pada dinding, rotasi, translasi, dan penyesuaian posisi masih diberi status MEMERLUKAN SMARTPHONE.
+4.4 Pelaksanaan Pengujian
+Pengujian dilakukan pada 13 Juli 2026 menggunakan environment beta. Secret pada .env digunakan oleh sistem dan test runner untuk koneksi, tetapi tidak dicatat dalam dokumen. Data pelanggan nyata tidak digunakan. Data sintetis dibuat dengan prefix TEST_BAB4_20260713_040254, kemudian pengujian ulang dilakukan dengan prefix TEST_BAB4_20260713_042711. Kedua batch data sintetis dibersihkan setelah pengujian.
+Tabel 4.6 Pelaksanaan Pengujian
+No
+Komponen
+Keterangan
+1
+Waktu pengujian
+13 Juli 2026
+2
+Lingkungan
+Database Aiven beta yang digunakan proyek, backend lokal, dan frontend static server lokal
+3
+Data uji
+Produk, art print, slider, alamat, cart, order, order item, dan custom order sintetis
+4
+Backend lokal
+Berjalan pada port 8080 selama pengujian
+5
+Frontend lokal
+Berjalan melalui static server lokal pada port 5173 selama pengujian
+6
+Jenis pengujian
+Unit test mock, integration test Aiven, black box HTTP lokal, integrasi Firebase, Flip, Cloudinary, dan API.co.id
+7
+Batasan
+Browser otomatis tidak tersedia; kamera WebAR belum diuji; SUS belum dilakukan; performa belum diukur
+Perintah pengujian utama yang berhasil dijalankan adalah go test ./..., go build ./..., node --check untuk seluruh JavaScript frontend, integration test Aiven dengan BAB4_INTEGRATION=1, serta black box HTTP lokal dengan BAB4_BLACKBOX=1.
+4.5 Hasil Pengujian Black Box
+Pengujian black box dilakukan dengan memeriksa keluaran sistem berdasarkan masukan tanpa menjadikan struktur internal kode sebagai bukti utama. Status PASS hanya diberikan ketika skenario benar-benar dijalankan dan hasil aktual sesuai dengan hasil yang diharapkan. Skenario yang membutuhkan browser visual, perangkat smartphone, atau responden tidak dihitung sebagai keberhasilan.
+Tabel 4.7 Ringkasan Hasil Pengujian per Kelompok
+Kelompok pengujian
+PASS
+FAIL
+BELUM DIUJI
+TIDAK BERLAKU
+MEMERLUKAN SMARTPHONE
+MEMERLUKAN RESPONDEN
+Catatan
+Unit test mock
+23
+0
+0
+0
+0
+0
+Semua unit test prioritas PASS
+Integration test Aiven
+18
+0
+1
+0
+0
+0
+Database kosong terpisah belum diuji
+Black box HTTP lokal
+29
+0
+2
+0
+0
+0
+Login UI admin dan logout UI belum diuji
+Firebase
+2
+0
+3
+0
+0
+0
+Tidak ada akun Firebase uji nyata
+Flip
+6
+0
+1
+0
+0
+0
+Callback eksternal sandbox real belum diterima
+Cloudinary
+4
+0
+0
+0
+0
+0
+Upload dan cleanup sintetis berhasil
+API.co.id
+2
+0
+0
+0
+0
+0
+Ongkir reachable dan dipakai backend
+WebAR/browser/performa/SUS
+2
+0
+4
+0
+2
+1
+Membutuhkan browser, smartphone, dan responden
+Frontend build
+0
+0
+0
+1
+0
+0
+Tidak ada package.json karena frontend statis
+Persentase keberhasilan keseluruhan tidak dihitung karena beberapa kelompok berstatus BELUM DIUJI, TIDAK BERLAKU, MEMERLUKAN SMARTPHONE, atau MEMERLUKAN RESPONDEN. Jika hanya skenario yang benar-benar dijalankan dihitung, tidak ada skenario yang berstatus FAIL setelah perbaikan.
+Tabel 4.8 Hasil Pengujian Black Box Utama
+ID
+Modul
+Skenario
+Hasil aktual
+Status
+Bukti
+BB-01
+Halaman publik
+Homepage
+200
+PASS
+public_pages_and_assets
+BB-02
+Halaman publik
+Katalog produk
+200
+PASS
+public_pages_and_assets
+BB-03
+Halaman publik
+Art print
+200
+PASS
+public_pages_and_assets
+BB-04
+Halaman publik
+Detail produk/art print
+200
+PASS
+public_pages_and_assets
+BB-05
+Halaman publik
+Custom frame builder
+200
+PASS
+public_pages_and_assets
+BB-06
+Halaman publik
+Halaman AR
+200
+PASS
+public_pages_and_assets
+BB-07
+Halaman publik
+Login admin
+200
+PASS
+public_pages_and_assets
+BB-08
+Asset
+JavaScript checkout
+200
+PASS
+public_pages_and_assets
+BB-09
+Asset
+CSS utama
+200
+PASS
+public_pages_and_assets
+BB-10
+Asset
+frame.glb
+200 dan file tidak kosong
+PASS
+TestBAB4FrameGLBFileExists
+BB-11
+Asset
+Placeholder texture
+Referensi tidak ditemukan pada runtime
+PASS
+rg dan frontend_asset_test
+BB-12
+Auth API
+Stats tanpa JWT
+401 tanpa redirect
+PASS
+api_auth_responses
+BB-13
+Auth API
+Invoice/order tanpa auth
+401 tanpa redirect
+PASS
+api_auth_responses
+BB-14
+Auth API
+JWT invalid
+401 tanpa redirect
+PASS
+api_auth_responses
+BB-15
+Admin login
+Login gagal
+401
+PASS
+api_auth_responses
+BB-17
+Admin JWT
+Stats dengan JWT
+200
+PASS
+admin_stats_with_JWT
+BB-18
+Admin produk
+Create produk
+201
+PASS
+product_CRUD
+BB-19
+Admin produk
+Update produk
+200
+PASS
+product_CRUD
+BB-20
+Admin produk
+Delete produk
+204
+PASS
+product_CRUD
+BB-21
+Admin art print
+Create art print
+201
+PASS
+art_print_CRUD
+BB-22
+Admin art print
+Update art print
+200
+PASS
+art_print_CRUD
+BB-23
+Admin art print
+Delete art print
+204
+PASS
+art_print_CRUD
+BB-24
+Admin slider
+Create slider
+201
+PASS
+slider_CRUD
+BB-25
+Admin slider
+Read slider admin
+Slider sintetis ditemukan
+PASS
+slider_CRUD
+BB-26
+Admin slider
+Delete slider
+200
+PASS
+slider_CRUD
+BB-27
+Custom order
+Simpan custom frame
+201
+PASS
+custom_order_persistence
+BB-28
+Admin order
+List order
+200
+PASS
+admin_order_list_detail_and_status_update
+BB-29
+Admin order
+Detail order
+200
+PASS
+admin_order_list_detail_and_status_update
+BB-30
+Admin order
+Update status
+200 dan status berubah
+PASS
+admin_order_list_detail_and_status_update
+BB-16
+Admin login
+Login UI berhasil
+Tidak ada kredensial uji UI
+BELUM DIUJI
+Perlu akun admin uji
+BB-31
+Admin logout
+Logout UI
+Browser tidak tersedia
+BELUM DIUJI
+Browser connector kosong
+4.6 Hasil Pengujian Kinerja, Kompatibilitas, dan Usability
+Pengujian kinerja belum menghasilkan nilai numerik karena tidak tersedia alat browser/performance pada sesi otomatis. Oleh karena itu, waktu muat halaman, penggunaan memori, dan frame rate WebAR belum dicatat. Status ini dicantumkan sebagai BELUM DIUJI, bukan PASS.
+Pengujian kompatibilitas dasar melalui HTTP lokal menunjukkan halaman publik, aset CSS, aset JavaScript, dan model GLB dapat diakses. Namun, kompatibilitas WebAR pada smartphone Android dengan dukungan ARCore serta browser yang mendukung WebXR belum diuji. Pengujian tersebut harus dilakukan menggunakan perangkat fisik karena memerlukan kamera dan izin sensor.
+Pengujian usability dengan SUS belum dilakukan karena belum ada responden. Dengan demikian, nilai SUS, rata-rata skor, kategori penerimaan, dan interpretasi kepuasan pengguna belum dapat ditulis pada Bab IV. Bagian tersebut masih menjadi placeholder yang harus dilengkapi setelah kuesioner dikumpulkan.
+Tabel 4.9 Status Pengujian Non-Fungsional
+ID
+Jenis
+Skenario
+Hasil aktual
+Status
+PERF-01
+Kinerja
+Loading time halaman
+Belum diukur
+BELUM DIUJI
+PERF-02
+Kinerja WebAR
+Frame rate WebAR
+Belum diuji pada smartphone
+MEMERLUKAN SMARTPHONE
+COMP-01
+Kompatibilitas HTTP
+Halaman dan aset lokal
+200 untuk halaman utama dan aset GLB
+PASS
+COMP-02
+Kompatibilitas WebXR
+Kamera dan AR markerless
+Belum diuji pada perangkat fisik
+MEMERLUKAN SMARTPHONE
+SUS-01
+Usability
+Kuesioner SUS
+Belum ada responden
+MEMERLUKAN RESPONDEN
+4.7 Analisis dan Pembahasan Rumusan Masalah
+Rumusan masalah pertama adalah bagaimana merancang sistem visualisasi produk berbasis WebAR yang dapat diakses melalui browser menggunakan WebXR dan Three.js tanpa instalasi aplikasi. Hasil implementasi menunjukkan bahwa sistem telah memiliki halaman AR berbasis web dan aset GLB yang dapat dimuat melalui HTTP lokal. Hal ini membuktikan kesiapan komponen web dan aset 3D. Namun, keberhasilan penuh rumusan masalah pertama belum dapat dinyatakan final karena uji pada browser smartphone dengan WebXR dan kamera belum dilakukan.
+Rumusan masalah kedua adalah bagaimana menerapkan markerless AR dengan deteksi bidang atau surface detection untuk menempatkan objek 3D secara proporsional pada permukaan dinding. Dari sisi implementasi, sistem menyediakan aset 3D dan halaman AR. Akan tetapi, deteksi bidang, kestabilan penempatan objek, dan kesesuaian proporsi di dinding harus dibuktikan melalui perangkat fisik. Oleh karena itu, pembahasan rumusan masalah kedua masih bersifat parsial dan membutuhkan pengujian lanjutan pada smartphone.
+Rumusan masalah ketiga adalah bagaimana mengimplementasikan interaksi pengguna berupa rotasi, translasi, dan penyesuaian posisi agar objek 3D mudah dan stabil ditempatkan. Pada sesi otomatis, interaksi visual belum dapat diuji karena browser connector tidak tersedia. Pengujian HTTP hanya membuktikan bahwa halaman dan aset dapat diakses. Dengan demikian, validasi kemudahan dan kestabilan interaksi masih memerlukan pengujian langsung pada perangkat pengguna.
+Di luar aspek WebAR, hasil pengujian menunjukkan bahwa sistem pendukung transaksi telah meningkat secara signifikan. Validasi checkout, otorisasi order, proteksi admin, integrasi Cloudinary, API.co.id, Flip sandbox, dan pembersihan data sintetis telah berjalan. Ini penting karena sistem visualisasi produk tidak berdiri sendiri, melainkan terhubung dengan proses pemesanan dan administrasi CitraFrame.
+4.8 Ringkasan Bab
+Berdasarkan pengujian pada environment beta, fitur yang terbukti berhasil adalah akses halaman publik utama, akses aset frame.glb, proteksi endpoint admin, proteksi detail order, respons JSON 401/403 tanpa redirect 302, validasi checkout, perhitungan ulang harga dan ongkir di backend, pembuatan payment link Flip sandbox, kompensasi stok saat Flip gagal, CRUD produk, CRUD art print, CRUD slider, daftar/detail/update order admin, upload dan cleanup Cloudinary, serta akses ongkir API.co.id.
+Tidak ada skenario yang tetap berstatus FAIL setelah perbaikan. Bug yang ditemukan selama pengujian adalah respons Flip sandbox dengan link_id numeric, payment URL Flip tanpa skema URL, serta schema beta yang belum memiliki beberapa kolom dan indeks. Ketiga bug tersebut telah diperbaiki dan diuji ulang hingga PASS.
+Data pengujian dibuat dengan prefix TEST_BAB4_20260713_040254 dan TEST_BAB4_20260713_042711 pada tabel produk, art print, slider, alamat, cart, order, order item, dan custom order. Setelah pengujian, data sintetis tersebut dibersihkan dan verifikasi cleanup menyatakan tidak ada sisa row prefix pada tabel yang diuji.
+Screenshot otomatis belum berhasil dibuat karena browser connector tidak tersedia pada sesi ini. Oleh karena itu, file 01-homepage.png sampai 17-network-glb.png belum tersedia dan bagian gambar pada Bab IV belum dapat difinalkan.
+Pengujian yang masih harus dilakukan menggunakan smartphone adalah WebAR dengan kamera, deteksi bidang, penempatan objek pada dinding, rotasi, translasi, penyesuaian skala/posisi, dan pengukuran frame rate. Data SUS juga masih harus dikumpulkan dari responden sebelum bagian usability dapat disimpulkan.
+Bagian Bab IV yang sudah dapat dianggap kuat adalah spesifikasi sistem beta, hasil implementasi backend, hasil pengujian otorisasi, hasil pengujian checkout, hasil integrasi Flip sandbox, Cloudinary, API.co.id, dan hasil black box HTTP lokal. Bagian yang masih placeholder adalah screenshot browser, pengujian WebAR pada smartphone, pengujian performa, dan analisis SUS.

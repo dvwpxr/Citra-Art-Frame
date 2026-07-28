@@ -24,19 +24,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let allProducts = [];
 
   // --- API CONFIG ---
-  const API_URL = "http://localhost:8080/api/products";
+  const API_URL = "/api/products"; // Relative path - no CORS issue
 
   // --- UTILITY & UI FUNCTIONS ---
   const showNotification = (message, isError = false) => {
     notification.textContent = message;
-    notification.className = `fixed top-[7%] right-5 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 ${
-      isError ? "bg-red-600" : "bg-green-500"
-    } translate-x-0`;
+    notification.className = "notification";
+    if (isError) {
+        notification.classList.add("error");
+    }
+    notification.classList.add("show");
+
     setTimeout(() => {
-      notification.className = notification.className.replace(
-        "translate-x-0",
-        "translate-x-[150%]"
-      );
+      notification.classList.remove("show");
     }, 3000);
   };
 
@@ -51,6 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("category").value = product.category || "";
     document.getElementById("detail_image_url").value =
       product.detail_image_url || "";
+    document.getElementById("border_slice").value =
+      product.border_slice ?? "";
+    document.getElementById("inset_top").value =
+      product.inset_top ?? "";
+    document.getElementById("inset_right").value =
+      product.inset_right ?? "";
+    document.getElementById("inset_bottom").value =
+      product.inset_bottom ?? "";
+    document.getElementById("inset_left").value =
+      product.inset_left ?? "";
 
     if (product.image_url) {
       currentImagePreview.src = product.image_url;
@@ -79,39 +89,36 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderTable = (products) => {
-    // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
     tableBody.innerHTML = "";
     if (!products || products.length === 0) {
       tableBody.innerHTML =
-        '<tr><td colspan="6" class="text-center p-4 text-gray-700">No products found.</td></tr>';
+        '<tr><td colspan="6" style="text-align:center;padding:32px;color:rgba(255,255,255,0.25)">No products found.</td></tr>';
       return;
     }
 
     products.forEach((product) => {
       const row = document.createElement("tr");
-      row.className = "border-b hover:bg-gray-200";
       row.innerHTML = `
-        <td class="p-3">
+        <td>
           <img src="${
             product.image_url || "https://via.placeholder.com/40"
-          }" alt="${product.name}" class="w-10 h-10 rounded-md object-cover">
+          }" alt="${product.name}" style="width:40px;height:40px;border-radius:8px;object-fit:cover">
         </td>
-        <td class="p-3 font-medium text-gray-600">${product.name}</td>
-        <td class="p-3 text-gray-600">${product.category}</td>
-        <td class="p-3 text-gray-600">Rp ${product.price.toLocaleString(
+        <td style="font-weight:600;color:#fff">${product.name}</td>
+        <td>${product.category}</td>
+        <td style="font-weight:600">Rp ${product.price.toLocaleString(
           "id-ID"
         )} / meter</td>
-        <td class="p-3 text-gray-600">${product.stock}</td>
-        <td class="p-3">
-          <button class="edit-btn text-blue-500 hover:text-blue-700 mr-3" data-id="${
+        <td>${product.stock}</td>
+        <td>
+          <button class="btn-icon edit edit-btn" data-id="${
             product.id
           }" title="Edit"><i class="ri-pencil-fill"></i></button>
-          <button class="delete-btn text-red-500 hover:text-red-700" data-id="${
+          <button class="btn-icon delete delete-btn" data-id="${
             product.id
           }" title="Delete"><i class="ri-delete-bin-5-fill"></i></button>
         </td>
       `;
-      // --- PERUBAHAN DI SINI: Menggunakan variabel yang benar ---
       tableBody.appendChild(row);
     });
   };

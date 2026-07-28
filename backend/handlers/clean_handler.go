@@ -60,13 +60,13 @@ func CleanupCloudinaryHandler(w http.ResponseWriter, r *http.Request) {
 	deletedCount := 0
 	for _, asset := range assets.Assets {
 		if _, exists := validImageUrls[asset.SecureURL]; !exists {
-			
+
 			// === PERBAIKAN DI SINI ===
 			// Kita tidak perlu mem-parsing `asset.CreatedAt` karena sudah bertipe time.Time.
 			// Langsung gunakan di dalam kondisi if.
 			if time.Since(asset.CreatedAt) > (7 * 24 * time.Hour) {
 				log.Printf("Menghapus gambar tidak terpakai: %s (Dibuat pada: %v)", asset.PublicID, asset.CreatedAt)
-				
+
 				_, err := cld.Admin.DeleteAssets(ctx, admin.DeleteAssetsParams{
 					PublicIDs: []string{asset.PublicID},
 				})

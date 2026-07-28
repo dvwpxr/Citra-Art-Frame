@@ -1,0 +1,79 @@
+@startuml Sequence_Admin_CitraFrame
+
+title Sequence Diagram Admin - Sistem CitraFrame
+
+autonumber
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+  ArrowColor #333333
+  ActorBorderColor #C09553
+  LifeLineBorderColor #888888
+  ParticipantBackgroundColor #FFFDE7
+  ParticipantBorderColor #C09553
+  BoxBackgroundColor #FAFAFA
+}
+
+actor "Admin CitraFrame" as Admin
+boundary "Frontend Panel Admin\n(/login, /dashboard)" as FE
+control "Backend Admin API\n(Controllers & Handlers)" as BE
+entity "Database MySQL\n(CitraFrame)" as DB
+
+== 1. Autentikasi & Login Admin ==
+Admin -> FE: Buka Halaman Login (/login) & Input Username + Password
+FE -> BE: POST /api/admin/login {username, password}
+BE -> BE: Verifikasi Kredensial & Generate JWT Token
+BE --> FE: Set HTTP-Only Cookie (jwt_token) & Return 200 OK
+FE --> Admin: Redirect ke Dashboard Admin (/dashboard)
+
+== 2. Monitoring Statistik Dashboard ==
+FE -> BE: GET /api/admin/stats (terproteksi JwtMiddleware)
+BE -> DB: SELECT count(orders), sum(total_amount), popular_products
+DB --> BE: Hasil Rekapitulasi Statistik
+BE --> FE: JSON Data Statistik Dashboard
+FE --> Admin: Tampilkan Grafik & Ringkasan Metrik Dashboard
+
+== 3. Manajemen Produk Bingkai & Art Prints (CRUD) ==
+Admin -> FE: Pilih Menu Produk / Art Prints & Lakukan Tambah / Edit / Hapus
+FE -> BE: POST / PUT / DELETE /api/products (atau /api/prints)
+BE -> DB: INSERT / UPDATE / DELETE pada tabel products / art_prints
+DB --> BE: Query Eksekusi Berhasil
+BE --> FE: Status 200 OK & Data Baru
+FE --> Admin: Tampilkan Notifikasi Sukses & Refresh Tabel
+
+== 4. Manajemen Slider Beranda & Produk Populer ==
+Admin -> FE: Tambah/Hapus Slider Promo atau Set Produk Populer
+FE -> BE: POST /api/slides atau PUT /api/products/{id}/set-popular
+BE -> DB: UPDATE tabel sliders / status populer produk
+DB --> BE: Query Berhasil
+BE --> FE: Status 200 OK
+FE --> Admin: Tampilkan Perubahan pada Panel Admin
+
+== 5. Manajemen Pesanan & Update Status Order ==
+Admin -> FE: Buka Halaman Pesanan (/dashboard/order) & Filter/Cari Pesanan
+FE -> BE: GET /api/admin/orders?status=...&search=...
+BE -> DB: SELECT * FROM orders WHERE ... ORDER BY created_at DESC
+DB --> BE: Daftar Pesanan Pelanggan
+BE --> FE: JSON Daftar Pesanan
+FE --> Admin: Tampilkan Tabel Daftar Pesanan
+
+Admin -> FE: Lihat Detail Pesanan Tertentu
+FE -> BE: GET /api/admin/orders/{id}
+BE -> DB: SELECT order, order_items, shipping_address FROM orders
+DB --> BE: Rincian Lengkap Pesanan
+BE --> FE: JSON Detail Pesanan
+FE --> Admin: Tampilkan Modal Detail Item, Alamat, & Bukti Bayar
+
+Admin -> FE: Ubah Status Pesanan (misal: PROCESSING -> SHIPPED -> DELIVERED)
+FE -> BE: PUT /api/admin/orders/{id}/status {status: "SHIPPED"}
+BE -> DB: UPDATE orders SET order_status = ? WHERE id = ?
+DB --> BE: Rows Affected
+BE --> FE: JSON {message: "Status updated successfully"}
+FE --> Admin: Status Pesanan Diperbarui pada Tabel
+
+== 6. Logout Admin ==
+Admin -> FE: Klik Tombol Logout
+FE -> BE: POST /api/admin/logout
+BE --> FE: Clear Cookie jwt_token (Clear-Site-Data)
+FE --> Admin: Redirect ke Halaman Login (/login)
+
+@enduml

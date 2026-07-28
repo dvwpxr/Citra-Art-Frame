@@ -17,14 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Fungsi Notifikasi (sama persis)
   const showNotification = (message, isError = false) => {
     notification.textContent = message;
-    notification.className = `notification fixed top-[7%] right-5 text-white py-2 px-4 rounded-lg shadow-md transition-transform duration-300 ${
-      isError ? "bg-red-600" : "bg-green-500"
-    } translate-x-0`;
+    notification.className = "notification";
+    if (isError) {
+        notification.classList.add("error");
+    }
+    notification.classList.add("show");
+    
     setTimeout(() => {
-      notification.className = notification.className.replace(
-        "translate-x-0",
-        "translate-x-[150%]"
-      );
+      notification.classList.remove("show");
     }, 3000);
   };
 
@@ -43,21 +43,45 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sliders && sliders.length > 0) {
         sliders.forEach((slide) => {
           const slideElement = document.createElement("div");
-          slideElement.className =
-            "relative group rounded-lg overflow-hidden shadow-md";
+          slideElement.style.position = "relative";
+          slideElement.style.borderRadius = "8px";
+          slideElement.style.overflow = "hidden";
+          slideElement.className = "group";
           slideElement.innerHTML = `
-            <img src="${slide.imageUrl}" alt="${slide.altText}" class="w-full h-48 object-cover">
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
-              <button class="delete-btn text-white text-3xl opacity-0 group-hover:opacity-100 transition-opacity" data-id="${slide.id}">
+            <div style="display:flex; height:200px; width:100%; position:relative">
+              <img src="${slide.imageUrl}" alt="${slide.altText}" style="width:100%;height:100%;object-fit:cover;display:block">
+              ${slide.mobileImageUrl && slide.mobileImageUrl !== slide.imageUrl ? 
+                `<div style="position:absolute;bottom:10px;right:10px;border:2px solid #fff;border-radius:6px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.5)">
+                  <img src="${slide.mobileImageUrl}" style="height:60px;width:auto;display:block">
+                </div>` : ''
+              }
+            </div>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;transition:background 0.3s" class="slider-overlay">
+              <button class="btn-icon delete delete-btn" data-id="${slide.id}" style="opacity:0;transform:scale(0.8);transition:all 0.3s" class="slider-del-btn">
                 <i class="ri-delete-bin-line"></i>
               </button>
             </div>
           `;
+          
+          // Hover effects using JS since we can't easily inline group-hover
+          slideElement.addEventListener("mouseenter", () => {
+            slideElement.querySelector(".slider-overlay").style.background = "rgba(0,0,0,0.5)";
+            const btn = slideElement.querySelector(".delete-btn");
+            btn.style.opacity = "1";
+            btn.style.transform = "scale(1)";
+          });
+          slideElement.addEventListener("mouseleave", () => {
+            slideElement.querySelector(".slider-overlay").style.background = "rgba(0,0,0,0)";
+            const btn = slideElement.querySelector(".delete-btn");
+            btn.style.opacity = "0";
+            btn.style.transform = "scale(0.8)";
+          });
+          
           sliderList.appendChild(slideElement);
         });
       } else {
         sliderList.innerHTML =
-          '<p class="text-gray-500 col-span-full">Belum ada gambar</p>';
+          '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:32px;grid-column:1/-1">Belum ada gambar</p>';
       }
     } catch (error) {
       showNotification(error.message, true);

@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- KONFIGURASI ---
-  const API_BASE_URL = "http://localhost:8080/api";
+  const API_BASE_URL = "/api";
   const MAX_ARTWORK_DIMENSION_CM = 80;
 
   let FRAME_MODELS = [];
@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     builderTitle: document.getElementById("builderTitle"),
     artworkWidthInput: document.getElementById("artworkWidth"),
     artworkHeightInput: document.getElementById("artworkHeight"),
-    updateSizeBtn: document.getElementById("updateSizeBtn"),
     uploadImageBtn: document.getElementById("uploadImageBtn"),
     imageUploader: document.getElementById("imageUploader"),
     framePreviewWrapper: document.getElementById("framePreviewWrapper"),
@@ -44,8 +43,14 @@ document.addEventListener("DOMContentLoaded", () => {
     glassOptions: document.getElementById("glassOptions"),
     glassInfo: document.getElementById("glassInfo"),
     glassSummary: document.getElementById("glassSummary"),
+    matInfo: document.getElementById("matInfo"),
     matFeeContainer: document.getElementById("matFeeContainer"),
     matFee: document.getElementById("matFee"),
+  };
+
+  const numberOrFallback = (value, fallback) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
   };
 
   // --- FUNGSI KALKULASI HARGA (Tidak Berubah) ---
@@ -72,25 +77,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initializeBuilder = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products`);
+	  const response = await fetch(`${API_BASE_URL}/products/frames`);
       if (!response.ok)
         throw new Error("Gagal mengambil data frame dari server.");
 
       const products = (await response.json()) || [];
 
       FRAME_MODELS = products.map((p) => ({
+        id: p.id,
         name: p.name,
         image: p.image_url,
         price: p.price,
-        // Fallback jika data insets tidak ada di database
+		model3d: p.frame_model_id && p.frame_model_url
+		  ? {
+				  id: p.frame_model_id,
+				  name: p.frame_model_name || "Model 3D Frame",
+				  fileUrl: p.frame_model_url,
+				  frontRotationY: Number(p.frame_model_front_rotation_y) === 180 ? 180 : 0,
+				}
+		  : null,
+        // Nilai ini dikalibrasi per produk melalui dashboard admin.
         insets: {
-          top: p.inset_top || 15,
-          right: p.inset_right || 15,
-          bottom: p.inset_bottom || 15,
-          left: p.inset_left || 15,
+          top: numberOrFallback(p.inset_top, 15),
+          right: numberOrFallback(p.inset_right, 15),
+          bottom: numberOrFallback(p.inset_bottom, 15),
+          left: numberOrFallback(p.inset_left, 15),
         },
-        // Nilai slice untuk border-image. Sesuaikan dengan file gambar frame Anda.
-        slice: p.border_image_slice || 80,
+        // API utama memakai border_slice. Nama lama tetap diterima agar data
+        // dari cache/deployment sebelumnya tidak merusak preview.
+        slice: numberOrFallback(
+          p.border_slice ?? p.border_image_slice,
+          80,
+        ),
       }));
 
       if (FRAME_MODELS.length === 0) {
@@ -114,48 +132,86 @@ document.addEventListener("DOMContentLoaded", () => {
     renderInfo();
   };
 
-  const renderFramePreview = () => {
-    const maxPreviewSize = 550;
-    const ratio = state.artworkWidth / state.artworkHeight;
-    let previewWrapperWidth, previewWrapperHeight;
+  const calculateContainedPreviewSize = (ratio, maxWidth, maxHeight) => {
+    const safeRatio = Number.isFinite(ratio) && ratio > 0 ? ratio : 1;
+    let width = Math.max(1, maxWidth);
+    let height = width / safeRatio;
 
-    if (ratio > 1) {
-      previewWrapperWidth = maxPreviewSize;
-      previewWrapperHeight = maxPreviewSize / ratio;
-    } else {
-      previewWrapperHeight = maxPreviewSize;
-      previewWrapperWidth = maxPreviewSize * ratio;
+    if (height > maxHeight) {
+      height = Math.max(1, maxHeight);
+      width = height * safeRatio;
     }
-    dom.framePreviewWrapper.style.width = `${previewWrapperWidth}px`;
-    dom.framePreviewWrapper.style.height = `${previewWrapperHeight}px`;
+
+    return {
+      width: Math.round(width),
+      height: Math.round(height),
+      ratio: safeRatio,
+    };
+  };
+
+  const renderFramePreview = () => {
+    const previewPanel = dom.framePreviewWrapper.closest(".frame-preview-large");
+    const panelStyle = previewPanel ? window.getComputedStyle(previewPanel) : null;
+    const horizontalPadding = panelStyle
+      ? parseFloat(panelStyle.paddingLeft || "0") +
+        parseFloat(panelStyle.paddingRight || "0")
+      : 0;
+    const panelWidth = previewPanel?.clientWidth || window.innerWidth;
+    const availableWidth = Math.max(220, panelWidth - horizontalPadding);
+    const availableHeight = Math.max(220, window.innerHeight * 0.68);
+    const previewBounds = Math.min(560, availableWidth, availableHeight);
+    const previewSize = calculateContainedPreviewSize(
+      state.artworkWidth / state.artworkHeight,
+      previewBounds,
+      previewBounds,
+    );
+
+    // Kedua sisi berasal dari rasio yang sama. CSS aspect-ratio menjadi
+    // pengaman ketika zoom browser atau breakpoint membatasi ruang preview.
+    dom.framePreviewWrapper.style.setProperty(
+      "--frame-preview-ratio",
+      `${previewSize.width} / ${previewSize.height}`,
+    );
+    dom.framePreviewWrapper.style.aspectRatio = `${previewSize.width} / ${previewSize.height}`;
+    dom.framePreviewWrapper.style.width = `${previewSize.width}px`;
+    dom.framePreviewWrapper.style.height = `${previewSize.height}px`;
 
     const frame = state.frameModel;
     if (frame && frame.image) {
-      // --- LOGIKA TAMPILAN BARU DAN DIPERBAIKI ---
-
-      // 1. Atur gambar frame sebagai background dari #frameElement
-      Object.assign(dom.frameElement.style, {
-        /* — BACKGROUND isi (bagian tengah) — */
-        backgroundSize: "100% 100%", // penuhi area isi
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundOrigin: "content-box", // hitung bg dari area konten
-        backgroundClip: "content-box", // bg tidak melebar ke area border
-        padding: "0", // jaga supaya isi benar2 'content-box'
-
-        /* — BORDER sebagai bingkai (9-slice) — */
-        borderStyle: "solid",
-        // Gunakan persen agar tebal bingkai proporsional terhadap ukuran elemen
-        borderWidth: `${frame.insets.top}% ${frame.insets.right}% ${frame.insets.bottom}% ${frame.insets.left}%`,
-        borderImageSource: `url('${frame.image}')`,
-        // 'fill' mengisi area tengah oleh potongan tengah gambar (agar benar2 full)
-        // Sesuaikan 'slice' (px) dengan lebar tebal bingkai pada file PNG Anda
-        borderImageSlice: `${frame.slice || 80} fill`,
-        borderImageRepeat: "stretch", // bisa 'repeat' bila pola harus diulang
-      });
-
-      // 2. Atur posisi #matElement agar pas di dalam "lubang" frame
       const { top, right, bottom, left } = frame.insets;
+      const borderWidths = {
+        top: Math.max(1, Math.round((previewSize.height * top) / 100)),
+        right: Math.max(1, Math.round((previewSize.width * right) / 100)),
+        bottom: Math.max(1, Math.round((previewSize.height * bottom) / 100)),
+        left: Math.max(1, Math.round((previewSize.width * left) / 100)),
+      };
+
+      // Frame digambar oleh ::after supaya selalu berada di atas artwork.
+      // Border slice memilih bagian sumber gambar, sedangkan empat inset
+      // menentukan batas lubang/canvas secara khusus untuk setiap produk.
+      Object.assign(dom.frameElement.style, {
+        backgroundImage: "none",
+        padding: "0",
+        borderStyle: "none",
+        borderImageSource: "none",
+      });
+      dom.frameElement.style.setProperty("border-width", "0", "important");
+      dom.frameElement.style.setProperty(
+        "--frame-border-image",
+        `url("${frame.image}")`,
+      );
+      dom.frameElement.style.setProperty(
+        "--frame-border-slice",
+        `${frame.slice || 80}`,
+      );
+      dom.frameElement.style.setProperty("--frame-border-top", `${borderWidths.top}px`);
+      dom.frameElement.style.setProperty("--frame-border-right", `${borderWidths.right}px`);
+      dom.frameElement.style.setProperty("--frame-border-bottom", `${borderWidths.bottom}px`);
+      dom.frameElement.style.setProperty("--frame-border-left", `${borderWidths.left}px`);
+
+      // Inset admin dipakai langsung terhadap kanvas luar. Dengan demikian
+      // mengganti frame langsung memakai kalibrasi frame tersebut, bukan
+      // mewarisi ukuran border dari frame sebelumnya.
       Object.assign(dom.matElement.style, {
         position: "absolute",
         top: `${top}%`,
@@ -169,6 +225,12 @@ document.addEventListener("DOMContentLoaded", () => {
       dom.frameElement.style.borderColor = "#8B4513";
       dom.frameElement.style.borderWidth = "20px";
       dom.frameElement.style.borderStyle = "solid";
+      Object.assign(dom.matElement.style, {
+        top: "0px",
+        right: "0px",
+        bottom: "0px",
+        left: "0px",
+      });
     }
 
     // Atur padding mat (tidak berubah)
@@ -193,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const finalWidth = state.artworkWidth + totalAddedDimension;
     const finalHeight = state.artworkHeight + totalAddedDimension;
     dom.finalSize.textContent = `${finalWidth.toFixed(
-      1
+      1,
     )} x ${finalHeight.toFixed(1)} cm`;
 
     // Kalkulasi Harga (konsisten dengan handleAddToCart)
@@ -213,17 +275,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPrice = glassPrice + matPrice + framePrice;
 
     dom.priceDisplay.textContent = `IDR ${Math.round(totalPrice).toLocaleString(
-      "id-ID"
+      "id-ID",
     )}`;
 
     dom.matFeeContainer.style.display = state.matWidth > 0 ? "flex" : "none";
     dom.matFee.textContent = `IDR ${Math.round(matPrice).toLocaleString(
-      "id-ID"
+      "id-ID",
     )}`;
 
     const glassText = state.hasGlass ? "With Glass" : "Without Glass";
     dom.glassInfo.textContent = glassText;
     dom.glassSummary.textContent = glassText;
+    if (dom.matInfo) {
+      const activeColor = document.querySelector(
+        "#matColorOptions .color-option.active",
+      );
+      const colorName = activeColor?.getAttribute("title") || state.matColor;
+      dom.matInfo.textContent =
+        state.matWidth === 0 ? "No Mat" : `${state.matWidth}cm, ${colorName}`;
+    }
     dom.builderTitle.textContent = `Customizing for ${state.artworkWidth}x${state.artworkHeight}cm Artwork`;
 
     document.querySelector(".frame-name-text").textContent = frame.name;
@@ -237,11 +307,15 @@ document.addEventListener("DOMContentLoaded", () => {
       year: "numeric",
     });
   };
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!state.frameModel) {
       alert("Silakan pilih model bingkai terlebih dahulu.");
       return;
     }
+
+    const btn = document.getElementById("addToCartBtn");
+    btn.disabled = true;
+    btn.textContent = "Menambahkan...";
 
     // Perhitungan ini SEKARANG sama persis dengan di renderInfo
     const totalAddedDimension = state.matWidth * 1;
@@ -263,15 +337,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const framePrice = perimeterM * state.frameModel.price;
     const totalPrice = glassPrice + matPrice + framePrice;
 
-    const orderData = {
-      frameModelName: state.frameModel.name,
-      frameModelImage: state.frameModel.image,
+    // Use CartManager to add to cart (async)
+    const result = await CartManager.addCustomFrame({
+      productId: state.frameModel.id,
+      name: state.frameModel.name,
+      imageUrl: state.frameModel.image,
       artworkWidth: state.artworkWidth,
       artworkHeight: state.artworkHeight,
       matWidth: state.matWidth,
       matColor: state.matColor,
       hasGlass: state.hasGlass,
-      artworkImageUrl: state.artworkImageUrl,
       dimensions: {
         finalWidthCm: finalWidth,
         finalHeightCm: finalHeight,
@@ -282,10 +357,14 @@ document.addEventListener("DOMContentLoaded", () => {
         glass: Math.round(glassPrice),
         total: Math.round(totalPrice),
       },
-    };
+    });
 
-    localStorage.setItem("customFrameOrder", JSON.stringify(orderData));
-    window.location.href = "/checkout";
+    btn.disabled = false;
+    btn.textContent = "Tambah ke Keranjang";
+
+    if (result) {
+      CartManager.showAddedToast(state.frameModel.name);
+    }
   };
 
   const handleImageUpload = (event) => {
@@ -297,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const localImageUrl = e.target.result;
-      dom.artworkContainer.innerHTML = `<img src="${localImageUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+      dom.artworkContainer.innerHTML = `<img class="artwork-image" src="${localImageUrl}" alt="Pratinjau artwork yang diunggah">`;
       const img = new Image();
       img.onload = () => {
         const ratio = img.naturalWidth / img.naturalHeight;
@@ -338,16 +417,58 @@ document.addEventListener("DOMContentLoaded", () => {
   dom.prevFrameBtn.addEventListener("click", () => handleFrameChange("prev"));
   dom.nextFrameBtn.addEventListener("click", () => handleFrameChange("next"));
 
-  dom.updateSizeBtn.addEventListener("click", () => {
+  const sanitizeAndLimitInput = (inputEl) => {
+    let val = inputEl.value.replace(/[^0-9]/g, "");
+    if (val !== "") {
+      const num = parseInt(val, 10);
+      const maxLimit = 500; // Allow custom dimensions up to 500cm instead of capping at 80cm
+      if (num > maxLimit) {
+        val = maxLimit.toString();
+      }
+    }
+    inputEl.value = val;
+  };
+
+  const autoUpdateSize = () => {
     const width = parseInt(dom.artworkWidthInput.value, 10);
     const height = parseInt(dom.artworkHeightInput.value, 10);
     if (width > 0 && height > 0) {
       state.artworkWidth = width;
       state.artworkHeight = height;
       renderAll();
-    } else {
-      alert("Please enter valid width and height.");
     }
+  };
+
+  dom.artworkWidthInput.addEventListener("input", (e) => {
+    sanitizeAndLimitInput(e.target);
+    autoUpdateSize();
+  });
+
+  dom.artworkHeightInput.addEventListener("input", (e) => {
+    sanitizeAndLimitInput(e.target);
+    autoUpdateSize();
+  });
+
+  const handleKeydown = (e) => {
+    if (e.key === "Enter") {
+      e.target.blur();
+    }
+  };
+  dom.artworkWidthInput.addEventListener("keydown", handleKeydown);
+  dom.artworkHeightInput.addEventListener("keydown", handleKeydown);
+
+  let previewResizeFrame = null;
+  const resizePreview = () => {
+    if (!state.frameModel) return;
+    window.cancelAnimationFrame(previewResizeFrame);
+    previewResizeFrame = window.requestAnimationFrame(renderFramePreview);
+  };
+
+  // Perubahan zoom browser memicu resize. Hitung kembali dua sisi sekaligus
+  // agar preview 50×50 tetap persegi pada zoom 80%, 100%, dan seterusnya.
+  window.addEventListener("resize", resizePreview, { passive: true });
+  window.visualViewport?.addEventListener("resize", resizePreview, {
+    passive: true,
   });
 
   dom.uploadImageBtn.addEventListener("click", () => dom.imageUploader.click());
@@ -387,6 +508,43 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   dom.addToCartBtn.addEventListener("click", handleAddToCart);
+  const arBtn = document.getElementById("addToCartBtn").cloneNode(true);
+  const arButton = document.getElementById("arBtn");
+  if (arButton) {
+    arButton.addEventListener("click", () => {
+      // Simpan state saat ini ke localStorage (sama seperti handleAddToCart tapi tanpa redirect checkout)
+      // Kita gunakan fungsi handleAddToCart logic tapi simpan saja
+
+      // Pastikan state.frameModel ada
+      if (!state.frameModel) {
+        alert("Pilih frame dulu");
+        return;
+      }
+
+      const totalAddedDimension = state.matWidth * 1;
+      const finalWidth = state.artworkWidth + totalAddedDimension;
+      const finalHeight = state.artworkHeight + totalAddedDimension;
+
+      const arData = {
+		frameProductId: state.frameModel.id,
+        frameModelName: state.frameModel.name,
+        frameModelImage: state.frameModel.image,
+		model3dId: state.frameModel.model3d?.id || 0,
+			model3dName: state.frameModel.model3d?.name || "Model 3D bawaan",
+			modelUrl: state.frameModel.model3d?.fileUrl || "/assets/3d/frame.glb",
+			modelFrontRotationY: state.frameModel.model3d?.frontRotationY || 0,
+        dimensions: {
+          finalWidthCm: finalWidth,
+          finalHeightCm: finalHeight,
+        },
+      };
+
+      localStorage.setItem("customFrameOrder", JSON.stringify(arData));
+
+      // Redirect ke halaman AR
+      window.location.href = "/ar-view";
+    });
+  }
 
   // --- INISIALISASI ---
   initializeBuilder();

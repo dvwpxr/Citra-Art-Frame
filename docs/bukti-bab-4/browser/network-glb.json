@@ -1,0 +1,8 @@
+{
+  "asset": "frame.glb",
+  "url": "http://127.0.0.1:<port>/assets/3d/frame.glb",
+  "status": 200,
+  "content_type": "application/octet-stream",
+  "size_bytes": 1522172,
+  "tested_at": "2026-07-12T22:05:06.361Z"
+}

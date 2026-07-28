@@ -1,0 +1,266 @@
+/* assets/css/detail.css */
+.main-content {
+  padding-top: 120px;
+  padding-bottom: 80px;
+  background-color: var(--color-background);
+  /* #fdfdfd */
+  color: var(--color-text);
+  /* #333 */
+  min-height: calc(100vh - 100px);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .detail-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+}
+
+.detail-image-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  background: #fff;
+}
+
+.detail-image-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+}
+
+.detail-image-wrapper img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.detail-image-wrapper:hover img {
+  transform: scale(1.03);
+}
+
+.detail-info {
+  background: #ffffff;
+  padding: 48px;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.detail-info h1 {
+  font-family: var(--font-heading), "Playfair Display", serif;
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  color: var(--color-heading);
+}
+
+.detail-info .artist {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.detail-info .price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detail-info .price::before {
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+.detail-info .description {
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 36px;
+  font-size: 1.05rem;
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.stock-badge.empty {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.quantity-selector {
+  margin-bottom: 36px;
+}
+
+.quantity-selector label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #666;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quantity-input {
+  width: 120px;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  background-color: #fcfcfc;
+  color: var(--color-heading);
+  outline: none;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.quantity-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(192, 149, 83, 0.1);
+}
+
+.add-to-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 8px 15px rgba(192, 149, 83, 0.2);
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background-color: #a87e41;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(192, 149, 83, 0.3);
+}
+
+.add-to-cart-btn:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Skeleton Loader Styles */
+.skeleton-loader {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 900px) {
+  .skeleton-loader {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-info {
+  background: #ffffff;
+  padding: 48px;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.skeleton-info .skeleton-line {
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-line.title {
+  height: 48px;
+  width: 70%;
+  margin-bottom: 12px;
+}
+
+.skeleton-line.artist {
+  height: 24px;
+  width: 40%;
+  margin-bottom: 32px;
+}
+
+.skeleton-line.price {
+  height: 40px;
+  width: 50%;
+  margin-bottom: 40px;
+}
+
+.skeleton-line.text {
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 60%;
+  margin-bottom: 40px;
+}
+
+.skeleton-line.btn {
+  height: 60px;
+  width: 100%;
+  margin-top: 40px;
+  border-radius: 8px;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}

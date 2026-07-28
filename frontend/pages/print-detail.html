@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Art Print - Citra Artframe</title>
+    <link rel="stylesheet" href="/assets/css/base.css?v=20260727.1" />
+    <link rel="stylesheet" href="/assets/css/detail.css" />
+    <link rel="stylesheet" href="/assets/css/cart.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260727.1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              playfair: ['"Playfair Display"', "serif"],
+              inter: ['"Inter"', "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="site-page page-detail">
+    <!-- Mobile nav overlay -->
+    <div class="nav-overlay" id="nav-overlay"></div>
+    <header class="header scrolled" id="main-header">
+      <div class="container">
+        <a href="/" class="logo">CITRA ARTFRAME</a>
+        <nav class="nav-menu" id="site-nav">
+          <div class="mobile-cta-group">
+            <a href="/#ar-section" class="btn-ar-nav mobile-only">
+              <span class="nav-ar-badge">AR</span>
+              Lihat Bingkai di Dindingmu <span class="sparkle">✨</span>
+            </a>
+            <a href="/custom" class="btn-nav-custom mobile-only">Buat Bingkai Custom</a>
+          </div>
+          <a href="/index.html#frames" class="nav-link">Pilihan Frame</a>
+          <a href="/prints" class="nav-link">Art Prints</a>
+          <a href="/products" class="nav-link">Produk</a>
+          <a href="/index.html#testimonials" class="nav-link">Testimoni</a>
+          <div class="mobile-nav-extras">
+            <a href="/cart" class="mobile-nav-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Keranjang
+            </a>
+            <a href="/account" class="mobile-nav-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Akun Saya
+            </a>
+          </div>
+        </nav>
+        <div class="nav-actions">
+          <a href="/cart" class="cart-nav-btn" aria-label="Keranjang">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span class="cart-badge">0</span>
+          </a>
+          <button class="icon-btn" aria-label="Akun">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </button>
+          <a href="/#ar-section" class="btn-ar-nav desktop-only">
+            <span class="nav-ar-badge">AR</span>
+            Lihat Bingkai di Dindingmu <span class="sparkle">✨</span>
+          </a>
+          <a href="/custom" class="btn-nav-custom desktop-only">Buat Bingkai Custom</a>
+        </div>
+        <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Buka menu navigasi" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container" id="detail-container">
+        <div class="skeleton-loader"></div>
+      </div>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/script.js" defer></script>
+    <script src="/assets/js/print-detail.js" defer></script>
+  </body>
+</html>
