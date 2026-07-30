@@ -16,9 +16,8 @@
       :root {
         --bg: #0c0c0f;
         --bg-soft: #111115;
-        --panel: rgba(255, 255, 255, 0.04);
-        --panel-strong: rgba(255, 255, 255, 0.06);
-        --border: rgba(255, 255, 255, 0.09);
+        --panel: rgba(255, 255, 255, 0.03);
+        --border: rgba(255, 255, 255, 0.08);
         --text: #f5f5f5;
         --muted: rgba(255, 255, 255, 0.52);
         --gold: #c09553;
@@ -35,161 +34,82 @@
         margin: 0;
         min-height: 100vh;
         font-family: "Inter", sans-serif;
-        background:
-          radial-gradient(circle at top left, rgba(192, 149, 83, 0.18), transparent 32%),
-          radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.1), transparent 28%),
+        background: 
+          radial-gradient(circle at 50% 0%, rgba(192, 149, 83, 0.15), transparent 50%),
           linear-gradient(180deg, #111115 0%, #0c0c0f 100%);
         color: var(--text);
-      }
-
-      .page {
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-      }
-
-      .brand-panel {
-        padding: 48px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        border-right: 1px solid var(--border);
-      }
-
-      .brand-mark {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        font-size: 0.95rem;
-      }
-
-      .brand-mark i {
-        color: var(--text);
-        font-size: 1.5rem;
-      }
-
-      .hero-copy {
-        max-width: 540px;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: var(--gold-soft);
-        border: 1px solid rgba(192, 149, 83, 0.25);
-        color: var(--gold);
-        font-size: 0.74rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .hero-copy h1 {
-        margin: 22px 0 14px;
-        font-size: clamp(2.3rem, 4vw, 4.4rem);
-        line-height: 0.98;
-        font-weight: 800;
-      }
-
-      .hero-copy p {
-        margin: 0;
-        max-width: 440px;
-        color: var(--muted);
-        font-size: 1rem;
-        line-height: 1.7;
-      }
-
-      .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-        max-width: 560px;
-      }
-
-      .feature-card {
-        padding: 18px;
-        border-radius: 16px;
-        background: var(--panel);
-        border: 1px solid var(--border);
-        backdrop-filter: blur(10px);
-      }
-
-      .feature-card i {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        margin-bottom: 14px;
-        background: rgba(192, 149, 83, 0.1);
-        color: var(--gold);
-        font-size: 1.15rem;
-      }
-
-      .feature-card strong {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 0.92rem;
-      }
-
-      .feature-card span {
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.6;
-      }
-
-      .login-panel {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px 28px;
+        padding: 20px;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        animation: fadeUp 0.6s ease-out forwards;
+      }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
       .login-shell {
-        width: min(100%, 440px);
-        padding: 30px;
+        padding: 40px;
         border-radius: 24px;
-        background: rgba(15, 15, 19, 0.86);
+        background: rgba(15, 15, 19, 0.7);
         border: 1px solid var(--border);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(18px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+      }
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 32px;
+        color: var(--text);
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        font-size: 1rem;
+      }
+
+      .brand-header i {
+        color: var(--gold);
+        font-size: 1.5rem;
       }
 
       .login-head {
-        margin-bottom: 26px;
+        text-align: center;
+        margin-bottom: 32px;
       }
 
       .login-head h2 {
         margin: 0 0 8px;
-        font-size: 1.8rem;
-        font-weight: 800;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
       }
 
       .login-head p {
         margin: 0;
         color: var(--muted);
-        font-size: 0.92rem;
-        line-height: 1.6;
+        font-size: 0.9rem;
       }
 
       .input-group {
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
 
       .input-group label {
         display: block;
         margin-bottom: 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
       }
 
       .input-shell {
@@ -201,65 +121,74 @@
         top: 50%;
         left: 16px;
         transform: translateY(-50%);
-        color: rgba(255, 255, 255, 0.32);
-        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 1.1rem;
+        transition: color 0.2s;
+        pointer-events: none;
       }
 
       .input-shell input {
         width: 100%;
-        height: 54px;
-        border-radius: 14px;
+        height: 52px;
+        border-radius: 12px;
         border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.04);
         color: var(--text);
         padding: 0 16px 0 48px;
         font: inherit;
-        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
       }
 
       .input-shell input::placeholder {
-        color: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.3);
       }
 
       .input-shell input:focus {
         outline: none;
-        border-color: rgba(192, 149, 83, 0.5);
-        background: rgba(255, 255, 255, 0.045);
-        box-shadow: 0 0 0 4px rgba(192, 149, 83, 0.12);
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 0 4px rgba(192, 149, 83, 0.15);
+      }
+
+      .input-shell input:focus ~ i {
+        color: var(--gold);
       }
 
       .error-message {
-        min-height: 22px;
-        margin: 2px 0 16px;
+        min-height: 20px;
+        margin: 0 0 16px;
         color: var(--danger);
-        font-size: 0.82rem;
+        font-size: 0.85rem;
+        text-align: center;
       }
 
       .error-message:not(:empty) {
-        padding: 10px 12px;
-        border-radius: 12px;
+        padding: 12px;
+        border-radius: 10px;
         background: var(--danger-soft);
-        border: 1px solid rgba(248, 113, 113, 0.16);
+        border: 1px solid rgba(248, 113, 113, 0.2);
       }
 
       .submit-btn {
         width: 100%;
-        height: 54px;
+        height: 52px;
         border: none;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #c09553, #e0af62);
-        color: #161616;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #c09553 0%, #d4a762 100%);
+        color: #111;
         font: inherit;
-        font-size: 0.95rem;
-        font-weight: 800;
+        font-size: 1rem;
+        font-weight: 700;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-        box-shadow: 0 18px 36px rgba(192, 149, 83, 0.22);
+        transition: all 0.2s ease;
+        box-shadow: 0 8px 20px rgba(192, 149, 83, 0.25);
       }
 
       .submit-btn:hover {
-        filter: brightness(1.03);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(192, 149, 83, 0.35);
+        filter: brightness(1.05);
       }
 
       .submit-btn:active {
@@ -268,149 +197,68 @@
 
       .submit-btn:disabled {
         opacity: 0.7;
-        cursor: wait;
+        cursor: not-allowed;
         transform: none;
       }
 
-      .login-note {
-        margin-top: 18px;
-        color: rgba(255, 255, 255, 0.34);
-        font-size: 0.76rem;
-        line-height: 1.6;
-        text-align: center;
-      }
-
-      @media (max-width: 980px) {
-        .page {
-          grid-template-columns: 1fr;
-        }
-
-        .brand-panel {
-          padding: 32px 24px 10px;
-          border-right: none;
-          border-bottom: 1px solid var(--border);
-          gap: 28px;
-        }
-
-        .feature-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .login-panel {
-          padding: 24px;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .brand-panel {
-          padding: 24px 20px 0;
-        }
-
-        .login-panel {
-          padding: 20px;
-        }
-
+      @media (max-width: 480px) {
         .login-shell {
-          padding: 22px;
-          border-radius: 20px;
+          padding: 30px 24px;
         }
       }
     </style>
   </head>
   <body>
-    <main class="page">
-      <section class="brand-panel">
-        <a class="brand-mark" href="/">
+    <main class="login-container">
+      <div class="login-shell">
+        <div class="brand-header">
           <i class="ri-camera-lens-line"></i>
           <span>CITRA ARTFRAME</span>
-        </a>
-
-        <div class="hero-copy">
-          <span class="eyebrow">
-            <i class="ri-shield-keyhole-line"></i>
-            Admin Access
-          </span>
-          <h1>Kelola pesanan, produk, dan konten dari satu panel.</h1>
-          <p>
-            Ruang kerja internal untuk operasional Citra Artframe. Gunakan akun admin
-            untuk mengakses dashboard, pembaruan stok, art print, dan hero slider.
-          </p>
+        </div>
+        
+        <div class="login-head">
+          <h2>Admin Access</h2>
+          <p>Please log in to manage your workspace.</p>
         </div>
 
-        <div class="feature-grid">
-          <div class="feature-card">
-            <i class="ri-dashboard-3-line"></i>
-            <strong>Operational Overview</strong>
-            <span>Pantau pendapatan, status pesanan, dan aktivitas harian dari satu layar.</span>
-          </div>
-          <div class="feature-card">
-            <i class="ri-shopping-bag-3-line"></i>
-            <strong>Order Handling</strong>
-            <span>Proses pesanan masuk lebih cepat dengan alur yang konsisten dan terpusat.</span>
-          </div>
-          <div class="feature-card">
-            <i class="ri-image-2-line"></i>
-            <strong>Content Control</strong>
-            <span>Atur art print, hero slider, dan popular frames tanpa keluar dari panel admin.</span>
-          </div>
-          <div class="feature-card">
-            <i class="ri-lock-password-line"></i>
-            <strong>Protected Session</strong>
-            <span>Akses dashboard menggunakan sesi login admin yang terverifikasi.</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="login-panel">
-        <div class="login-shell">
-          <div class="login-head">
-            <h2>Masuk ke Dashboard</h2>
-            <p>Gunakan kredensial admin untuk melanjutkan ke panel pengelolaan Citra Artframe.</p>
-          </div>
-
-          <form id="login-form" novalidate>
-            <div class="input-group">
-              <label for="username">Username</label>
-              <div class="input-shell">
-                <i class="ri-user-3-line"></i>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autocomplete="username"
-                  placeholder="Masukkan username admin"
-                  required
-                />
-              </div>
+        <form id="login-form" novalidate>
+          <div class="input-group">
+            <label for="username">Username</label>
+            <div class="input-shell">
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autocomplete="username"
+                placeholder="Enter username"
+                required
+              />
+              <i class="ri-user-3-line"></i>
             </div>
-
-            <div class="input-group">
-              <label for="password">Password</label>
-              <div class="input-shell">
-                <i class="ri-lock-2-line"></i>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  placeholder="Masukkan password"
-                  required
-                />
-              </div>
-            </div>
-
-            <div id="error-message" class="error-message"></div>
-
-            <button type="submit" class="submit-btn" id="submit-btn">
-              Sign in
-            </button>
-          </form>
-
-          <div class="login-note">
-            Halaman ini khusus admin internal. Akses tanpa kredensial yang valid akan ditolak.
           </div>
-        </div>
-      </section>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+            <div class="input-shell">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Enter password"
+                required
+              />
+              <i class="ri-lock-2-line"></i>
+            </div>
+          </div>
+
+          <div id="error-message" class="error-message"></div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">
+            Sign In
+          </button>
+        </form>
+      </div>
     </main>
 
     <script>
@@ -450,7 +298,7 @@
           })
           .finally(() => {
             submitButton.disabled = false;
-            submitButton.textContent = "Sign in";
+            submitButton.textContent = "Sign In";
           });
       });
     </script>
