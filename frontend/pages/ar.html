@@ -1,17 +1,18 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Visualisasi AR Bingkai - Citra Artframe</title>
-    <link rel="stylesheet" href="/assets/css/base.css?v=20260727.1" />
-    <link rel="stylesheet" href="/assets/css/ar.css?v=20260724-tilt-fix-12" />
-    <link rel="stylesheet" href="/assets/css/auth.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 
-    <script type="importmap">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Visualisasi AR Bingkai - Citra Artframe</title>
+  <link rel="stylesheet" href="/assets/css/base.css?v=20260727.1" />
+  <link rel="stylesheet" href="/assets/css/ar.css?v=20260724-tilt-fix-12" />
+  <link rel="stylesheet" href="/assets/css/auth.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <script type="importmap">
       {
         "imports": {
           "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
@@ -20,538 +21,704 @@
       }
     </script>
 
-    <style>
-      @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
-      @keyframes fadeOut { from { opacity:1 } to { opacity:0 } }
-      @keyframes spin    { to   { transform: rotate(360deg) } }
-
-      /* ===== MODE SELECTOR — CITRA ARTFRAME PREMIUM THEME ===== */
-      .ar-mode-selector {
-        min-height: 100vh;
-        background: #f8f9fa;
-        display: flex; flex-direction: column;
-        align-items: center; justify-content: flex-start;
-        padding: 48px 24px 40px;
-        text-align: center; overflow-y: auto;
-        position: relative;
-      }
-      .ar-mode-selector::before {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 60vh;
-        background: radial-gradient(ellipse 100% 50% at 50% -10%, rgba(192,149,83,0.08) 0%, transparent 100%);
-        pointer-events: none; z-index: 0;
-      }
-      .ar-mode-selector > * { position: relative; z-index: 1; }
-
-      .ar-mode-logo {
-        font-size: 1.1rem; font-weight: 800; color: #000;
-        letter-spacing: 5px; margin-bottom: 40px;
-        text-transform: uppercase;
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0
       }
 
-      .ar-mode-title {
-        font-size: 2.2rem; font-weight: 800; color: #1a1a1a;
-        margin-bottom: 12px; letter-spacing: -0.5px;
-        line-height: 1.2;
+      to {
+        opacity: 1
       }
-      .ar-mode-title span { color: #c09553; }
+    }
 
-      .ar-mode-subtitle {
-        color: #666; font-size: 0.95rem;
-        margin-bottom: 40px; max-width: 400px; line-height: 1.6;
+    @keyframes fadeOut {
+      from {
+        opacity: 1
       }
 
-      /* Frame Preview Card */
-      .ar-frame-preview-card {
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 16px; padding: 14px 18px;
-        display: flex; align-items: center;
-        gap: 16px; margin-bottom: 32px;
-        text-align: left; max-width: 380px; width: 100%;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+      to {
+        opacity: 0
       }
-      .ar-frame-preview-card img {
-        width: 56px; height: 56px; border-radius: 10px;
-        object-fit: cover; background: #f0f0f0;
-        flex-shrink: 0; border: 1px solid #eaeaea;
-      }
-      .ar-frame-preview-card .info h4 {
-        color: #1a1a1a; font-size: 0.95rem; margin: 0 0 4px;
-        font-weight: 700;
-      }
-      .ar-frame-preview-card .info span { color: #c09553; font-size: 0.85rem; font-weight: 600; }
+    }
 
-      /* Size visual */
-      #frame-size-visual { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 36px; }
-
-      #size-box {
-        border: 2px solid #c09553; border-radius: 4px;
-        margin: 0 auto 8px; background: rgba(192,149,83,0.05);
-        transition: all 0.4s; box-shadow: inset 0 0 10px rgba(192,149,83,0.1);
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
       }
+    }
 
-      /* WebXR unsupported notice */
-      .webxr-unsupported-tag {
-        background: #fff5f5; border: 1px solid #ffe3e3;
-        color: #e03131; border-radius: 10px; padding: 12px 16px;
-        font-size: 0.85rem; margin-bottom: 24px; display: none;
-        max-width: 380px; line-height: 1.5; box-shadow: 0 4px 12px rgba(224,49,49,0.05);
-      }
+    /* ===== MODE SELECTOR — CITRA ARTFRAME PREMIUM THEME ===== */
+    .ar-mode-selector {
+      min-height: 100vh;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 48px 24px 40px;
+      text-align: center;
+      overflow-y: auto;
+      position: relative;
+    }
 
-      /* Mode Cards */
+    .ar-mode-selector::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60vh;
+      background: radial-gradient(ellipse 100% 50% at 50% -10%, rgba(192, 149, 83, 0.08) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ar-mode-selector>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ar-mode-logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #000;
+      letter-spacing: 5px;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    .ar-mode-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .ar-mode-title span {
+      color: #c09553;
+    }
+
+    .ar-mode-subtitle {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    /* Frame Preview Card */
+    .ar-frame-preview-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    }
+
+    .ar-frame-preview-card img {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex-shrink: 0;
+      border: 1px solid #eaeaea;
+    }
+
+    .ar-frame-preview-card .info h4 {
+      color: #1a1a1a;
+      font-size: 0.95rem;
+      margin: 0 0 4px;
+      font-weight: 700;
+    }
+
+    .ar-frame-preview-card .info span {
+      color: #c09553;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Size visual */
+    #frame-size-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    #size-box {
+      border: 2px solid #c09553;
+      border-radius: 4px;
+      margin: 0 auto 8px;
+      background: rgba(192, 149, 83, 0.05);
+      transition: all 0.4s;
+      box-shadow: inset 0 0 10px rgba(192, 149, 83, 0.1);
+    }
+
+    /* WebXR unsupported notice */
+    .webxr-unsupported-tag {
+      background: #fff5f5;
+      border: 1px solid #ffe3e3;
+      color: #e03131;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      display: none;
+      max-width: 380px;
+      line-height: 1.5;
+      box-shadow: 0 4px 12px rgba(224, 49, 49, 0.05);
+    }
+
+    /* Mode Cards */
+    .ar-mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 640px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 560px) {
       .ar-mode-cards {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        max-width: 640px;
-        width: 100%;
-        margin-bottom: 16px;
+        grid-template-columns: 1fr;
+        max-width: 380px;
       }
-      @media (max-width: 560px) { .ar-mode-cards { grid-template-columns: 1fr; max-width: 380px; } }
+    }
 
-      .ar-mode-card {
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 24px; padding: 32px 24px;
-        cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        text-align: center; position: relative; overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-      }
-      .ar-mode-card::before {
-        content: ''; position: absolute;
-        inset: 0; border-radius: 24px; opacity: 0;
-        background: radial-gradient(circle at 50% 0%, rgba(192,149,83,0.05) 0%, transparent 70%);
-        transition: opacity 0.3s; pointer-events: none;
-      }
-      .ar-mode-card > * { position: relative; z-index: 2; }
-      .ar-mode-card:hover { border-color: rgba(192,149,83,0.3); transform: translateY(-6px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-      .ar-mode-card:hover::before { opacity: 1; }
-      .ar-mode-card.recommended {
-        border-color: #c09553;
-        box-shadow: 0 0 0 1px #c09553 inset, 0 12px 40px rgba(192,149,83,0.15);
-      }
+    .ar-mode-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 24px;
+      padding: 32px 24px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
 
-      .ar-mode-card .badge {
-        background: linear-gradient(135deg, #c09553, #a87e41);
-        color: #fff; font-size: 0.7rem; font-weight: 700;
-        padding: 5px 12px; border-radius: 20px; letter-spacing: 1px;
-        display: inline-block; margin-bottom: 20px; text-transform: uppercase;
-        box-shadow: 0 4px 12px rgba(192,149,83,0.25);
-      }
-      .ar-mode-card .icon { font-size: 2.8rem; margin-bottom: 16px; display: block; }
-      .ar-mode-card h3 { color: #1a1a1a; font-size: 1.15rem; font-weight: 800; margin-bottom: 12px; }
-      .ar-mode-card p { color: #666; font-size: 0.85rem; line-height: 1.6; margin-bottom: 28px; }
+    .ar-mode-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(192, 149, 83, 0.05) 0%, transparent 70%);
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
 
-      .ar-mode-card .card-btn {
-        background: linear-gradient(135deg, #c09553, #a87e41);
-        color: #fff; border: none; border-radius: 12px;
-        padding: 14px 24px; font-weight: 700; font-size: 0.9rem;
-        cursor: pointer; width: 100%; transition: all 0.2s;
-        box-shadow: 0 6px 16px rgba(192,149,83,0.25);
-        letter-spacing: 0.2px;
-      }
-      .ar-mode-card .card-btn:hover { box-shadow: 0 8px 24px rgba(192,149,83,0.4); transform: translateY(-2px); }
-      .ar-mode-card .card-btn:active { transform: scale(0.97); }
-      .ar-mode-card .card-btn.secondary {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        color: #495057;
-        box-shadow: none;
-      }
-      .ar-mode-card .card-btn.secondary:hover {
-        background: #e9ecef;
-        border-color: #ced4da;
-        color: #212529;
-      }
-      .ar-mode-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+    .ar-mode-card>* {
+      position: relative;
+      z-index: 2;
+    }
 
-      .ar-back-link {
-        margin-top: 36px; color: #868e96; font-size: 0.9rem; font-weight: 600;
-        text-decoration: none; transition: color 0.2s; display: inline-block;
-      }
-      .ar-back-link:hover { color: #c09553; }
+    .ar-mode-card:hover {
+      border-color: rgba(192, 149, 83, 0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
 
-    </style>
-    <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260728-ui-v2" />
-  </head>
-  <body class="page-ar">
-    <!-- ===== MODE SELECTOR ===== -->
-    <div class="ar-mode-selector" id="mode-selector">
-      <div class="ar-mode-logo">CITRA ARTFRAME</div>
-      <h1 class="ar-mode-title">Visualisasi Bingkai AR</h1>
-      <p class="ar-mode-subtitle">Lihat bingkai langsung di dinding rumah Anda sebelum membeli.</p>
+    .ar-mode-card:hover::before {
+      opacity: 1;
+    }
 
-      <!-- Frame size visual indicator -->
-      <div id="frame-size-visual">
-        <div style="text-align:center;">
-          <div id="size-box" style="width:60px; height:80px;"></div>
-          <span style="color:#c09553;font-weight:700;font-size:0.85rem;" id="size-label-w">— cm</span>
-          <span style="color:#adb5bd;font-size:0.8rem;margin:0 2px;">×</span>
-          <span style="color:#c09553;font-weight:700;font-size:0.85rem;" id="size-label-h">— cm</span>
-        </div>
-        <div style="color:#6c757d;font-size:0.85rem;max-width:160px;line-height:1.5;text-align:left;">
-          Ukuran sebenarnya akan terlihat di dinding Anda
-        </div>
+    .ar-mode-card.recommended {
+      border-color: #c09553;
+      box-shadow: 0 0 0 1px #c09553 inset, 0 12px 40px rgba(192, 149, 83, 0.15);
+    }
+
+    .ar-mode-card .badge {
+      background: linear-gradient(135deg, #c09553, #a87e41);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      display: inline-block;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(192, 149, 83, 0.25);
+    }
+
+    .ar-mode-card .icon {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .ar-mode-card h3 {
+      color: #1a1a1a;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .ar-mode-card p {
+      color: #666;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .ar-mode-card .card-btn {
+      background: linear-gradient(135deg, #c09553, #a87e41);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px rgba(192, 149, 83, 0.25);
+      letter-spacing: 0.2px;
+    }
+
+    .ar-mode-card .card-btn:hover {
+      box-shadow: 0 8px 24px rgba(192, 149, 83, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .ar-mode-card .card-btn:active {
+      transform: scale(0.97);
+    }
+
+    .ar-mode-card .card-btn.secondary {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      color: #495057;
+      box-shadow: none;
+    }
+
+    .ar-mode-card .card-btn.secondary:hover {
+      background: #e9ecef;
+      border-color: #ced4da;
+      color: #212529;
+    }
+
+    .ar-mode-card.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+
+    .ar-back-link {
+      margin-top: 36px;
+      color: #868e96;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+      display: inline-block;
+    }
+
+    .ar-back-link:hover {
+      color: #c09553;
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/css/device-responsive.css?v=20260728-ui-v2" />
+</head>
+
+<body class="page-ar">
+  <!-- ===== MODE SELECTOR ===== -->
+  <div class="ar-mode-selector" id="mode-selector">
+    <div class="ar-mode-logo">CITRA ARTFRAME</div>
+    <h1 class="ar-mode-title">Visualisasi Bingkai AR</h1>
+    <p class="ar-mode-subtitle">Lihat bingkai langsung di dinding rumah Anda sebelum membeli.</p>
+
+    <!-- Frame size visual indicator -->
+    <div id="frame-size-visual">
+      <div style="text-align:center;">
+        <div id="size-box" style="width:60px; height:80px;"></div>
+        <span style="color:#c09553;font-weight:700;font-size:0.85rem;" id="size-label-w">— cm</span>
+        <span style="color:#adb5bd;font-size:0.8rem;margin:0 2px;">×</span>
+        <span style="color:#c09553;font-weight:700;font-size:0.85rem;" id="size-label-h">— cm</span>
       </div>
-
-      <!-- Frame yang akan di-preview -->
-      <div class="ar-frame-preview-card" id="frame-preview-card">
-        <img id="preview-img" src="" alt="Frame" />
-        <div class="info">
-          <h4 id="preview-name">Memuat frame...</h4>
-          <span id="preview-size">0 × 0 cm</span>
-		  <small id="preview-model-name" style="display:block;margin-top:3px;color:#8b6a3c;font-size:.7rem">Model 3D bawaan</small>
-        </div>
-      </div>
-
-      <div class="webxr-unsupported-tag" id="webxr-tag">
-        WebXR tidak didukung di perangkat/browser ini. Anda tetap dapat menempatkan model 3D secara manual dengan kamera biasa.
-      </div>
-
-      <div class="ar-mode-cards">
-        <!-- WebXR Card -->
-        <div class="ar-mode-card recommended" id="card-webxr">
-          <div class="badge">Terbaik</div>
-          <div class="icon" style="color: #c09553; display: flex; justify-content: center; margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
-              <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
-              <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
-              <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
-              <rect x="7" y="7" width="10" height="10" rx="1"></rect>
-            </svg>
-          </div>
-          <h3>AR WebXR</h3>
-          <p>Gunakan deteksi dinding atau pilih Tempatkan Manual jika tracking sulit. Membutuhkan WebXR AR.</p>
-          <button class="card-btn" id="btn-webxr">Mulai AR WebXR</button>
-        </div>
-
-        <!-- Camera Fallback Card -->
-        <div class="ar-mode-card" id="card-camera">
-          <div class="badge" id="manual-fallback-badge" style="display:none;">Tersedia</div>
-          <div class="icon" style="color: #adb5bd; display: flex; justify-content: center; margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
-              <circle cx="12" cy="13" r="3"></circle>
-            </svg>
-          </div>
-          <h3>Tempatkan Manual</h3>
-          <p>Tempatkan model 3D pada dinding, atur jarak, sudut, dan skala secara manual. Tidak membutuhkan WebXR.</p>
-          <button class="card-btn secondary" id="btn-camera">Mulai Penempatan Manual</button>
-        </div>
-      </div>
-
-      <a href="/custom" class="ar-back-link">← Kembali ke Custom Frame</a>
-    </div>
-
-    <!-- ===== WebXR AR PAGE ===== -->
-    <header class="header" id="main-header" style="display:none;">
-      <div class="container">
-        <a href="/" class="logo">CITRA ARTFRAME</a>
-        <button id="back-to-selector" class="btn-secondary" style="padding:8px 16px;font-size:0.85rem;">← Pilih Mode Lain</button>
-      </div>
-    </header>
-
-    <main class="ar-container" id="webxr-main" style="display:none;">
-      <div class="ar-intro">
-        <h2>Mode AR WebXR</h2>
-        <p>Arahkan kamera ke dinding lalu ketuk tombol untuk menempatkan bingkai.</p>
-
-        <div class="frame-summary-card">
-          <div class="frame-preview-mini">
-            <img id="arPreviewImg" src="" alt="Preview Frame" />
-          </div>
-          <div class="frame-details">
-            <h3 id="arFrameName">Memuat...</h3>
-            <span id="arFrameSize">0 × 0 cm</span>
-          </div>
-        </div>
-
-        <div id="ar-supported-msg" class="status-msg">
-          <p>Klik tombol di bawah untuk memulai sesi AR.</p>
-        </div>
-        <div id="ar-unsupported-msg" class="status-msg error" style="display:none;">
-          <p><strong>WebXR tidak terdeteksi.</strong></p>
-          <ul style="text-align:left;margin-top:10px;font-size:0.85rem;">
-            <li>Android: Pastikan Chrome + ARCore terinstall.</li>
-            <li>iPhone/iPad: immersive WebXR AR belum didukung secara konsisten; gunakan Tempatkan Manual.</li>
-            <li>Akses wajib via <b>HTTPS</b>.</li>
-          </ul>
-        </div>
-        <div id="ar-button-container"></div>
-        <div
-          id="ar-session-feedback"
-          class="ar-session-feedback"
-          role="status"
-          aria-live="polite"
-          hidden
-        ></div>
-      </div>
-    </main>
-
-    <!-- WebXR overlay (saat AR session aktif) -->
-    <div id="ar-overlay">
-      <div class="ar-top-chrome">
-        <button id="ar-exit-btn" class="ar-exit-btn" type="button" aria-label="Keluar dari AR">Keluar AR</button>
-        <div id="ar-size-badge" class="ar-size-badge">
-          <span>Ukuran frame</span>
-          <strong id="overlay-size">- x - cm</strong>
-        </div>
-      </div>
-
-      <div class="ar-status-stack">
-        <div class="ar-instruction-toast" id="ar-instruction" role="status">Menunggu AR...</div>
-        <div class="ar-quick-actions">
-          <button id="ar-wall-help-btn" class="ar-wall-help-btn" type="button">Dinding sulit terdeteksi?</button>
-          <button id="ar-start-manual-btn" class="ar-start-manual-btn" type="button">Tempatkan Manual</button>
-        </div>
-        <div id="ar-wall-tips" class="ar-wall-tips" hidden>
-          <strong>Tips pemindaian dinding polos</strong>
-          <ul>
-            <li>Bergerak menyamping perlahan, bukan hanya memutar ponsel.</li>
-            <li>Jaga jarak sekitar 1-3 meter dari dinding.</li>
-            <li>Arahkan ke tepi dinding, pertemuan dinding dengan lantai, atau area yang memiliki bayangan.</li>
-            <li>Pastikan pencahayaan cukup dan hindari pantulan berlebih.</li>
-            <li>Setelah bidang ditemukan, arahkan kembali ke posisi bingkai.</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Dihapus ar-manual-label yang mengganggu -->
-      <div id="ar-center-aim" class="ar-center-aim" aria-hidden="true" hidden></div>
-
-      <!-- ===== VISUAL GUIDE PANEL ===== -->
-      <div id="ar-guide-panel"></div>
-
-      <div id="ar-native-offer" class="ar-native-offer" hidden>
-        <span>Deteksi dinding asli sudah stabil.</span>
-        <button id="use-native-hit-btn" type="button">Gunakan hasil deteksi dinding</button>
-      </div>
-
-      <div id="ar-detection-fallback" class="ar-detection-fallback" hidden>
-        <strong>Dinding belum terdeteksi</strong>
-        <p>Dinding polos bisa tidak memiliki feature points yang cukup untuk ARCore.</p>
-        <div class="ar-fallback-actions">
-          <button id="ar-retry-scan-btn" type="button">Coba pindai lagi</button>
-        </div>
-      </div>
-
-      <div id="ar-manual-panel" class="ar-manual-panel" hidden>
-        <div class="ar-manual-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <div class="ar-manual-title" style="margin: 0;">Penempatan manual</div>
-          <button id="manual-capture-btn" class="ar-icon-btn ar-webxr-capture-btn" type="button" title="Ambil foto" aria-label="Ambil foto AR" style="position: relative; width: 44px; height: 44px; font-size: 0.8rem; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);">Foto</button>
-        </div>
-        
-        <div class="ar-manual-row">
-          <label for="manual-tilt">Kemiringan</label>
-          <input id="manual-tilt" type="range" min="-30" max="30" step="1" value="0" />
-          <span id="manual-tilt-value">0 deg</span>
-        </div>
-        <div class="ar-manual-row">
-          <label for="manual-distance">Jarak</label>
-          <input id="manual-distance" type="range" min="0.5" max="5" step="0.1" value="2" />
-          <span id="manual-distance-value">2.00 m</span>
-        </div>
-        <div class="ar-manual-row">
-          <label for="manual-height">Tinggi</label>
-          <input id="manual-height" type="range" min="-1.2" max="1.2" step="0.02" value="0" />
-          <span id="manual-height-value">0.00 m</span>
-        </div>
-        <div class="ar-manual-row">
-          <label for="manual-yaw">Sudut dinding</label>
-          <input id="manual-yaw" type="range" min="-45" max="45" step="1" value="0" />
-          <span id="manual-yaw-value">0 deg</span>
-        </div>
-
-        <div class="ar-manual-meta">Perkiraan jarak aktif: <span id="manual-estimated-distance">2.00 m</span></div>
-        <div class="ar-manual-actions">
-          <button id="manual-reset-btn" type="button">Reset</button>
-          <button id="manual-cancel-btn" type="button">Pindai lagi</button>
-          <button id="manual-confirm-btn" type="button">Konfirmasi</button>
-        </div>
-      </div>
-
-      <div id="ar-debug-panel" class="ar-debug-panel" hidden>
-        <div class="ar-debug-head">
-          <strong>AR Debug</strong>
-          <button id="ar-debug-toggle" type="button">Sembunyikan</button>
-        </div>
-        <div id="ar-debug-body"></div>
-      </div>
-      <button id="ar-debug-show" class="ar-debug-show" type="button" hidden>Tampilkan debug</button>
-
-      <div class="ar-controls">
-        <button id="place-btn" class="btn-primary ar-action-btn" disabled>Tempel Bingkai</button>
-
-        <!-- Rotate buttons (hanya tampil saat frame sudah ditempatkan) -->
-        <div id="rotate-controls" class="ar-rotate-controls" hidden>
-          <button id="rotate-left-btn" class="ar-icon-btn" type="button" title="Putar kiri" aria-label="Putar bingkai ke kiri">↺</button>
-          <button id="rotate-right-btn" class="ar-icon-btn" type="button" title="Putar kanan" aria-label="Putar bingkai ke kanan">↻</button>
-        </div>
-
-        <button id="capture-btn" class="ar-icon-btn ar-webxr-capture-btn" type="button" title="Ambil foto" aria-label="Ambil foto AR">Foto</button>
+      <div style="color:#6c757d;font-size:0.85rem;max-width:160px;line-height:1.5;text-align:left;">
+        Ukuran sebenarnya akan terlihat di dinding Anda
       </div>
     </div>
 
-    <!-- ===== CAMERA FALLBACK (ar-visualizer) ===== -->
-    <!-- Diinject oleh ar-visualizer.js secara dinamis -->
+    <!-- Frame yang akan di-preview -->
+    <div class="ar-frame-preview-card" id="frame-preview-card">
+      <img id="preview-img" src="" alt="Frame" />
+      <div class="info">
+        <h4 id="preview-name">Memuat frame...</h4>
+        <span id="preview-size">0 × 0 cm</span>
+        <small id="preview-model-name" style="display:block;margin-top:3px;color:#8b6a3c;font-size:.7rem">Model 3D
+          bawaan</small>
+      </div>
+    </div>
 
-    <script type="module">
-	  import { openARVisualizer } from "/assets/js/ar-visualizer.js?v=20260728-color-fix-1";
-      import { initAuthModal } from "/assets/js/firebase-auth.js";
+    <div class="webxr-unsupported-tag" id="webxr-tag">
+      WebXR tidak didukung di perangkat/browser ini. Anda tetap dapat menempatkan model 3D secara manual dengan kamera
+      biasa.
+    </div>
 
-      // ── Init auth modal (untuk navbar dropdown login/logout) ──
-      // AR dapat diakses tanpa login — login hanya diperlukan saat checkout
-      initAuthModal();
+    <div class="ar-mode-cards">
+      <!-- WebXR Card -->
+      <div class="ar-mode-card recommended" id="card-webxr">
+        <div class="badge">Terbaik</div>
+        <div class="icon" style="color: #c09553; display: flex; justify-content: center; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+          </svg>
+        </div>
+        <h3>AR WebXR</h3>
+        <p>Gunakan deteksi dinding atau pilih Tempatkan Manual jika tracking sulit. Membutuhkan WebXR AR.</p>
+        <button class="card-btn" id="btn-webxr">Mulai AR WebXR</button>
+      </div>
 
-      // ── Load frame data dari localStorage ──
-	  const DEFAULT_FRAME_MODEL_URL = "/assets/3d/frame.glb";
-	  const resolveFrameModelUrl = (candidate) => {
-		try {
-		  const url = new URL(String(candidate || DEFAULT_FRAME_MODEL_URL), window.location.origin);
-		  const allowedPath = url.pathname.startsWith("/uploads/models/") || url.pathname.startsWith("/assets/3d/");
-		  const allowedExtension = /\.(?:glb|gltf)$/i.test(url.pathname);
-		  return url.origin === window.location.origin && allowedPath && allowedExtension
-			? `${url.pathname}${url.search}`
-			: DEFAULT_FRAME_MODEL_URL;
-		} catch {
-		  return DEFAULT_FRAME_MODEL_URL;
-		}
-	  };
+      <!-- Camera Fallback Card -->
+      <div class="ar-mode-card" id="card-camera">
+        <div class="badge" id="manual-fallback-badge" style="display:none;">Tersedia</div>
+        <div class="icon" style="color: #adb5bd; display: flex; justify-content: center; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+            <circle cx="12" cy="13" r="3"></circle>
+          </svg>
+        </div>
+        <h3>Tempatkan Manual</h3>
+        <p>Tempatkan model 3D pada dinding, atur jarak, sudut, dan skala secara manual. Tidak membutuhkan WebXR.</p>
+        <button class="card-btn secondary" id="btn-camera">Mulai Penempatan Manual</button>
+      </div>
+    </div>
 
-	  let frameData = {
-		width: 40,
-		height: 60,
-		textureUrl: "",
-		name: "Custom Frame",
-			modelName: "Model 3D bawaan",
-			modelUrl: DEFAULT_FRAME_MODEL_URL,
-			modelFrontRotationY: 0,
-			model3dId: 0,
-	  };
+    <a href="/custom" class="ar-back-link">← Kembali ke Custom Frame</a>
+  </div>
+
+  <!-- ===== WebXR AR PAGE ===== -->
+  <header class="header" id="main-header" style="display:none;">
+    <div class="container">
+      <a href="/" class="logo">CITRA ARTFRAME</a>
+      <button id="back-to-selector" class="btn-secondary" style="padding:8px 16px;font-size:0.85rem;">← Pilih Mode
+        Lain</button>
+    </div>
+  </header>
+
+  <main class="ar-container" id="webxr-main" style="display:none;">
+    <div class="ar-intro">
+      <h2>Mode AR WebXR</h2>
+      <p>Arahkan kamera ke dinding lalu ketuk tombol untuk menempatkan bingkai.</p>
+
+      <div class="frame-summary-card">
+        <div class="frame-preview-mini">
+          <img id="arPreviewImg" src="" alt="Preview Frame" />
+        </div>
+        <div class="frame-details">
+          <h3 id="arFrameName">Memuat...</h3>
+          <span id="arFrameSize">0 × 0 cm</span>
+        </div>
+      </div>
+
+      <div id="ar-supported-msg" class="status-msg">
+        <p>Klik tombol di bawah untuk memulai sesi AR.</p>
+      </div>
+      <div id="ar-unsupported-msg" class="status-msg error" style="display:none;">
+        <p><strong>WebXR tidak terdeteksi.</strong></p>
+        <ul style="text-align:left;margin-top:10px;font-size:0.85rem;">
+          <li>Android: Pastikan Chrome + ARCore terinstall.</li>
+          <li>iPhone/iPad: immersive WebXR AR belum didukung secara konsisten; gunakan Tempatkan Manual.</li>
+          <li>Akses wajib via <b>HTTPS</b>.</li>
+        </ul>
+      </div>
+      <div id="ar-button-container"></div>
+      <div id="ar-session-feedback" class="ar-session-feedback" role="status" aria-live="polite" hidden></div>
+    </div>
+  </main>
+
+  <!-- WebXR overlay (saat AR session aktif) -->
+  <div id="ar-overlay">
+    <div class="ar-top-chrome">
+      <button id="ar-exit-btn" class="ar-exit-btn" type="button" aria-label="Keluar dari AR">Keluar AR</button>
+      <div id="ar-size-badge" class="ar-size-badge">
+        <span>Ukuran frame</span>
+        <strong id="overlay-size">- x - cm</strong>
+      </div>
+    </div>
+
+    <div class="ar-status-stack">
+      <div class="ar-instruction-toast" id="ar-instruction" role="status">Menunggu AR...</div>
+      <div class="ar-quick-actions">
+        <button id="ar-wall-help-btn" class="ar-wall-help-btn" type="button">Dinding sulit terdeteksi?</button>
+        <button id="ar-start-manual-btn" class="ar-start-manual-btn" type="button">Atur Posisi Manual</button>
+      </div>
+      <div id="ar-wall-tips" class="ar-wall-tips" hidden>
+        <strong>Tips pemindaian dinding polos</strong>
+        <ul>
+          <li>Bergerak menyamping perlahan, bukan hanya memutar ponsel.</li>
+          <li>Jaga jarak sekitar 1-3 meter dari dinding.</li>
+          <li>Arahkan ke tepi dinding, pertemuan dinding dengan lantai, atau area yang memiliki bayangan.</li>
+          <li>Pastikan pencahayaan cukup dan hindari pantulan berlebih.</li>
+          <li>Setelah bidang ditemukan, arahkan kembali ke posisi bingkai.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Dihapus ar-manual-label yang mengganggu -->
+    <div id="ar-center-aim" class="ar-center-aim" aria-hidden="true" hidden></div>
+
+    <!-- ===== VISUAL GUIDE PANEL ===== -->
+    <div id="ar-guide-panel"></div>
+
+    <div id="ar-native-offer" class="ar-native-offer" hidden>
+      <span>Deteksi dinding asli sudah stabil.</span>
+      <button id="use-native-hit-btn" type="button">Gunakan hasil deteksi dinding</button>
+    </div>
+
+    <div id="ar-detection-fallback" class="ar-detection-fallback" hidden>
+      <strong>Dinding belum terdeteksi</strong>
+      <p>Dinding polos bisa tidak memiliki feature points yang cukup untuk ARCore.</p>
+      <div class="ar-fallback-actions">
+        <button id="ar-retry-scan-btn" type="button">Coba pindai lagi</button>
+      </div>
+    </div>
+
+    <div id="ar-manual-panel" class="ar-manual-panel" hidden>
+      <div class="ar-manual-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div class="ar-manual-title" style="margin: 0;">Penempatan manual</div>
+        <button id="manual-capture-btn" class="ar-icon-btn ar-webxr-capture-btn" type="button" title="Ambil foto"
+          aria-label="Ambil foto AR"
+          style="position: relative; width: 44px; height: 44px; font-size: 0.8rem; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);">Foto</button>
+      </div>
+
+      <div class="ar-manual-row">
+        <label for="manual-tilt">Kemiringan</label>
+        <input id="manual-tilt" type="range" min="-30" max="30" step="1" value="0" />
+        <span id="manual-tilt-value">0 deg</span>
+      </div>
+      <div class="ar-manual-row">
+        <label for="manual-distance">Jarak</label>
+        <input id="manual-distance" type="range" min="0.5" max="5" step="0.1" value="2" />
+        <span id="manual-distance-value">2.00 m</span>
+      </div>
+      <div class="ar-manual-row">
+        <label for="manual-height">Tinggi</label>
+        <input id="manual-height" type="range" min="-1.2" max="1.2" step="0.02" value="0" />
+        <span id="manual-height-value">0.00 m</span>
+      </div>
+      <div class="ar-manual-row">
+        <label for="manual-yaw">Sudut dinding</label>
+        <input id="manual-yaw" type="range" min="-45" max="45" step="1" value="0" />
+        <span id="manual-yaw-value">0 deg</span>
+      </div>
+
+      <div class="ar-manual-meta">Perkiraan jarak aktif: <span id="manual-estimated-distance">2.00 m</span></div>
+      <div class="ar-manual-actions">
+        <button id="manual-reset-btn" type="button">Reset</button>
+        <button id="manual-cancel-btn" type="button">Pindai lagi</button>
+        <button id="manual-confirm-btn" type="button">Konfirmasi</button>
+      </div>
+    </div>
+
+    <div id="ar-debug-panel" class="ar-debug-panel" hidden>
+      <div class="ar-debug-head">
+        <strong>AR Debug</strong>
+        <button id="ar-debug-toggle" type="button">Sembunyikan</button>
+      </div>
+      <div id="ar-debug-body"></div>
+    </div>
+    <button id="ar-debug-show" class="ar-debug-show" type="button" hidden>Tampilkan debug</button>
+
+    <div class="ar-controls">
+      <button id="place-btn" class="btn-primary ar-action-btn" disabled>Tempel Bingkai</button>
+
+      <!-- Rotate buttons (hanya tampil saat frame sudah ditempatkan) -->
+      <div id="rotate-controls" class="ar-rotate-controls" hidden>
+        <button id="rotate-left-btn" class="ar-icon-btn" type="button" title="Putar kiri"
+          aria-label="Putar bingkai ke kiri">↺</button>
+        <button id="rotate-right-btn" class="ar-icon-btn" type="button" title="Putar kanan"
+          aria-label="Putar bingkai ke kanan">↻</button>
+      </div>
+
+      <button id="capture-btn" class="ar-icon-btn ar-webxr-capture-btn" type="button" title="Ambil foto"
+        aria-label="Ambil foto AR">Foto</button>
+    </div>
+  </div>
+
+  <!-- ===== CAMERA FALLBACK (ar-visualizer) ===== -->
+  <!-- Diinject oleh ar-visualizer.js secara dinamis -->
+
+  <script type="module">
+    import { openARVisualizer } from "/assets/js/ar-visualizer.js?v=20260728-color-fix-1";
+    import { initAuthModal } from "/assets/js/firebase-auth.js";
+
+    // ── Init auth modal (untuk navbar dropdown login/logout) ──
+    // AR dapat diakses tanpa login — login hanya diperlukan saat checkout
+    initAuthModal();
+
+    // ── Load frame data dari localStorage ──
+    const DEFAULT_FRAME_MODEL_URL = "/assets/3d/frame.glb";
+    const resolveFrameModelUrl = (candidate) => {
       try {
-        const raw = localStorage.getItem("customFrameOrder");
-        if (raw) {
-          const d = JSON.parse(raw);
-          frameData = {
-            width:  d.dimensions?.finalWidthCm  || 40,
-            height: d.dimensions?.finalHeightCm || 60,
-            textureUrl: d.frameModelImage || "",
-            name: d.frameModelName || "Custom Frame",
-				modelName: d.model3dName || "Model 3D bawaan",
-				modelUrl: resolveFrameModelUrl(d.modelUrl),
-				modelFrontRotationY: Number(d.modelFrontRotationY) === 180 ? 180 : 0,
-				model3dId: Number(d.model3dId) || 0,
-          };
-        }
-      } catch(e) {}
-
-	  // Ambil ulang metadata arah model dari server. Ini penting untuk order
-	  // lama yang masih menyimpan front_rotation_y sebelumnya di localStorage.
-	  if (frameData.model3dId > 0) {
-		try {
-		  const modelResponse = await fetch(`/api/frame-models/${frameData.model3dId}`);
-		  if (modelResponse.ok) {
-			const latestModel = await modelResponse.json();
-			if (latestModel?.is_active !== false) {
-			  frameData.modelName = latestModel.name || frameData.modelName;
-			  frameData.modelUrl = resolveFrameModelUrl(latestModel.file_url || frameData.modelUrl);
-			  frameData.modelFrontRotationY =
-				Number(latestModel.front_rotation_y) === 180 ? 180 : 0;
-			  frameData.modelFrontRotationX = Number(latestModel.front_rotation_x) || 0;
-			}
-		  }
-		} catch (error) {
-		  console.warn("[AR] Metadata model terbaru tidak dapat diambil:", error);
-		}
-	  }
-
-	  // Preload dan decode model penuh sebelum kamera WebXR dimulai. Modul
-	  // ar-logic dimuat setelah modul halaman ini, jadi tunggu event loader
-	  // apabila fungsi preload belum tersedia pada saat data produk selesai.
-	  let arModelPreloadPromise = null;
-	  const beginARModelPreload = () => {
-		if (arModelPreloadPromise) return arModelPreloadPromise;
-		arModelPreloadPromise = new Promise((resolve, reject) => {
-		  const startPreload = () => {
-			if (typeof window.preloadARModel !== "function") {
-			  window.addEventListener("citraframe:ar-loader-ready", startPreload, { once: true });
-			  return;
-			}
-			Promise.resolve(window.preloadARModel(frameData)).then(resolve, reject);
-		  };
-		  startPreload();
-		});
-		return arModelPreloadPromise;
-	  };
-
-      // ── Update UI preview card ──
-      const previewImg  = document.getElementById("preview-img");
-      const previewName = document.getElementById("preview-name");
-      const previewSize = document.getElementById("preview-size");
-	  const previewModelName = document.getElementById("preview-model-name");
-      if (previewImg && frameData.textureUrl)  previewImg.src = frameData.textureUrl;
-      if (previewName) previewName.textContent = frameData.name;
-      if (previewSize) previewSize.textContent = `${frameData.width} × ${frameData.height} cm`;
-	  if (previewModelName) previewModelName.textContent = frameData.modelName;
-
-      // ── Update size visual box (proporsional, max 100px) ──
-      const maxPx = 100;
-      const ratio = frameData.width / frameData.height;
-      let boxW, boxH;
-      if (ratio >= 1) { boxW = maxPx; boxH = Math.round(maxPx / ratio); }
-      else            { boxH = maxPx; boxW = Math.round(maxPx * ratio); }
-      const sizeBox = document.getElementById("size-box");
-      if (sizeBox) { sizeBox.style.width = boxW + "px"; sizeBox.style.height = boxH + "px"; }
-      const lblW = document.getElementById("size-label-w");
-      const lblH = document.getElementById("size-label-h");
-      if (lblW) lblW.textContent = frameData.width + " cm";
-      if (lblH) lblH.textContent = frameData.height + " cm";
-
-      // ── Update overlay size badge ──
-      const overlaySize = document.getElementById("overlay-size");
-      if (overlaySize) overlaySize.textContent = `${frameData.width} × ${frameData.height} cm`;
-
-
-      // ── Cek WebXR support ──
-      const webxrSupported = !!(navigator.xr);
-      let hitTestSupported = false;
-      if (webxrSupported) {
-        try {
-          hitTestSupported = await navigator.xr.isSessionSupported("immersive-ar");
-        } catch(e) {}
+        const url = new URL(String(candidate || DEFAULT_FRAME_MODEL_URL), window.location.origin);
+        const allowedPath = url.pathname.startsWith("/uploads/models/") || url.pathname.startsWith("/assets/3d/");
+        const allowedExtension = /\.(?:glb|gltf)$/i.test(url.pathname);
+        return url.origin === window.location.origin && allowedPath && allowedExtension
+          ? `${url.pathname}${url.search}`
+          : DEFAULT_FRAME_MODEL_URL;
+      } catch {
+        return DEFAULT_FRAME_MODEL_URL;
       }
+    };
 
+    let frameData = {
+      width: 40,
+      height: 60,
+      textureUrl: "",
+      name: "Custom Frame",
+      modelName: "Model 3D bawaan",
+      modelUrl: DEFAULT_FRAME_MODEL_URL,
+      modelFrontRotationY: 0,
+      model3dId: 0,
+    };
+    try {
+      const raw = localStorage.getItem("customFrameOrder");
+      if (raw) {
+        const d = JSON.parse(raw);
+        frameData = {
+          width: d.dimensions?.finalWidthCm || 40,
+          height: d.dimensions?.finalHeightCm || 60,
+          textureUrl: d.frameModelImage || "",
+          name: d.frameModelName || "Custom Frame",
+          modelName: d.model3dName || "Model 3D bawaan",
+          modelUrl: resolveFrameModelUrl(d.modelUrl),
+          modelFrontRotationY: Number(d.modelFrontRotationY) === 180 ? 180 : 0,
+          model3dId: Number(d.model3dId) || 0,
+        };
+      }
+    } catch (e) { }
+
+    // Ambil ulang metadata arah model dari server. Ini penting untuk order
+    // lama yang masih menyimpan front_rotation_y sebelumnya di localStorage.
+    if (frameData.model3dId > 0) {
+      try {
+        const modelResponse = await fetch(`/api/frame-models/${frameData.model3dId}`);
+        if (modelResponse.ok) {
+          const latestModel = await modelResponse.json();
+          if (latestModel?.is_active !== false) {
+            frameData.modelName = latestModel.name || frameData.modelName;
+            frameData.modelUrl = resolveFrameModelUrl(latestModel.file_url || frameData.modelUrl);
+            frameData.modelFrontRotationY =
+              Number(latestModel.front_rotation_y) === 180 ? 180 : 0;
+            frameData.modelFrontRotationX = Number(latestModel.front_rotation_x) || 0;
+          }
+        }
+      } catch (error) {
+        console.warn("[AR] Metadata model terbaru tidak dapat diambil:", error);
+      }
+    }
+
+    // Preload dan decode model penuh sebelum kamera WebXR dimulai. Modul
+    // ar-logic dimuat setelah modul halaman ini, jadi tunggu event loader
+    // apabila fungsi preload belum tersedia pada saat data produk selesai.
+    let arModelPreloadPromise = null;
+    const beginARModelPreload = () => {
+      if (arModelPreloadPromise) return arModelPreloadPromise;
+      arModelPreloadPromise = new Promise((resolve, reject) => {
+        const startPreload = () => {
+          if (typeof window.preloadARModel !== "function") {
+            window.addEventListener("citraframe:ar-loader-ready", startPreload, { once: true });
+            return;
+          }
+          Promise.resolve(window.preloadARModel(frameData)).then(resolve, reject);
+        };
+        startPreload();
+      });
+      return arModelPreloadPromise;
+    };
+
+    // ── Update UI preview card ──
+    const previewImg = document.getElementById("preview-img");
+    const previewName = document.getElementById("preview-name");
+    const previewSize = document.getElementById("preview-size");
+    const previewModelName = document.getElementById("preview-model-name");
+    if (previewImg && frameData.textureUrl) previewImg.src = frameData.textureUrl;
+    if (previewName) previewName.textContent = frameData.name;
+    if (previewSize) previewSize.textContent = `${frameData.width} × ${frameData.height} cm`;
+    if (previewModelName) previewModelName.textContent = frameData.modelName;
+
+    // ── Update size visual box (proporsional, max 100px) ──
+    const maxPx = 100;
+    const ratio = frameData.width / frameData.height;
+    let boxW, boxH;
+    if (ratio >= 1) { boxW = maxPx; boxH = Math.round(maxPx / ratio); }
+    else { boxH = maxPx; boxW = Math.round(maxPx * ratio); }
+    const sizeBox = document.getElementById("size-box");
+    if (sizeBox) { sizeBox.style.width = boxW + "px"; sizeBox.style.height = boxH + "px"; }
+    const lblW = document.getElementById("size-label-w");
+    const lblH = document.getElementById("size-label-h");
+    if (lblW) lblW.textContent = frameData.width + " cm";
+    if (lblH) lblH.textContent = frameData.height + " cm";
+
+    // ── Update overlay size badge ──
+    const overlaySize = document.getElementById("overlay-size");
+    if (overlaySize) overlaySize.textContent = `${frameData.width} × ${frameData.height} cm`;
+
+
+    // ── Cek WebXR support ──
+    const webxrSupported = !!(navigator.xr);
+    let hitTestSupported = false;
+    if (webxrSupported) {
+      try {
+        hitTestSupported = await navigator.xr.isSessionSupported("immersive-ar");
+      } catch (e) { }
+    }
+
+    if (!hitTestSupported) {
+      document.getElementById("webxr-tag").style.display = "block";
+      document.getElementById("card-webxr").classList.add("disabled");
+      document.getElementById("card-webxr").classList.remove("recommended");
+      document.getElementById("card-camera").classList.add("recommended");
+      document.getElementById("btn-camera").classList.remove("secondary");
+      document.getElementById("manual-fallback-badge").style.display = "inline-block";
+    } else {
+      // Siapkan model segera setelah dukungan WebXR terkonfirmasi. Dengan
+      // begitu model umumnya sudah siap bahkan sebelum panduan dibuka.
+      beginARModelPreload();
+    }
+
+    // ── Tombol WebXR ──
+    document.getElementById("btn-webxr").addEventListener("click", () => {
       if (!hitTestSupported) {
-        document.getElementById("webxr-tag").style.display = "block";
-        document.getElementById("card-webxr").classList.add("disabled");
-        document.getElementById("card-webxr").classList.remove("recommended");
-        document.getElementById("card-camera").classList.add("recommended");
-        document.getElementById("btn-camera").classList.remove("secondary");
-        document.getElementById("manual-fallback-badge").style.display = "inline-block";
-      } else {
-        // Siapkan model segera setelah dukungan WebXR terkonfirmasi. Dengan
-        // begitu model umumnya sudah siap bahkan sebelum panduan dibuka.
-        beginARModelPreload();
+        alert("WebXR AR tidak didukung di perangkat/browser ini.\nGunakan Tempatkan Manual untuk menampilkan model 3D dengan kamera biasa.");
+        return;
       }
 
-      // ── Tombol WebXR ──
-      document.getElementById("btn-webxr").addEventListener("click", () => {
-        if (!hitTestSupported) {
-          alert("WebXR AR tidak didukung di perangkat/browser ini.\nGunakan Tempatkan Manual untuk menampilkan model 3D dengan kamera biasa.");
-          return;
-        }
+      const modelReadyPromise = beginARModelPreload();
 
-        const modelReadyPromise = beginARModelPreload();
-
-        // Tampilkan panduan AR TERLEBIH DAHULU sebelum masuk WebXR
-        const guideBefore = document.createElement("div");
-        guideBefore.id = "ar-pre-guide";
-        guideBefore.className = "ar-pre-guide";
-        guideBefore.setAttribute("role", "dialog");
-        guideBefore.setAttribute("aria-modal", "true");
-        guideBefore.setAttribute("aria-labelledby", "ar-pre-guide-title");
-        guideBefore.innerHTML = `
+      // Tampilkan panduan AR TERLEBIH DAHULU sebelum masuk WebXR
+      const guideBefore = document.createElement("div");
+      guideBefore.id = "ar-pre-guide";
+      guideBefore.className = "ar-pre-guide";
+      guideBefore.setAttribute("role", "dialog");
+      guideBefore.setAttribute("aria-modal", "true");
+      guideBefore.setAttribute("aria-labelledby", "ar-pre-guide-title");
+      guideBefore.innerHTML = `
           <div class="ar-pre-guide-dialog">
             <div class="ar-pre-guide-scroll">
               <div class="ar-pre-guide-kicker">PANDUAN SEBELUM MULAI</div>
@@ -560,12 +727,12 @@
 
               <div class="ar-pre-guide-steps">
               ${[
-                ["1","📱","Gerakkan HP <strong>perlahan ke kiri-kanan</strong> sambil arahkan ke dinding"],
-                ["2","💡","Pastikan dinding <strong>cukup terang</strong>. Dinding polos lebih mudah terbaca jika ada tepi, bayangan, atau detail visual"],
-                ["3","🎯","Tunggu reticle berubah <strong>hijau</strong>. Reticle kuning berarti kandidat belum stabil"],
-                ["4","📌","Ketuk <strong>\"Tempel Bingkai\"</strong> untuk menempatkan bingkai di dinding"],
-                ["5","↺↻","Jika dinding tidak terdeteksi, gunakan <strong>penempatan manual</strong> sebagai perkiraan"],
-              ].map(([n,icon,text]) => `
+          ["1", "📱", "Gerakkan HP <strong>perlahan ke kiri-kanan</strong> sambil arahkan ke dinding"],
+          ["2", "💡", "Pastikan dinding <strong>cukup terang</strong>. Dinding polos lebih mudah terbaca jika ada tepi, bayangan, atau detail visual"],
+          ["3", "🎯", "Tunggu reticle berubah <strong>hijau</strong>. Reticle kuning berarti kandidat belum stabil"],
+          ["4", "📌", "Ketuk <strong>\"Tempel Bingkai\"</strong> untuk menempatkan bingkai di dinding"],
+          ["5", "↺↻", "Jika dinding tidak terdeteksi, gunakan <strong>penempatan manual</strong> sebagai perkiraan"],
+        ].map(([n, icon, text]) => `
                 <div class="ar-pre-guide-step">
                   <div class="ar-pre-guide-number">${n}</div>
                   <div class="ar-pre-guide-icon" aria-hidden="true">${icon}</div>
@@ -598,128 +765,129 @@
             </div>
           </div>
         `;
-        document.body.classList.add("ar-pre-guide-open");
-        document.body.appendChild(guideBefore);
+      document.body.classList.add("ar-pre-guide-open");
+      document.body.appendChild(guideBefore);
 
-        const startARConfirm = document.getElementById("start-ar-confirm");
-        const modelPreloadStatus = document.getElementById("ar-model-preload-status");
+      const startARConfirm = document.getElementById("start-ar-confirm");
+      const modelPreloadStatus = document.getElementById("ar-model-preload-status");
 
-        requestAnimationFrame(() => {
-          const scrollArea = guideBefore.querySelector(".ar-pre-guide-scroll");
-          if (scrollArea) scrollArea.scrollTop = 0;
-          document.getElementById("cancel-ar-guide")?.focus({ preventScroll: true });
-        });
-
-        const progressBar = document.getElementById("ar-progress-bar");
-        const progressText = document.getElementById("ar-progress-text");
-        const progressContainer = document.getElementById("ar-progress-container");
-        const progressDetail = document.getElementById("ar-progress-detail");
-        const preloadPanel = document.getElementById("ar-preload-panel");
-        const progressSizeRow = document.getElementById("ar-progress-size-row");
-
-        const formatMB = (bytes) =>
-          (bytes / (1024 * 1024)).toFixed(1).replace(".", ",") + " MB";
-
-        const progressListener = (e) => {
-          const { progress, loaded, total } = e.detail || {};
-
-          // Update detail teks & baris MB
-          if (Number.isFinite(loaded)) {
-            const mbLoaded = formatMB(loaded);
-            const mbTotal = Number.isFinite(total) && total ? formatMB(total) : null;
-            if (progressDetail) {
-              progressDetail.textContent = mbTotal
-                ? `${mbLoaded} dari ${mbTotal}`
-                : `${mbLoaded} diunduh`;
-            }
-            if (progressSizeRow) {
-              progressSizeRow.textContent = mbTotal
-                ? `${mbLoaded} / ${mbTotal}`
-                : mbLoaded;
-            }
-          }
-
-          if (!Number.isFinite(progress) || progress === null) {
-            progressContainer?.classList.add("is-indeterminate");
-            return;
-          }
-          const percent = Math.round(progress * 100);
-          progressContainer?.classList.remove("is-indeterminate");
-          if (progressBar) progressBar.style.width = percent + "%";
-          if (progressText) progressText.textContent = percent + "%";
-        };
-        window.addEventListener("ar-model-progress", progressListener);
-
-        const finishPreloadUI = (percentText, sizeText) => {
-          progressContainer?.classList.remove("is-indeterminate");
-          if (progressBar) progressBar.style.width = "100%";
-          if (progressText) progressText.textContent = percentText;
-          if (progressSizeRow && sizeText !== undefined) progressSizeRow.textContent = sizeText;
-        };
-
-        modelReadyPromise
-          .then((loadedModel) => {
-            if (!guideBefore.isConnected) return;
-            startARConfirm.disabled = false;
-            startARConfirm.textContent = "Mengerti, mulai AR →";
-            modelPreloadStatus.textContent = loadedModel
-              ? "Model 3D siap ✓"
-              : "Model cadangan siap ✓";
-            if (progressDetail) progressDetail.textContent = "Kamera AR siap dimulai";
-            preloadPanel?.classList.add("is-ready");
-            finishPreloadUI("100%", "Unduhan selesai");
-            startARConfirm.focus({ preventScroll: true });
-          })
-          .catch(() => {
-            if (!guideBefore.isConnected) return;
-            startARConfirm.disabled = false;
-            startARConfirm.textContent = "Mulai AR dengan model cadangan →";
-            modelPreloadStatus.textContent = "Model utama gagal dimuat";
-            if (progressDetail) progressDetail.textContent = "Model cadangan akan digunakan";
-            preloadPanel?.classList.add("is-warning");
-            finishPreloadUI("—", "");
-          });
-
-        startARConfirm.addEventListener("click", () => {
-          if (startARConfirm.disabled) return;
-          window.removeEventListener("ar-model-progress", progressListener);
-          guideBefore.remove();
-          document.body.classList.remove("ar-pre-guide-open");
-          document.getElementById("mode-selector").style.display = "none";
-          document.getElementById("main-header").style.display = "flex";
-          document.getElementById("webxr-main").style.display = "block";
-          window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-          window._arMode = "webxr";
-		  window.initWebXR(frameData);
-          requestAnimationFrame(() => {
-            window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-            document.getElementById("ar-button-container")?.scrollIntoView({ block: "center", behavior: "auto" });
-          });
-        });
-
-        document.getElementById("cancel-ar-guide").addEventListener("click", () => {
-          guideBefore.remove();
-          document.body.classList.remove("ar-pre-guide-open");
-        });
+      requestAnimationFrame(() => {
+        const scrollArea = guideBefore.querySelector(".ar-pre-guide-scroll");
+        if (scrollArea) scrollArea.scrollTop = 0;
+        document.getElementById("cancel-ar-guide")?.focus({ preventScroll: true });
       });
 
-      // ── Tombol Kamera ──
-      document.getElementById("btn-camera").addEventListener("click", async () => {
+      const progressBar = document.getElementById("ar-progress-bar");
+      const progressText = document.getElementById("ar-progress-text");
+      const progressContainer = document.getElementById("ar-progress-container");
+      const progressDetail = document.getElementById("ar-progress-detail");
+      const preloadPanel = document.getElementById("ar-preload-panel");
+      const progressSizeRow = document.getElementById("ar-progress-size-row");
+
+      const formatMB = (bytes) =>
+        (bytes / (1024 * 1024)).toFixed(1).replace(".", ",") + " MB";
+
+      const progressListener = (e) => {
+        const { progress, loaded, total } = e.detail || {};
+
+        // Update detail teks & baris MB
+        if (Number.isFinite(loaded)) {
+          const mbLoaded = formatMB(loaded);
+          const mbTotal = Number.isFinite(total) && total ? formatMB(total) : null;
+          if (progressDetail) {
+            progressDetail.textContent = mbTotal
+              ? `${mbLoaded} dari ${mbTotal}`
+              : `${mbLoaded} diunduh`;
+          }
+          if (progressSizeRow) {
+            progressSizeRow.textContent = mbTotal
+              ? `${mbLoaded} / ${mbTotal}`
+              : mbLoaded;
+          }
+        }
+
+        if (!Number.isFinite(progress) || progress === null) {
+          progressContainer?.classList.add("is-indeterminate");
+          return;
+        }
+        const percent = Math.round(progress * 100);
+        progressContainer?.classList.remove("is-indeterminate");
+        if (progressBar) progressBar.style.width = percent + "%";
+        if (progressText) progressText.textContent = percent + "%";
+      };
+      window.addEventListener("ar-model-progress", progressListener);
+
+      const finishPreloadUI = (percentText, sizeText) => {
+        progressContainer?.classList.remove("is-indeterminate");
+        if (progressBar) progressBar.style.width = "100%";
+        if (progressText) progressText.textContent = percentText;
+        if (progressSizeRow && sizeText !== undefined) progressSizeRow.textContent = sizeText;
+      };
+
+      modelReadyPromise
+        .then((loadedModel) => {
+          if (!guideBefore.isConnected) return;
+          startARConfirm.disabled = false;
+          startARConfirm.textContent = "Mengerti, mulai AR →";
+          modelPreloadStatus.textContent = loadedModel
+            ? "Model 3D siap ✓"
+            : "Model cadangan siap ✓";
+          if (progressDetail) progressDetail.textContent = "Kamera AR siap dimulai";
+          preloadPanel?.classList.add("is-ready");
+          finishPreloadUI("100%", "Unduhan selesai");
+          startARConfirm.focus({ preventScroll: true });
+        })
+        .catch(() => {
+          if (!guideBefore.isConnected) return;
+          startARConfirm.disabled = false;
+          startARConfirm.textContent = "Mulai AR dengan model cadangan →";
+          modelPreloadStatus.textContent = "Model utama gagal dimuat";
+          if (progressDetail) progressDetail.textContent = "Model cadangan akan digunakan";
+          preloadPanel?.classList.add("is-warning");
+          finishPreloadUI("—", "");
+        });
+
+      startARConfirm.addEventListener("click", () => {
+        if (startARConfirm.disabled) return;
+        window.removeEventListener("ar-model-progress", progressListener);
+        guideBefore.remove();
+        document.body.classList.remove("ar-pre-guide-open");
         document.getElementById("mode-selector").style.display = "none";
+        document.getElementById("main-header").style.display = "flex";
+        document.getElementById("webxr-main").style.display = "block";
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-        await openARVisualizer({
-          frameData,
-		  modelUrl: frameData.modelUrl,
+        window._arMode = "webxr";
+        window.initWebXR(frameData);
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          document.getElementById("ar-button-container")?.scrollIntoView({ block: "center", behavior: "auto" });
         });
       });
 
-
-      // ── Back button ──
-      document.getElementById("back-to-selector")?.addEventListener("click", () => {
-        location.reload();
+      document.getElementById("cancel-ar-guide").addEventListener("click", () => {
+        guideBefore.remove();
+        document.body.classList.remove("ar-pre-guide-open");
       });
-    </script>
+    });
 
-	<script type="module" src="/assets/js/ar-logic.js?v=20260728-color-fix-1"></script>
-  </body>
+    // ── Tombol Kamera ──
+    document.getElementById("btn-camera").addEventListener("click", async () => {
+      document.getElementById("mode-selector").style.display = "none";
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      await openARVisualizer({
+        frameData,
+        modelUrl: frameData.modelUrl,
+      });
+    });
+
+
+    // ── Back button ──
+    document.getElementById("back-to-selector")?.addEventListener("click", () => {
+      location.reload();
+    });
+  </script>
+
+  <script type="module" src="/assets/js/ar-logic.js?v=20260728-color-fix-1"></script>
+</body>
+
 </html>
